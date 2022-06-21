@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32414.318
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZeusInventarioWebAPI", "ZeusInventarioWebAPI\ZeusInventarioWebAPI.csproj", "{FAAA80AF-8C20-4E43-8EB9-39D2BFB22E69}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FAAA80AF-8C20-4E43-8EB9-39D2BFB22E69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAAA80AF-8C20-4E43-8EB9-39D2BFB22E69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAAA80AF-8C20-4E43-8EB9-39D2BFB22E69}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAAA80AF-8C20-4E43-8EB9-39D2BFB22E69}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CC0C883B-93CE-417A-9864-23C17214EDFA}
+	EndGlobalSection
+EndGlobal
