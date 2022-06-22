@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using ZeusInventarioWebAPI.Data;
 using ZeusInventarioWebAPI.Models;
 
+//Variable para habilitar error de CORS
+var myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -18,6 +20,19 @@ builder.Services.AddDbContext<InventarioDataContext>(options =>
 
 });
 
+//HABILITAR CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: myAllowSpecificOrigins,
+
+        builder =>
+        {
+            builder.WithOrigins("http://localhost:4200", "http://192.168.0.153:4600")
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+        });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -26,6 +41,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+//HABILITAR CORS
+app.UseCors(myAllowSpecificOrigins);
 
 app.UseHttpsRedirection();
 
