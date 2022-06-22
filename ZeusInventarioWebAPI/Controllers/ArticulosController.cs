@@ -32,6 +32,8 @@ namespace ZeusInventarioWebAPI.Controllers
             return await _context.Articulos.ToListAsync();
         }
 
+
+
         // GET: api/Articulos/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Articulo>> GetArticulo(decimal id)
