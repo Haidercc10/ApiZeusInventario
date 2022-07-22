@@ -32,6 +32,40 @@ namespace ZeusInventarioWebAPI.Controllers
             return await _context.Existencia.ToListAsync();
         }
 
+        //GET EXISTENCIA Y ARTICULO PARA OBTENER INVENTARIO
+        [HttpGet("BusquedaCodigoArticulo")]
+        public IActionResult GetExistenciasProductos()
+        {
+            if (_context.Existencia == null)
+            {
+                return NotFound();
+            }
+
+            var TipoProd = "PRODUCTO TERMINADO";
+            var CodArticulo = _context.Existencia.Where(a => a.ArticuloNavigation.Tipo == TipoProd
+                                                && a.Existencias >= 1
+                                                && a.Articulo == a.ArticuloNavigation.IdArticulo)
+                                               .Include(a => a.ArticuloNavigation)
+                                               .OrderByDescending(x => x.Existencias)
+                                               .Select(ART => new {
+                                                   ART.Articulo,
+                                                   ART.Codigo,
+                                                   ART.ArticuloNavigation.Nombre,
+                                                   ART.Existencias,
+                                                   ART.ArticuloNavigation.PrecioVenta,
+                                                   Precio_Total = ART.Existencias * ART.ArticuloNavigation.PrecioVenta
+                                               }).ToList();
+
+            if (CodArticulo == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(CodArticulo);
+            }
+        }
+
         // GET: api/Existencias/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Existencia>> GetExistencia(decimal id)

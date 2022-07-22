@@ -32,8 +32,7 @@ namespace ZeusInventarioWebAPI.Controllers
             return await _context.Articulos.ToListAsync();
         }
 
-
-
+        
         // GET: api/Articulos/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Articulo>> GetArticulo(decimal id)
@@ -51,6 +50,7 @@ namespace ZeusInventarioWebAPI.Controllers
 
             return articulo;
         }
+
 
         // PUT: api/Articulos/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -82,6 +82,8 @@ namespace ZeusInventarioWebAPI.Controllers
 
             return NoContent();
         }
+
+
 
         // POST: api/Articulos
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
