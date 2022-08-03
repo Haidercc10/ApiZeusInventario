@@ -49,7 +49,7 @@ namespace ZeusInventarioWebAPI.Controllers
                                                .OrderByDescending(x => x.Existencias)
                                                .Select(ART => new {
                                                    ART.Articulo,
-                                                   ART.Codigo,
+                                                   ART.ArticuloNavigation.Codigo,
                                                    ART.ArticuloNavigation.Nombre,
                                                    ART.Existencias,
                                                    ART.ArticuloNavigation.PrecioVenta,
