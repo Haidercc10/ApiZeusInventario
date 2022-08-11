@@ -53,6 +53,7 @@ namespace ZeusInventarioWebAPI.Controllers
                                                    ART.ArticuloNavigation.Nombre,
                                                    ART.Existencias,
                                                    ART.ArticuloNavigation.PrecioVenta,
+                                                   ART.ArticuloNavigation.Presentacion,
                                                    Precio_Total = ART.Existencias * ART.ArticuloNavigation.PrecioVenta
                                                }).ToList();
 
