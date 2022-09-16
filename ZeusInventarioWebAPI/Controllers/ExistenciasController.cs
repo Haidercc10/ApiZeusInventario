@@ -42,7 +42,9 @@ namespace ZeusInventarioWebAPI.Controllers
             }
 
             var TipoProd = "PRODUCTO TERMINADO";
+            var Bodega = "003";
             var CodArticulo = _context.Existencia.Where(a => a.ArticuloNavigation.Tipo == TipoProd
+                                                &&  a.Bodega == Bodega
                                                 && a.Existencias >= 1
                                                 && a.Articulo == a.ArticuloNavigation.IdArticulo)
                                                .Include(a => a.ArticuloNavigation)
