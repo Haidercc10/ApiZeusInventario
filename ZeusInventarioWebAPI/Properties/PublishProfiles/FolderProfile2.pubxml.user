@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121.
+-->
+<Project>
+  <PropertyGroup>
+    <_PublishTargetUrl>C:\inetpub\ZeusInventarioWebAPI_App\ZeusInventarioWebAPI\Release</_PublishTargetUrl>
+    <History>True|2022-09-30T17:24:49.1842286Z;</History>
+  </PropertyGroup>
+</Project>

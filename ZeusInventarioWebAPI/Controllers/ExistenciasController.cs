@@ -45,7 +45,7 @@ namespace ZeusInventarioWebAPI.Controllers
             var Bodega = "003";
             var CodArticulo = _context.Existencia.Where(a => a.ArticuloNavigation.Tipo == TipoProd
                                                 && a.Bodega == Bodega
-                                                && a.Existencias >= 1
+                                                && a.Existencias >= 0
                                                 && a.Articulo == a.ArticuloNavigation.IdArticulo)
                                                .Include(a => a.ArticuloNavigation)
                                                .OrderByDescending(x => x.Existencias)
