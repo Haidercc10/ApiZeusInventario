@@ -4,7 +4,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
 -->
 <Project>
   <PropertyGroup>
-    <_PublishTargetUrl>C:\Users\Desarrollo1\source\repos\ZeusInventarioWebAPI_App\ZeusInventarioWebAPI\Migrations</_PublishTargetUrl>
-    <History>True|2022-06-22T16:54:10.5252922Z;</History>
+    <_PublishTargetUrl>C:\inetpub\ApiZeus</_PublishTargetUrl>
+    <History>True|2022-08-03T21:53:41.0863414Z;</History>
   </PropertyGroup>
 </Project>

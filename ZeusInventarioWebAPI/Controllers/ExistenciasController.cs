@@ -42,9 +42,9 @@ namespace ZeusInventarioWebAPI.Controllers
             }
 
             var TipoProd = "PRODUCTO TERMINADO";
+            var Bodega = "003";
             var CodArticulo = _context.Existencia.Where(a => a.ArticuloNavigation.Tipo == TipoProd
-                                                && a.Existencias >= 0
-                                                && a.Bodega == "003" 
+                                                && a.Existencias >= 1
                                                 && a.Articulo == a.ArticuloNavigation.IdArticulo)
                                                .Include(a => a.ArticuloNavigation)
                                                .OrderByDescending(x => x.Existencias)
@@ -54,6 +54,7 @@ namespace ZeusInventarioWebAPI.Controllers
                                                    ART.ArticuloNavigation.Nombre,
                                                    ART.Existencias,
                                                    ART.ArticuloNavigation.PrecioVenta,
+                                                   ART.ArticuloNavigation.Presentacion,
                                                    Precio_Total = ART.Existencias * ART.ArticuloNavigation.PrecioVenta
                                                }).ToList();
 
