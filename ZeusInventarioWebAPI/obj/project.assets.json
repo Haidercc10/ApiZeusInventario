@@ -9713,19 +9713,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Desarrollo1\\.nuget\\packages\\": {}
+    "C:\\Users\\SANDRA\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Desarrollo1\\source\\repos\\ZeusInventarioWebAPI_App\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj",
+      "projectUniqueName": "C:\\Users\\SANDRA\\Documents\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj",
       "projectName": "ZeusInventarioWebAPI",
-      "projectPath": "C:\\Users\\Desarrollo1\\source\\repos\\ZeusInventarioWebAPI_App\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj",
-      "packagesPath": "C:\\Users\\Desarrollo1\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Desarrollo1\\source\\repos\\ZeusInventarioWebAPI_App\\ZeusInventarioWebAPI\\obj\\",
+      "projectPath": "C:\\Users\\SANDRA\\Documents\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj",
+      "packagesPath": "C:\\Users\\SANDRA\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\SANDRA\\Documents\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "C:\\Users\\Desarrollo1\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\SANDRA\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
