@@ -64,8 +64,42 @@ namespace ZeusInventarioWebAPI.Controllers
                                     Articulo = grupo.Key.IdArticulo,
                                     NombreArticulo = grupo.Key.Nombre,
                                     CantidadFact = grupo.Count(),
-                                    CantidadPed = grupo.Sum(d => d.Cantidad),
-                                    TotalxItem = grupo.Sum(d => d.PrecioUnidad) * grupo.Sum(d => d.Cantidad)
+                                    TotalxItem = grupo.Sum(d => d.PrecioTotal)
+                                };
+
+            if (DocumentoItem == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(DocumentoItem);
+        }
+
+        /** Clientes mas facturados en el mes */
+        [HttpGet("ClientesFacturadosMes/{fecha1}/{fecha2}")]
+        public ActionResult GetDocumento(DateTime fecha1, DateTime fecha2)
+        {
+            if (_context.DocumentoItems == null)
+            {
+                return NotFound();
+            }
+
+            DateTime Hora1 = Convert.ToDateTime("00:00:00");
+            DateTime Hora2 = Convert.ToDateTime("23:59:00");
+
+            var DocumentoItem = from doc in _context.Set<DocumentoItem>()
+                                from fc in _context.Set<FacturaDeCliente>()
+                                where fc.Consecutivo == doc.Documento
+                                && doc.TipoDocumento == 9
+                                && fc.Fecha >= fecha1.AddHours(Hora1.Hour).AddMinutes(Hora1.Minute).AddSeconds(Hora1.Second) //2022-12-01T00:00:00
+                                && fc.Fecha <= fecha2.AddHours(Hora2.Hour).AddMinutes(Hora2.Minute).AddSeconds(Hora2.Second) //2022-12-20T23:59:59
+                                group doc by new { fc.Cliente } into grupo
+                                orderby grupo.Count() descending
+                                select new
+                                {
+                                    Cliente = grupo.Key.Cliente,
+                                    CantidadFact = grupo.Count(),
+                                    TotalxItem = grupo.Sum(d => d.PrecioTotal)
                                 };
 
             if (DocumentoItem == null)

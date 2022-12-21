@@ -33,7 +33,7 @@ namespace ZeusInventarioWebAPI.Controllers
         }
 
 
-        // GET: api/MovimientoItems/5
+        // Facturación mes actual.
         [HttpGet("FacturacionMensual/{fechaIni}/{fechaFin}")]
         public ActionResult GetMovimientoItem(DateTime fechaIni, DateTime fechaFin)
         {
