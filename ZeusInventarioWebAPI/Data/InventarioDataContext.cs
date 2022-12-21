@@ -1549,6 +1549,152 @@ namespace ZeusInventarioWebAPI.Data
                     .IsUnicode(false);
             });
 
+          
+            modelBuilder.Entity<Maevende>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("MAEVENDE");
+
+                entity.Property(e => e.Ciudad)
+                    .HasMaxLength(40)
+                    .IsUnicode(false)
+                    .HasColumnName("CIUDAD");
+
+                entity.Property(e => e.Contacto)
+                    .HasMaxLength(40)
+                    .IsUnicode(false)
+                    .HasColumnName("CONTACTO");
+
+                entity.Property(e => e.Contactoa)
+                    .HasMaxLength(40)
+                    .IsUnicode(false)
+                    .HasColumnName("CONTACTOA");
+
+                entity.Property(e => e.Dirconta)
+                    .HasMaxLength(40)
+                    .IsUnicode(false)
+                    .HasColumnName("DIRCONTA");
+
+                entity.Property(e => e.Dircontaa)
+                    .HasMaxLength(40)
+                    .IsUnicode(false)
+                    .HasColumnName("DIRCONTAA");
+
+                entity.Property(e => e.Dircorres)
+                    .HasMaxLength(40)
+                    .IsUnicode(false)
+                    .HasColumnName("DIRCORRES");
+
+                entity.Property(e => e.Direccion)
+                    .HasMaxLength(40)
+                    .IsUnicode(false)
+                    .HasColumnName("DIRECCION");
+
+                entity.Property(e => e.Dirgerente)
+                    .HasMaxLength(40)
+                    .IsUnicode(false)
+                    .HasColumnName("DIRGERENTE");
+
+                entity.Property(e => e.Email)
+                    .HasMaxLength(60)
+                    .IsUnicode(false)
+                    .HasColumnName("EMAIL");
+
+                entity.Property(e => e.Emailconta)
+                    .HasMaxLength(60)
+                    .IsUnicode(false)
+                    .HasColumnName("EMAILCONTA");
+
+                entity.Property(e => e.Emailcontaa)
+                    .HasMaxLength(40)
+                    .IsUnicode(false)
+                    .HasColumnName("EMAILCONTAA");
+
+                entity.Property(e => e.Emailgeren)
+                    .HasMaxLength(60)
+                    .IsUnicode(false)
+                    .HasColumnName("EMAILGEREN");
+
+                entity.Property(e => e.Fax)
+                    .HasMaxLength(15)
+                    .IsUnicode(false)
+                    .HasColumnName("FAX");
+
+                entity.Property(e => e.Gerente)
+                    .HasMaxLength(40)
+                    .IsUnicode(false)
+                    .HasColumnName("GERENTE");
+
+                entity.Property(e => e.IdenMaevende)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("Iden_maevende");
+
+                entity.Property(e => e.Identificacion)
+                    .HasMaxLength(25)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Idvende)
+                    .HasMaxLength(3)
+                    .IsUnicode(false)
+                    .HasColumnName("IDVENDE")
+                    .IsFixedLength();
+
+                entity.Property(e => e.Idzona)
+                    .HasMaxLength(3)
+                    .IsUnicode(false)
+                    .HasColumnName("IDZONA")
+                    .IsFixedLength();
+
+                entity.Property(e => e.MetaVenta).HasColumnType("numeric(18, 2)");
+
+                entity.Property(e => e.Nombvende)
+                    .HasMaxLength(40)
+                    .IsUnicode(false)
+                    .HasColumnName("NOMBVENDE");
+
+                entity.Property(e => e.Pcomision)
+                    .HasColumnType("numeric(18, 6)")
+                    .HasColumnName("PComision");
+
+                entity.Property(e => e.Pdescuento)
+                    .HasColumnType("numeric(18, 6)")
+                    .HasColumnName("PDescuento");
+
+                entity.Property(e => e.Ppenalidad)
+                    .HasColumnType("numeric(18, 6)")
+                    .HasColumnName("PPenalidad");
+
+                entity.Property(e => e.Telconta)
+                    .HasMaxLength(25)
+                    .IsUnicode(false)
+                    .HasColumnName("TELCONTA");
+
+                entity.Property(e => e.Telcontaa)
+                    .HasMaxLength(25)
+                    .IsUnicode(false)
+                    .HasColumnName("TELCONTAA");
+
+                entity.Property(e => e.Telefono)
+                    .HasMaxLength(25)
+                    .IsUnicode(false)
+                    .HasColumnName("TELEFONO");
+
+                entity.Property(e => e.Telgerente)
+                    .HasMaxLength(25)
+                    .IsUnicode(false)
+                    .HasColumnName("TELGERENTE");
+
+                entity.Property(e => e.VersionDeLaFila)
+                    .IsRowVersion()
+                    .IsConcurrencyToken();
+
+                entity.Property(e => e.Website)
+                    .HasMaxLength(60)
+                    .IsUnicode(false)
+                    .HasColumnName("WEBSITE");
+            });
+
             OnModelCreatingPartial(modelBuilder);
         }
 
