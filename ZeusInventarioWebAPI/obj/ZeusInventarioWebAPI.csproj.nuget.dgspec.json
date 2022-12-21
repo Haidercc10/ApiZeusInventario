@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Desarrollo1\\source\\repos\\ZeusInventarioWebAPI_App\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj": {}
+    "C:\\Repositorio\\ApiZeusInventario\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Desarrollo1\\source\\repos\\ZeusInventarioWebAPI_App\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj": {
+    "C:\\Repositorio\\ApiZeusInventario\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Desarrollo1\\source\\repos\\ZeusInventarioWebAPI_App\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj",
+        "projectUniqueName": "C:\\Repositorio\\ApiZeusInventario\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj",
         "projectName": "ZeusInventarioWebAPI",
-        "projectPath": "C:\\Users\\Desarrollo1\\source\\repos\\ZeusInventarioWebAPI_App\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj",
+        "projectPath": "C:\\Repositorio\\ApiZeusInventario\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj",
         "packagesPath": "C:\\Users\\Desarrollo1\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Desarrollo1\\source\\repos\\ZeusInventarioWebAPI_App\\ZeusInventarioWebAPI\\obj\\",
+        "outputPath": "C:\\Repositorio\\ApiZeusInventario\\ZeusInventarioWebAPI\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Desarrollo1\\AppData\\Roaming\\NuGet\\NuGet.Config",

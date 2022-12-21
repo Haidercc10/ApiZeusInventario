@@ -14,9 +14,9 @@ namespace ZeusInventarioWebAPI.Controllers
     [ApiController]
     public class ItemsController : ControllerBase
     {
-        private readonly InventarioDataContext _context;
+        private readonly Data.InventarioDataContext _context;
 
-        public ItemsController(InventarioDataContext context)
+        public ItemsController(Data.InventarioDataContext context)
         {
             _context = context;
         }

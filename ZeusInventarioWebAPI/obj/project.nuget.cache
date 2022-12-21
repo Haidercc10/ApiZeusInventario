@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Ue1aYpmSIJZBKazQvPM5lPiZcHvUAJdhzFLV6E5ofKWsSLCG1VrH7U7aRgtFkhTo+OQaxeGFvA2+Iwu/wrqfvQ==",
+  "dgSpecHash": "MVzWYESR+n++Gucq+N0Na7vNlwvGhFPDZmxDIKE30OmKebC3gKKvMEz+VkJDqXTy7YqbthjT027w1xdrLJUc8g==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Desarrollo1\\source\\repos\\ZeusInventarioWebAPI_App\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj",
+  "projectFilePath": "C:\\Repositorio\\ApiZeusInventario\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Desarrollo1\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
     "C:\\Users\\Desarrollo1\\.nuget\\packages\\intercom.dotnet.client\\2.1.1\\intercom.dotnet.client.2.1.1.nupkg.sha512",
