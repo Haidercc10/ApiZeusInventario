@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "MVzWYESR+n++Gucq+N0Na7vNlwvGhFPDZmxDIKE30OmKebC3gKKvMEz+VkJDqXTy7YqbthjT027w1xdrLJUc8g==",
+  "dgSpecHash": "EoeN6FjxWSLlnekU2RcGVvm4AZ4xOXqBmxNQt/yAieDX+4CUxmEOtezJrNp458RFF40dsoEwwfPJoBp/2V8gJQ==",
   "success": true,
   "projectFilePath": "C:\\Repositorio\\ApiZeusInventario\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj",
   "expectedPackageFiles": [
@@ -83,6 +83,7 @@
     "C:\\Users\\Desarrollo1\\.nuget\\packages\\nuget.projectmodel\\5.11.0\\nuget.projectmodel.5.11.0.nupkg.sha512",
     "C:\\Users\\Desarrollo1\\.nuget\\packages\\nuget.protocol\\5.11.0\\nuget.protocol.5.11.0.nupkg.sha512",
     "C:\\Users\\Desarrollo1\\.nuget\\packages\\nuget.versioning\\5.11.0\\nuget.versioning.5.11.0.nupkg.sha512",
+    "C:\\Users\\Desarrollo1\\.nuget\\packages\\restsharp\\106.5.4\\restsharp.106.5.4.nupkg.sha512",
     "C:\\Users\\Desarrollo1\\.nuget\\packages\\rick.docs.samples.routeinfo\\1.0.0.8\\rick.docs.samples.routeinfo.1.0.0.8.nupkg.sha512",
     "C:\\Users\\Desarrollo1\\.nuget\\packages\\runtime.debian.8-x64.runtime.native.system.security.cryptography.openssl\\4.3.0\\runtime.debian.8-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
     "C:\\Users\\Desarrollo1\\.nuget\\packages\\runtime.fedora.23-x64.runtime.native.system.security.cryptography.openssl\\4.3.0\\runtime.fedora.23-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
@@ -189,7 +190,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "El paquete \"Intercom.Dotnet.Client 2.1.1\" se restauró con \".NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8\" en lugar de la plataforma de destino del proyecto \"net6.0\". Puede que el paquete no sea totalmente compatible con el proyecto.",
+      "message": "El paquete \"Intercom.Dotnet.Client 2.1.1\" se restauró con \".NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1\" en lugar de la plataforma de destino del proyecto \"net6.0\". Puede que el paquete no sea totalmente compatible con el proyecto.",
       "libraryId": "Intercom.Dotnet.Client",
       "targetGraphs": [
         "net6.0"

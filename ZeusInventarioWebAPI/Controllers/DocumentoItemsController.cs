@@ -98,7 +98,6 @@ namespace ZeusInventarioWebAPI.Controllers
                                 select new
                                 {
                                     Cliente = grupo.Key.Cliente,
-                                    CantidadFact = grupo.Count(),
                                     TotalxItem = grupo.Sum(d => d.PrecioTotal)
                                 };
 
@@ -109,5 +108,43 @@ namespace ZeusInventarioWebAPI.Controllers
 
             return Ok(DocumentoItem);
         }
+
+        /** Vendedores mas facturados en el mes */
+        [HttpGet("VendedoresFacturadosMes/{fecha1}/{fecha2}")]
+        public ActionResult GetDocumentoxVendedor(DateTime fecha1, DateTime fecha2)
+        {
+            if (_context.DocumentoItems == null)
+            {
+                return NotFound();
+            }
+
+            DateTime Hora1 = Convert.ToDateTime("00:00:00");
+            DateTime Hora2 = Convert.ToDateTime("23:59:00");
+
+            var DocumentoItem = from doc in _context.Set<DocumentoItem>()
+                                from fc in _context.Set<FacturaDeCliente>()
+                                from ve in _context.Set<Maevende>()
+                                where fc.Consecutivo == doc.Documento
+                                && ve.Idvende == fc.Vendedor 
+                                && doc.TipoDocumento == 9
+                                && fc.Fecha >= fecha1.AddHours(Hora1.Hour).AddMinutes(Hora1.Minute).AddSeconds(Hora1.Second) //2022-12-01T00:00:00
+                                && fc.Fecha <= fecha2.AddHours(Hora2.Hour).AddMinutes(Hora2.Minute).AddSeconds(Hora2.Second) //2022-12-20T23:59:59
+                                group doc by new { fc.Vendedor, ve.Nombvende } into grupo
+                                orderby grupo.Count() descending
+                                select new
+                                {
+                                    IdVendedor = grupo.Key.Vendedor,
+                                    Venderor = grupo.Key.Nombvende,
+                                    TotalxItem = grupo.Sum(d => d.PrecioTotal)
+                                };
+
+            if (DocumentoItem == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(DocumentoItem);
+        }
+
     }
 }
