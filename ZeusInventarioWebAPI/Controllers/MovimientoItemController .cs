@@ -164,5 +164,48 @@ namespace ZeusInventarioWebAPI.Controllers
                         select mov.TotalIvacompras).Sum();
             return Ok(num1);
         }
+
+        [HttpGet("getPedidos")]
+        public ActionResult getPedidos()
+        {
+            var con = from mov in _context.Set<MovimientoItem>()
+                      from cli in _context.Set<Cliente>()
+                      from ped in _context.Set<PedidoDeCliente>()
+                      from art in _context.Set<Articulo>()
+                      //from ext in _context.Set<Existencia>()
+                      join ext in _context.Set<Existencia>() on art.IdArticulo equals ext.Articulo
+                      where mov.TipoDocumento == 7
+                            && mov.Estado != "Liquidado"
+                            && mov.Faltantes < mov.Cantidad
+                            && cli.Idcliente == mov.Tercero
+                            //&& ext.Articulo == art.IdArticulo
+                            && art.Codigo == mov.CodigoArticulo
+                            && art.DesHabilitado == false
+                            && art.Presentacion == mov.Presentacion
+                            && ped.Consecutivo == mov.Consecutivo
+                      select new
+                      {
+                          mov.Consecutivo,
+                          Fecha_Creacion = mov.FechaDocumento,
+                          Id_Cliente = mov.Tercero,
+                          Cliente = mov.NombreTercero,
+                          cli.Ciudad,
+                          Id_Producto = mov.CodigoArticulo,
+                          Producto = mov.NombreArticulo,
+                          ext.Existencias,
+                          Cant_Pedida = mov.Cantidad,
+                          Cant_Pendiente = (mov.Cantidad - mov.Faltantes),
+                          Cant_Facturada = mov.Faltantes,
+                          mov.Presentacion,
+                          mov.PrecioUnidad,
+                          Id_Vendedor = mov.Vendedor,
+                          Vendedor = mov.NombreVendedor,
+                          Orden_Compra_CLiente = ped.OrdenCompraCliente,
+                          Costo_Cant_Pendiente = ((mov.Cantidad - mov.Faltantes) * mov.PrecioUnidad),
+                          Costo_Cant_Total = (mov.Cantidad * mov.PrecioUnidad),
+                          Fecha_Entrega = ped.FechaEntrega,
+                      };
+            return Ok(con);
+        }
     }
 }
