@@ -200,7 +200,8 @@ namespace ZeusInventarioWebAPI.Controllers
                                                && art.DesHabilitado == false
                                                && art.Presentacion == mov.Presentacion
                                          group ext by ext.Articulo into ext
-                                         select ext.Sum(x => x.Existencias)).FirstOrDefault()
+                                         select ext.Sum(x => x.Existencias)).FirstOrDefault(),
+                        mov.Estado
                       };
             return Ok(con);
         }
