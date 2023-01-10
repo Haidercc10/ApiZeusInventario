@@ -41,27 +41,25 @@ namespace ZeusInventarioWebAPI.Controllers
             {
                 return NotFound();
             }
+            var ano = DateTime.Today;
+
             var MovimientoItem = (from mi in _context.Set<MovimientoItem>()
                                   where mi.Fuente == "FV"
                                   && mi.Estado == "Procesado"
-                                  && mi.FechaDocumento >= fechaIni
-                                  && mi.FechaDocumento <= fechaFin
+                                  && mi.FechaDocumento.Month == ano.Month
+                                  && mi.FechaDocumento.Year == ano.Year
                                   select mi.PrecioTotal).Sum();
 
             var Transaccion1 = (from tr in _context.Set<Transac>()
-                               where tr.Idfuente == "DV"
-                               && tr.Tipofac == "FA"
-                               && tr.Indcpitra == "1"
-                               && tr.Fgratra >= fechaIni
-                               && tr.Fgratra <= fechaFin
-                               select tr.Valortra).Sum();
+                                where tr.Idfuente == "DV"
+                                && tr.Tipofac == "FA"
+                                && tr.Indcpitra == "1"
+                                && tr.Fgratra.Month == ano.Month
+                                && tr.Fgratra.Year == ano.Year
+                                select tr.Valortra).Sum();
+            var datos = MovimientoItem - Transaccion1;
 
-            //if (MovimientoItem == null) MovimientoItem = 0;
-            //if (Transaccion == null) Transaccion = 0;
-
-            var ValorReal = MovimientoItem - Transaccion1;
-
-            return Ok(ValorReal);
+            return Ok(datos);
         }
 
 
@@ -171,17 +169,10 @@ namespace ZeusInventarioWebAPI.Controllers
             var con = from mov in _context.Set<MovimientoItem>()
                       from cli in _context.Set<Cliente>()
                       from ped in _context.Set<PedidoDeCliente>()
-                      from art in _context.Set<Articulo>()
-                      //from ext in _context.Set<Existencia>()
-                      join ext in _context.Set<Existencia>() on art.IdArticulo equals ext.Articulo
                       where mov.TipoDocumento == 7
                             && mov.Estado != "Liquidado"
                             && mov.Faltantes < mov.Cantidad
                             && cli.Idcliente == mov.Tercero
-                            //&& ext.Articulo == art.IdArticulo
-                            && art.Codigo == mov.CodigoArticulo
-                            && art.DesHabilitado == false
-                            && art.Presentacion == mov.Presentacion
                             && ped.Consecutivo == mov.Consecutivo
                       select new
                       {
@@ -192,7 +183,6 @@ namespace ZeusInventarioWebAPI.Controllers
                           cli.Ciudad,
                           Id_Producto = mov.CodigoArticulo,
                           Producto = mov.NombreArticulo,
-                          ext.Existencias,
                           Cant_Pedida = mov.Cantidad,
                           Cant_Pendiente = (mov.Cantidad - mov.Faltantes),
                           Cant_Facturada = mov.Faltantes,
@@ -204,6 +194,13 @@ namespace ZeusInventarioWebAPI.Controllers
                           Costo_Cant_Pendiente = ((mov.Cantidad - mov.Faltantes) * mov.PrecioUnidad),
                           Costo_Cant_Total = (mov.Cantidad * mov.PrecioUnidad),
                           Fecha_Entrega = ped.FechaEntrega,
+                          Existencias = (from art in _context.Set<Articulo>()
+                                         join ext in _context.Set<Existencia>() on art.IdArticulo equals ext.Articulo
+                                         where art.Codigo == mov.CodigoArticulo
+                                               && art.DesHabilitado == false
+                                               && art.Presentacion == mov.Presentacion
+                                         group ext by ext.Articulo into ext
+                                         select ext.Sum(x => x.Existencias)).FirstOrDefault(),
                           mov.Estado
                       };
             return Ok(con);
@@ -252,6 +249,8 @@ namespace ZeusInventarioWebAPI.Controllers
                           NIT = 800188732,
                           Direccion = "Calle 42 #52-105",
                           Ciudad_Empresa = "Barranquilla"
+
+                         
                       };
             return Ok(con);
         }
