@@ -51,6 +51,54 @@ namespace ZeusInventarioWebAPI.Controllers
             return articulo;
         }
 
+        /** */
+        [HttpGet("getArticulos/{item}")]
+        public ActionResult GetArticulos2(string item)
+        {
+
+            var articulo = from ar in _context.Set<Articulo>()
+                           where ar.Tipo == "PRODUCTO TERMINADO"
+                           && ar.Nombre.Contains(item)
+                           select new
+                           {
+                             ar.IdArticulo,
+                             ar.Nombre
+                           };     
+            return Ok(articulo);
+        }
+
+        /** */
+        [HttpGet("getVendedores/{nombre}")]
+        public ActionResult GetVendedor2(string nombre)
+        {
+            var vendedor = from v in _context.Set<Maevende>()
+                           where v.Deshabilitado != 1
+                           && v.Nombvende.Contains(nombre)
+                           select new
+                           {
+                               v.Idvende,
+                               v.Nombvende
+                           };
+            return Ok(vendedor);
+
+        }
+
+        [HttpGet("getClientes/{nombre}")]
+        public ActionResult GetCliente2(string nombre)
+        {
+
+            var clientes = from c in _context.Set<Cliente>()
+                           where c.Deshabilitado != 1
+                           && c.Razoncial.Contains(nombre)
+                           select new
+                           {
+                               c.Idcliente, 
+                               c.Razoncial
+                           };
+            
+            return Ok(clientes);
+        }
+
 
         // PUT: api/Articulos/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

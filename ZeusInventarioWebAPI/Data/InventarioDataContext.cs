@@ -36,6 +36,10 @@ namespace ZeusInventarioWebAPI.Data
         public virtual DbSet<MovimientoItem> MovimientoItems { get; set; } = null!;
         public virtual DbSet<Transac> Transacs { get; set; } = null!;
 
+        public virtual DbSet<Maevende> Maevende { get; set; } = null!;
+
+        public virtual DbSet<Cliente> Cliente { get; set; } = null!;
+
 
         //CONEXIÓN A BASE DE DATOS QUE YA SE ENCUENTRA EN appsettings.json
         /*protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
