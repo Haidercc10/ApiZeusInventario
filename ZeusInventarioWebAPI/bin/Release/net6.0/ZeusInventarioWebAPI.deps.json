@@ -65,10 +65,6 @@
         }
       },
       "Intercom.Dotnet.Client/2.1.1": {
-        "dependencies": {
-          "Newtonsoft.Json": "13.0.2",
-          "RestSharp": "106.5.4"
-        },
         "runtime": {
           "lib/net452/Intercom.dll": {
             "assemblyVersion": "1.0.0.0",
@@ -1554,14 +1550,6 @@
           "lib/netstandard2.0/NuGet.Versioning.dll": {
             "assemblyVersion": "5.11.0.10",
             "fileVersion": "5.11.0.10"
-          }
-        }
-      },
-      "RestSharp/106.5.4": {
-        "runtime": {
-          "lib/netstandard2.0/RestSharp.dll": {
-            "assemblyVersion": "106.5.4.0",
-            "fileVersion": "106.5.4.0"
           }
         }
       },
@@ -3087,13 +3075,6 @@
       "sha512": "sha512-mCv/GzvMk5iatWoZY41PoIShEbwVxq9CDCc1fV/uqPFKZ4DD/1JuKZ5AL/FJJRsTanvMR3EOXKYCLdQ7PFYn8Q==",
       "path": "nuget.versioning/5.11.0",
       "hashPath": "nuget.versioning.5.11.0.nupkg.sha512"
-    },
-    "RestSharp/106.5.4": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-AOAzWW/L0YNxOLjc2foBmKFRBGNshfKXlpQrWtX9U5fArZsuiz9o9tb2QsY6uXtMEtRdKJcj3J2Mw4L6UJVaAA==",
-      "path": "restsharp/106.5.4",
-      "hashPath": "restsharp.106.5.4.nupkg.sha512"
     },
     "Rick.Docs.Samples.RouteInfo/1.0.0.8": {
       "type": "package",
