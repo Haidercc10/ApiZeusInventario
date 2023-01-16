@@ -213,6 +213,15 @@ namespace ZeusInventarioWebAPI.Controllers
                       from ped in _context.Set<PedidoDeCliente>()
                       where mov.TipoDocumento == 7
                             && cli.Idcliente == mov.Tercero
+                      //from art in _context.Set<Articulo>()
+                          //from ext in _context.Set<Existencia>()
+                      //join ext in _context.Set<Existencia>() on art.IdArticulo equals ext.Articulo
+                      where mov.TipoDocumento == 7
+                            && cli.Idcliente == mov.Tercero
+                            //&& ext.Articulo == art.IdArticulo
+                            //&& art.Codigo == mov.CodigoArticulo
+                            //&& art.DesHabilitado == false
+                            //&& art.Presentacion == mov.Presentacion
                             && ped.Consecutivo == mov.Consecutivo
                             && mov.Consecutivo == consecutivo
                       select new
