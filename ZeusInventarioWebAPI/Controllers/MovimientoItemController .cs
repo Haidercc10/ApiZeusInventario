@@ -162,6 +162,45 @@ namespace ZeusInventarioWebAPI.Controllers
             return Ok(num1);
         }
 
+
+        [HttpGet("getPedidosAgrupados")]
+        public ActionResult getPedidosAgrupados()
+        {
+            var con = from mov in _context.Set<MovimientoItem>()
+                      from cli in _context.Set<Cliente>()
+                      from ped in _context.Set<PedidoDeCliente>()
+                      where mov.TipoDocumento == 7
+                            && mov.Estado != "Liquidado"
+                            && mov.Faltantes < mov.Cantidad
+                            && cli.Idcliente == mov.Tercero
+                            && ped.Consecutivo == mov.Consecutivo
+                      group mov by new
+                      {
+                          mov.Consecutivo,
+                          mov.FechaDocumento,
+                          mov.Tercero,
+                          mov.NombreTercero,
+                          ped.FechaEntrega,
+                          mov.Vendedor,
+                          mov.NombreVendedor,
+                          ped.OrdenCompraCliente,
+                          mov.Estado
+                      } into mov
+                      select new
+                      {
+                          mov.Key.Consecutivo,
+                          Fecha_Creacion = mov.Key.FechaDocumento,
+                          Id_Cliente = mov.Key.Tercero,
+                          Cliente = mov.Key.NombreTercero,
+                          Id_Vendedor = mov.Key.Vendedor,
+                          Vendedor = mov.Key.NombreVendedor,
+                          Orden_Compra_CLiente = mov.Key.OrdenCompraCliente,
+                          Fecha_Entrega = mov.Key.FechaEntrega,
+                          mov.Key.Estado
+                      };
+            return Ok(con);
+        }
+
         [HttpGet("getPedidos")]
         public ActionResult getPedidos()
         {
