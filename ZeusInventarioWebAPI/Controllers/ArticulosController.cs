@@ -148,6 +148,18 @@ namespace ZeusInventarioWebAPI.Controllers
             return CreatedAtAction("GetArticulo", new { id = articulo.IdArticulo }, articulo);
         }
 
+        [HttpGet("insertarArticulo/{Codigo}/{Nombre}/{Grupo}/{Presentacion}/{Tipo}/{Valorizacion}/{Categoria}/{PrecioVenta}/{Iva}")]
+        public ActionResult PostArticulo2(string Codigo, string Nombre, string Grupo, string Presentacion, string Tipo, string Valorizacion, string Categoria, decimal PrecioVenta, decimal Iva)
+        {
+            if (_context.Articulos == null)
+            {
+                return Problem("Entity set 'InventarioDataContext.Articulos'  is null.");
+            }
+            var insert = _context.Database.ExecuteSql($"INSERT INTO [dbo].[Articulo] ([Codigo] ,[Nombre] ,[Descripcion] ,[Grupo] ,[GrupoAuxiliar] ,[Presentacion] ,[Tipo] ,[Valorización] ,[Categoria] ,[PorcentajeIva] ,[CuentaIVA] ,[PrecioVenta] ,[DescripcionOtroIdioma] ,[ComplementoCosto] ,[DesHabilitado] ,[DiasGarantia] ,[ComplementoVenta] ,[ConfiguracionPrecioVenta] ,[ComplementoInventario] ,[ComplementoDevolucionVentas1] ,[CuentaIVAVentas] ,[CuentaIVADevolucionVentas] ,[ComplementoInventarioRemisionado] ,[ComplementoCentroCosto] ,[ComplementoVenta1] ,[TipoArticulo] ,[UnidadesContenidaEmpaque] ,[ArticuloBolsaAgropecuaria] ,[MaximoIVADescontable] ,[ModificarCantidadAlistamientoPorVerificacion]) VALUES ({Codigo} , {Nombre} , {Nombre} , {Grupo} , {Grupo} , {Presentacion}, {Tipo} , {Valorizacion} , {Categoria} , {Iva} , 24081005 , {PrecioVenta}, {Nombre} , 2 , 0 , 0 , 2 , 4 , 4 , 2 , 24080505 , 24081020 , 4 , 4 , 4 , 'G' , 1 , 'N' , {Iva} , 0 )");
+
+            return Ok(insert);
+        }
+
         // DELETE: api/Articulos/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteArticulo(decimal id)
