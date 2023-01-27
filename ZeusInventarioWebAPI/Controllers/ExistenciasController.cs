@@ -69,6 +69,31 @@ namespace ZeusInventarioWebAPI.Controllers
             }
         }
 
+        //
+        [HttpGet("getExistenciasArticulo/{id}")]
+        public ActionResult getExistenciasArticulo(string id)
+        {
+            var con = from exis in _context.Set<Existencia>()
+                      from art in _context.Set<Articulo>()
+                      where exis.Articulo == art.IdArticulo
+                            && art.Codigo == id
+                      select exis;
+            return Ok(con);
+        }
+
+        //
+        [HttpGet("getPrecioUltimoPrecioFacturado/{producto}/{presentacion}")]
+        public ActionResult getPrecioUltimoPrecioFacturado(string producto, string presentacion)
+        {
+            var con = (from ped in _context.Set<MovimientoItem>()
+                      where presentacion == ped.Presentacion
+                            && producto == ped.CodigoArticulo
+                            && ped.TipoDocumento == 9
+                      orderby ped.FechaDocumento descending
+                      select ped.PrecioUnidad).FirstOrDefault();
+            return Ok(con);
+        }
+
         // GET: api/Existencias/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Existencia>> GetExistencia(decimal id)
