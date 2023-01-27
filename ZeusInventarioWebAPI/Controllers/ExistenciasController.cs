@@ -94,6 +94,18 @@ namespace ZeusInventarioWebAPI.Controllers
             return Ok(con);
         }
 
+        [HttpGet("getExistenciasProductos/{producto}/{presentacion}")]
+        public ActionResult GetExistenciasProducto(string producto, string presentacion)
+        {
+            var con = from exis in _context.Set<Existencia>()
+                      from art in _context.Set<Articulo>()
+                      where exis.Articulo == art.IdArticulo
+                            && art.Codigo == producto
+                            && art.Presentacion == presentacion
+                      select exis;
+            return Ok(con);
+        }
+
         // GET: api/Existencias/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Existencia>> GetExistencia(decimal id)
