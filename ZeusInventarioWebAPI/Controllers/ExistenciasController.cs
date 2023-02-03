@@ -90,7 +90,11 @@ namespace ZeusInventarioWebAPI.Controllers
                             && producto == ped.CodigoArticulo
                             && ped.TipoDocumento == 9
                       orderby ped.FechaDocumento descending
-                      select ped.PrecioUnidad).FirstOrDefault();
+                      select new
+                      {
+                          ped.PrecioUnidad,
+                          ped.FechaDocumento
+                      }).FirstOrDefault();
             return Ok(con);
         }
 
