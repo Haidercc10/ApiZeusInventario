@@ -467,7 +467,9 @@ namespace ZeusInventarioWebAPI.Controllers
                           Id_Producto = mov.CodigoArticulo,
                           Producto = mov.NombreArticulo,
                           Presentación = mov.Presentacion,
-                          Precio = mov.PrecioUnidad
+                          Precio = mov.PrecioUnidad,
+                          Id_Vendedor = mov.Vendedor,
+                          Vendedor = mov.NombreVendedor,
                       } into mov
                       orderby mov.Key.Ano ascending, mov.Key.Mes ascending
                       select new
@@ -481,7 +483,9 @@ namespace ZeusInventarioWebAPI.Controllers
                           Cantidad = mov.Sum(x => x.Cantidad),
                           mov.Key.Presentación,
                           mov.Key.Precio,
-                          SubTotal = (mov.Key.Precio * mov.Sum(x => x.Cantidad))
+                          SubTotal = (mov.Key.Precio * mov.Sum(x => x.Cantidad)),
+                          mov.Key.Id_Vendedor,
+                          mov.Key.Vendedor,
                       };
             return Ok(con);
         }
@@ -506,7 +510,9 @@ namespace ZeusInventarioWebAPI.Controllers
                           Id_Producto = mov.CodigoArticulo,
                           Producto = mov.NombreArticulo,
                           Presentación = mov.Presentacion,
-                          Precio = mov.PrecioUnidad
+                          Precio = mov.PrecioUnidad,
+                          Id_Vendedor = mov.Vendedor,
+                          Vendedor = mov.NombreVendedor,
                       } into mov
                       orderby mov.Key.Ano ascending, mov.Key.Mes ascending
                       select new
@@ -520,10 +526,54 @@ namespace ZeusInventarioWebAPI.Controllers
                           Cantidad = mov.Sum(x => x.Cantidad),
                           mov.Key.Presentación,
                           mov.Key.Precio,
-                          SubTotal = (mov.Key.Precio * mov.Sum(x => x.Cantidad))
+                          SubTotal = (mov.Key.Precio * mov.Sum(x => x.Cantidad)),
+                          mov.Key.Id_Vendedor,
+                          mov.Key.Vendedor,
                       };
             return Ok(con);
         }
 
+        //GET: Consullta para obtener un consolidad de los productos comprados por cliente cada mes año a año, esta consultará entre un ragon de años y un vendedor
+        [HttpGet("getConsolidadoClientesArticulo_Vendedor/{ano1}/{ano2}/{vendedor}")]
+        public ActionResult GetConsolidadClientesArticulo_Vendedor(int ano1, int ano2, string vendedor)
+        {
+            var con = from mov in _context.Set<MovimientoItem>()
+                      from cli in _context.Set<Cliente>()
+                      where mov.Vendedor == vendedor
+                            && mov.Tercero == cli.Idcliente
+                            && mov.TipoDocumento == 9
+                            && mov.FechaDocumento.Year >= ano1
+                            && mov.FechaDocumento.Year <= ano2
+                      group mov by new
+                      {
+                          Mes = mov.FechaDocumento.Month,
+                          Ano = mov.FechaDocumento.Year,
+                          Id_Cliente = mov.Tercero,
+                          Cliente = mov.NombreTercero,
+                          Id_Producto = mov.CodigoArticulo,
+                          Producto = mov.NombreArticulo,
+                          Presentación = mov.Presentacion,
+                          Precio = mov.PrecioUnidad,
+                          Id_Vendedor = mov.Vendedor,
+                          Vendedor = mov.NombreVendedor,
+                      } into mov
+                      orderby mov.Key.Ano ascending, mov.Key.Mes ascending
+                      select new
+                      {
+                          mov.Key.Mes,
+                          mov.Key.Ano,
+                          mov.Key.Id_Cliente,
+                          mov.Key.Cliente,
+                          mov.Key.Id_Producto,
+                          mov.Key.Producto,
+                          Cantidad = mov.Sum(x => x.Cantidad),
+                          mov.Key.Presentación,
+                          mov.Key.Precio,
+                          SubTotal = (mov.Key.Precio * mov.Sum(x => x.Cantidad)),
+                          mov.Key.Id_Vendedor,
+                          mov.Key.Vendedor,
+                      };
+            return Ok(con);
+        }
     }
 }
