@@ -455,5 +455,54 @@ namespace ZeusInventarioWebAPI.Controllers
                       };
             return Ok(con);
         }
+
+        //GET: Consullta para obtener un consolidad de los productos comprados por cliente cada mes año a año, esta consultará entre un ragon de años y/o un vendedor y/o un cliente y/o un producto
+        [HttpGet("getConsolidadoClientesArticulo/{ano1}/{ano2}")]
+        public ActionResult GetConsolidadClientesArticulo(int ano1, int ano2, string? vendedor = "", string? producto = "", string? cliente = "")
+        {
+#pragma warning disable CS8604 // Posible argumento de referencia nulo
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = from mov in _context.Set<MovimientoItem>()
+                      from cli in _context.Set<Cliente>()
+                      where mov.Vendedor.Contains(vendedor)
+                            && mov.CodigoArticulo.Contains(producto)
+                            && mov.Tercero.Contains(cliente)
+                            && mov.Tercero == cli.Idcliente
+                            && mov.TipoDocumento == 9
+                            && mov.FechaDocumento.Year >= ano1
+                            && mov.FechaDocumento.Year <= ano2
+                      group mov by new
+                      {
+                          Mes = mov.FechaDocumento.Month,
+                          Ano = mov.FechaDocumento.Year,
+                          Id_Cliente = mov.Tercero,
+                          Cliente = mov.NombreTercero,
+                          Id_Producto = mov.CodigoArticulo,
+                          Producto = mov.NombreArticulo,
+                          Presentación = mov.Presentacion,
+                          Precio = mov.PrecioUnidad,
+                          Id_Vendedor = mov.Vendedor,
+                          Vendedor = mov.NombreVendedor,
+                      } into mov
+                      orderby mov.Key.Ano ascending, mov.Key.Mes ascending
+                      select new
+                      {
+                          mov.Key.Mes,
+                          mov.Key.Ano,
+                          mov.Key.Id_Cliente,
+                          mov.Key.Cliente,
+                          mov.Key.Id_Producto,
+                          mov.Key.Producto,
+                          Cantidad = mov.Sum(x => x.Cantidad),
+                          mov.Key.Presentación,
+                          mov.Key.Precio,
+                          SubTotal = (mov.Key.Precio * mov.Sum(x => x.Cantidad)),
+                          mov.Key.Id_Vendedor,
+                          mov.Key.Vendedor,
+                      };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+#pragma warning restore CS8604 // Posible argumento de referencia nulo
+            return Ok(con);
+        }
     }
 }

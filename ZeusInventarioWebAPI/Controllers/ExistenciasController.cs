@@ -90,7 +90,23 @@ namespace ZeusInventarioWebAPI.Controllers
                             && producto == ped.CodigoArticulo
                             && ped.TipoDocumento == 9
                       orderby ped.FechaDocumento descending
-                      select ped.PrecioUnidad).FirstOrDefault();
+                      select new
+                      {
+                          ped.PrecioUnidad,
+                          ped.FechaDocumento
+                      }).FirstOrDefault();
+            return Ok(con);
+        }
+
+        [HttpGet("getExistenciasProductos/{producto}/{presentacion}")]
+        public ActionResult GetExistenciasProducto(string producto, string presentacion)
+        {
+            var con = from exis in _context.Set<Existencia>()
+                      from art in _context.Set<Articulo>()
+                      where exis.Articulo == art.IdArticulo
+                            && art.Codigo == producto
+                            && art.Presentacion == presentacion
+                      select exis;
             return Ok(con);
         }
 
