@@ -83,6 +83,21 @@ namespace ZeusInventarioWebAPI.Controllers
 
         }
 
+        [HttpGet("getVendedoresxNombre/{nombre}")]
+        public ActionResult GetNombreVendedor2(string nombre)
+        {
+            var vendedor = from v in _context.Set<Maevende>()
+                           where v.Deshabilitado != 1
+                           && v.Nombvende == nombre
+                           select new
+                           {
+                               v.Idvende,
+                               v.Nombvende
+                           };
+            return Ok(vendedor);
+
+        }
+
         [HttpGet("getClientes/{nombre}")]
         public ActionResult GetCliente2(string nombre)
         {
@@ -96,6 +111,22 @@ namespace ZeusInventarioWebAPI.Controllers
                                c.Razoncial
                            };
             
+            return Ok(clientes);
+        }
+
+        [HttpGet("getClientesxVendedor/{idVendedor}")]
+        public ActionResult GetCliente_Vendedor(string idVendedor)
+        {
+
+            var clientes = from c in _context.Set<Cliente>()
+                           where c.Deshabilitado != 1
+                           && c.Idvende == idVendedor
+                           select new
+                           {
+                               c.Idcliente,
+                               c.Razoncial
+                           };
+
             return Ok(clientes);
         }
 
