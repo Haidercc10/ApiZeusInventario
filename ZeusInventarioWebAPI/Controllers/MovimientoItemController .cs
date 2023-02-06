@@ -25,10 +25,10 @@ namespace ZeusInventarioWebAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MovimientoItem>>> GetMovimientoItems()
         {
-          if (_context.MovimientoItems == null)
-          {
-              return NotFound();
-          }
+            if (_context.MovimientoItems == null)
+            {
+                return NotFound();
+            }
             return await _context.MovimientoItems.ToListAsync();
         }
 
@@ -73,19 +73,19 @@ namespace ZeusInventarioWebAPI.Controllers
             }
 
             var MovimientoItem = (from mi in _context.Set<MovimientoItem>()
-                                        where mi.Fuente == "FV"
-                                        && mi.Estado == "Procesado"
-                                        && mi.FechaDocumento.Month == mes
-                                        && mi.FechaDocumento.Year == ano
-                                        select mi.PrecioTotal).Sum();
+                                  where mi.Fuente == "FV"
+                                  && mi.Estado == "Procesado"
+                                  && mi.FechaDocumento.Month == mes
+                                  && mi.FechaDocumento.Year == ano
+                                  select mi.PrecioTotal).Sum();
 
             var Transaccion1 = (from tr in _context.Set<Transac>()
-                                        where tr.Idfuente == "DV"
-                                        && tr.Tipofac == "FA"
-                                        && tr.Indcpitra == "1"
-                                        && tr.Fgratra.Month == mes
-                                        && tr.Fgratra.Year == ano
-                                        select tr.Valortra).Sum();
+                                where tr.Idfuente == "DV"
+                                && tr.Tipofac == "FA"
+                                && tr.Indcpitra == "1"
+                                && tr.Fgratra.Month == mes
+                                && tr.Fgratra.Year == ano
+                                select tr.Valortra).Sum();
             var datos = MovimientoItem - Transaccion1;
 
             return Ok(datos);
@@ -253,7 +253,7 @@ namespace ZeusInventarioWebAPI.Controllers
                       where mov.TipoDocumento == 7
                             && cli.Idcliente == mov.Tercero
                       //from art in _context.Set<Articulo>()
-                          //from ext in _context.Set<Existencia>()
+                      //from ext in _context.Set<Existencia>()
                       //join ext in _context.Set<Existencia>() on art.IdArticulo equals ext.Articulo
                       where mov.TipoDocumento == 7
                             && cli.Idcliente == mov.Tercero
@@ -294,7 +294,7 @@ namespace ZeusInventarioWebAPI.Controllers
                           Empresa = "Plasticaribe SAS",
                           NIT = 800188732,
                           Direccion = "Calle 42 #52-105",
-                          Ciudad_Empresa = "Barranquilla"                         
+                          Ciudad_Empresa = "Barranquilla"
                       };
             return Ok(con);
         }
@@ -503,6 +503,20 @@ namespace ZeusInventarioWebAPI.Controllers
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 #pragma warning restore CS8604 // Posible argumento de referencia nulo
             return Ok(con);
+        }
+
+        [HttpGet("getArticulosxCliente/{idcliente}")]
+        public ActionResult GetArticulosxCliente(string idcliente)
+        {
+            var items = (from mov in _context.Set<MovimientoItem>()
+                        where mov.TipoDocumento == 9
+                        && mov.Tercero == idcliente
+                        select new
+                        {
+                            codigo = mov.CodigoArticulo,
+                            nombre = mov.NombreArticulo
+                        }).Distinct();
+            return Ok(items);
         }
     }
 }

@@ -62,8 +62,26 @@ namespace ZeusInventarioWebAPI.Controllers
                            select new
                            {
                              ar.IdArticulo,
+                             ar.Codigo,
                              ar.Nombre
                            };     
+            return Ok(articulo);
+        }
+
+        /** */
+        [HttpGet("getArticulosxId/{codigo}")]
+        public ActionResult GetArticulosxId(string codigo)
+        {
+
+            var articulo = from ar in _context.Set<Articulo>()
+                           where ar.Tipo == "PRODUCTO TERMINADO"
+                           && ar.Codigo == codigo
+                           select new
+                           {
+                               ar.IdArticulo,
+                               ar.Codigo,
+                               ar.Nombre
+                           };
             return Ok(articulo);
         }
 
@@ -83,12 +101,12 @@ namespace ZeusInventarioWebAPI.Controllers
 
         }
 
-        [HttpGet("getVendedoresxNombre/{nombre}")]
-        public ActionResult GetNombreVendedor2(string nombre)
+        [HttpGet("getVendedoresxId/{idvende}")]
+        public ActionResult GetNombreVendedor2(string idvende)
         {
             var vendedor = from v in _context.Set<Maevende>()
                            where v.Deshabilitado != 1
-                           && v.Nombvende == nombre
+                           && v.Idvende == idvende
                            select new
                            {
                                v.Idvende,
@@ -111,6 +129,21 @@ namespace ZeusInventarioWebAPI.Controllers
                                c.Razoncial
                            };
             
+            return Ok(clientes);
+        }
+
+        [HttpGet("getClientesxId/{idCliente}")]
+        public ActionResult GetClientexId(string idCliente)
+        {
+            var clientes = from c in _context.Set<Cliente>()
+                           where c.Deshabilitado != 1
+                           && c.Idcliente == idCliente
+                           select new
+                           {
+                               c.Idcliente,
+                               c.Razoncial
+                           };
+
             return Ok(clientes);
         }
 
