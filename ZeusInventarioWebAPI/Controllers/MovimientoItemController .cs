@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +12,7 @@ using ZeusInventarioWebAPI.Models;
 namespace ZeusInventarioWebAPI.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
+    [ApiController, Authorize]
     public class MovimientoItemsController : ControllerBase
     {
         private readonly Data.InventarioDataContext _context;
@@ -458,15 +459,18 @@ namespace ZeusInventarioWebAPI.Controllers
 
         //GET: Consullta para obtener un consolidad de los productos comprados por cliente cada mes año a año, esta consultará entre un ragon de años y/o un vendedor y/o un cliente y/o un producto
         [HttpGet("getConsolidadoClientesArticulo/{ano1}/{ano2}")]
-        public ActionResult GetConsolidadClientesArticulo(int ano1, int ano2, string? vendedor = "", string? producto = "", string? cliente = "")
+        public ActionResult GetConsolidadClientesArticulo(int ano1, int ano2, string? vendedor = "", string? nombreVendedor = "", string? producto = "", string? nombreProducto = "", string? cliente = "", string? nombreCliente = "")
         {
 #pragma warning disable CS8604 // Posible argumento de referencia nulo
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = from mov in _context.Set<MovimientoItem>()
                       from cli in _context.Set<Cliente>()
                       where mov.Vendedor.Contains(vendedor)
+                            && mov.NombreVendedor.Contains(nombreVendedor)
                             && mov.CodigoArticulo.Contains(producto)
+                            && mov.NombreArticulo.Contains(nombreProducto)
                             && mov.Tercero.Contains(cliente)
+                            && mov.NombreTercero.Contains(nombreCliente)
                             && mov.Tercero == cli.Idcliente
                             && mov.TipoDocumento == 9
                             && mov.FechaDocumento.Year >= ano1
