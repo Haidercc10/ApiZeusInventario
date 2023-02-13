@@ -271,6 +271,7 @@ namespace ZeusInventarioWebAPI.Controllers
                           Id_Cliente = mov.Tercero,
                           Cliente = mov.NombreTercero,
                           cli.Ciudad,
+                          Direccion_Cliente = cli.Direccion,
                           Id_Producto = mov.CodigoArticulo,
                           Producto = mov.NombreArticulo,
                           Existencias = (from art in _context.Set<Articulo>()
@@ -295,7 +296,7 @@ namespace ZeusInventarioWebAPI.Controllers
                           Empresa = "Plasticaribe SAS",
                           NIT = 800188732,
                           Direccion = "Calle 42 #52-105",
-                          Ciudad_Empresa = "Barranquilla"
+                          Ciudad_Empresa = "Barranquilla",
                       };
             return Ok(con);
         }
@@ -521,6 +522,56 @@ namespace ZeusInventarioWebAPI.Controllers
                             nombre = mov.NombreArticulo
                         }).Distinct();
             return Ok(items);
+        }
+
+        // Funcion que conultará un pedido por sus consecutivo
+        [HttpGet("getInfoPedido_Consecutivo/{id}")]
+        public ActionResult GetInfoPedido_Consecutivo(int id)
+        {
+            var con = from mov in _context.Set<MovimientoItem>()
+                      from cli in _context.Set<Cliente>()
+                      from ped in _context.Set<PedidoDeCliente>()
+                      where mov.TipoDocumento == 7
+                            && mov.Estado != "Liquidado"
+                            && mov.Faltantes < mov.Cantidad
+                            && cli.Idcliente == mov.Tercero
+                            && ped.Consecutivo == mov.Consecutivo
+                            && mov.Consecutivo == id
+                      select new
+                      {
+                          mov.Consecutivo,
+                          Fecha_Creacion = mov.FechaDocumento,
+                          Id_Cliente = mov.Tercero,
+                          Cliente = mov.NombreTercero,
+                          cli.Ciudad,
+                          Direccion_Cliente = cli.Direccion,
+                          Id_Producto = mov.CodigoArticulo,
+                          Producto = mov.NombreArticulo,
+                          Existencias = (from art in _context.Set<Articulo>()
+                                         join ext in _context.Set<Existencia>() on art.IdArticulo equals ext.Articulo
+                                         where art.Codigo == mov.CodigoArticulo
+                                               && art.DesHabilitado == false
+                                               && art.Presentacion == mov.Presentacion
+                                         group ext by ext.Articulo into ext
+                                         select ext.Sum(x => x.Existencias)).FirstOrDefault(),
+                          Cant_Pedida = mov.Cantidad,
+                          Cant_Pendiente = (mov.Cantidad - mov.Faltantes),
+                          Cant_Facturada = mov.Faltantes,
+                          mov.Presentacion,
+                          mov.PrecioUnidad,
+                          Id_Vendedor = mov.Vendedor,
+                          Vendedor = mov.NombreVendedor,
+                          Orden_Compra_CLiente = ped.OrdenCompraCliente,
+                          Costo_Cant_Pendiente = ((mov.Cantidad - mov.Faltantes) * mov.PrecioUnidad),
+                          Costo_Cant_Total = (mov.Cantidad * mov.PrecioUnidad),
+                          Fecha_Entrega = ped.FechaEntrega,
+                          mov.Estado,
+                          Empresa = "Plasticaribe SAS",
+                          NIT = 800188732,
+                          Direccion = "Calle 42 #52-105",
+                          Ciudad_Empresa = "Barranquilla",
+                      };
+            return Ok(con);
         }
     }
 }
