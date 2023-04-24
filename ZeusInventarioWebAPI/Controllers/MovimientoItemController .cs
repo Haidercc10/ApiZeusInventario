@@ -43,6 +43,7 @@ namespace ZeusInventarioWebAPI.Controllers
                 return NotFound();
             }
             var ano = DateTime.Today;
+            var mes = Convert.ToString(ano.Month).Length == 1 ? "0" + Convert.ToString(ano.Month) : Convert.ToString(ano.Month);
 
             var MovimientoItem = (from mi in _context.Set<MovimientoItem>()
                                   where mi.Fuente == "FV"
@@ -55,18 +56,17 @@ namespace ZeusInventarioWebAPI.Controllers
                                 where tr.Idfuente == "DV"
                                 && tr.Tipofac == "FA"
                                 && tr.Indcpitra == "1"
-                                && tr.Fgratra.Month == ano.Month
-                                && tr.Fgratra.Year == ano.Year
+                                && tr.Fechatra.Substring(5, 2) == mes
+                                && tr.Fechatra.Substring(0, 4) == Convert.ToString(ano.Year)
                                 select tr.Valortra).Sum();
             var datos = MovimientoItem - Transaccion1;
 
             return Ok(datos);
         }
 
-
         // GET: api/MovimientoItems/5
         [HttpGet("FacturacionTodosMeses/{mes}/{ano}")]
-        public ActionResult FacturacionTodosMeses(int mes, int ano)
+        public ActionResult FacturacionTodosMeses(string mes, int ano)
         {
             if (_context.MovimientoItems == null)
             {
@@ -76,7 +76,7 @@ namespace ZeusInventarioWebAPI.Controllers
             var MovimientoItem = (from mi in _context.Set<MovimientoItem>()
                                   where mi.Fuente == "FV"
                                   && mi.Estado == "Procesado"
-                                  && mi.FechaDocumento.Month == mes
+                                  && mi.FechaDocumento.Month == Convert.ToInt32(mes)
                                   && mi.FechaDocumento.Year == ano
                                   select mi.PrecioTotal).Sum();
 
@@ -84,9 +84,10 @@ namespace ZeusInventarioWebAPI.Controllers
                                 where tr.Idfuente == "DV"
                                 && tr.Tipofac == "FA"
                                 && tr.Indcpitra == "1"
-                                && tr.Fgratra.Month == mes
-                                && tr.Fgratra.Year == ano
+                                && tr.Fechatra.Substring(5,2) == Convert.ToString(mes)
+                                && tr.Fechatra.Substring(0,4) == Convert.ToString(ano)
                                 select tr.Valortra).Sum();
+
             var datos = MovimientoItem - Transaccion1;
 
             return Ok(datos);
@@ -572,6 +573,31 @@ namespace ZeusInventarioWebAPI.Controllers
                           Ciudad_Empresa = "Barranquilla",
                       };
             return Ok(con);
+        }
+
+        //Consulta que devolver la costo facturado por mes de cada vendedor
+        [HttpGet("getCostoFacturado_Vendedor/{vendedor}/{mes}/{anio}")]
+        public ActionResult GetCostoFacturado_Vendedor(string vendedor, string mes, int anio)
+        {
+            var MovimientoItem = (from mi in _context.Set<MovimientoItem>()
+                                  where mi.Fuente == "FV"
+                                  && mi.Estado == "Procesado"
+                                  && mi.FechaDocumento.Month == Convert.ToInt32(mes)
+                                  && mi.FechaDocumento.Year == anio
+                                  && mi.Vendedor == vendedor
+                                  select mi.PrecioTotal).Sum();
+
+            var Transaccion1 = (from tr in _context.Set<Transac>()
+                                where tr.Idfuente == "DV"
+                                && tr.Tipofac == "FA"
+                                && tr.Indcpitra == "1"
+                                && tr.Fechatra.Substring(5,2) == Convert.ToString(mes)
+                                && tr.Fechatra.Substring(0,4) == Convert.ToString(anio)
+                                && tr.Idvende == vendedor
+                                select tr.Valortra).Sum();
+
+            var datos = MovimientoItem - Transaccion1;
+            return Ok(datos);
         }
     }
 }
