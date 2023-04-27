@@ -40,6 +40,8 @@ namespace ZeusInventarioWebAPI.Data
 
         public virtual DbSet<Cliente> Cliente { get; set; } = null!;
 
+        public virtual DbSet<DevolucionVenta> DevolucionVentas { get; set; } = null!;
+
 
         //CONEXIÓN A BASE DE DATOS QUE YA SE ENCUENTRA EN appsettings.json
         /*protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -2037,6 +2039,87 @@ namespace ZeusInventarioWebAPI.Data
                     .IsUnicode(false)
                     .HasDefaultValueSql("('')");
                 entity.Property(e => e.YaFueAnalizadaPr).HasColumnName("YaFueAnalizadaPR");
+            });
+
+            modelBuilder.Entity<DevolucionVenta>(entity =>
+            {
+                entity.HasKey(e => e.Consecutivo);
+
+                entity.HasIndex(e => e.Cliente, "IX_DevolucionVentas");
+
+                entity.Property(e => e.Consecutivo).HasColumnType("numeric(18, 0)");
+                entity.Property(e => e.Auxiliar)
+                    .HasMaxLength(30)
+                    .IsUnicode(false);
+                entity.Property(e => e.CentroCosto)
+                    .HasMaxLength(30)
+                    .IsUnicode(false);
+                entity.Property(e => e.Cliente)
+                    .HasMaxLength(25)
+                    .IsUnicode(false);
+                entity.Property(e => e.CuentaAnticipo)
+                    .HasMaxLength(16)
+                    .IsUnicode(false);
+                entity.Property(e => e.CuentaPago)
+                    .HasMaxLength(16)
+                    .IsUnicode(false);
+                entity.Property(e => e.Detalle)
+                    .HasMaxLength(2000)
+                    .IsUnicode(false)
+                    .HasColumnName("detalle");
+                entity.Property(e => e.DiasCreditos).HasColumnType("numeric(18, 0)");
+                entity.Property(e => e.Documento)
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+                entity.Property(e => e.DocumentoRev).HasColumnType("numeric(18, 0)");
+                entity.Property(e => e.Estado)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+                entity.Property(e => e.Fecha).HasColumnType("smalldatetime");
+                entity.Property(e => e.FechaCaducidad).HasColumnType("smalldatetime");
+                entity.Property(e => e.FormaPago)
+                    .HasMaxLength(30)
+                    .IsUnicode(false);
+                entity.Property(e => e.Fuente)
+                    .HasMaxLength(5)
+                    .IsUnicode(false);
+                entity.Property(e => e.IdenDevolucionventas)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("Iden_devolucionventas");
+                entity.Property(e => e.ModalidadVentas)
+                    .HasMaxLength(5)
+                    .IsUnicode(false);
+                entity.Property(e => e.Moneda)
+                    .HasMaxLength(3)
+                    .IsUnicode(false);
+                entity.Property(e => e.Ncf)
+                    .HasMaxLength(25)
+                    .IsUnicode(false)
+                    .HasColumnName("NCF");
+                entity.Property(e => e.NcfModificado)
+                    .HasMaxLength(25)
+                    .IsUnicode(false)
+                    .HasColumnName("NCF_Modificado");
+                entity.Property(e => e.NumeroCuotas).HasColumnType("numeric(18, 0)");
+                entity.Property(e => e.NumeroFactura)
+                    .HasMaxLength(30)
+                    .IsUnicode(false);
+                entity.Property(e => e.Serie)
+                    .HasMaxLength(5)
+                    .IsUnicode(false);
+                entity.Property(e => e.Tasacambio)
+                    .HasDefaultValueSql("((1))")
+                    .HasColumnType("numeric(18, 6)");
+                entity.Property(e => e.TipoFactura)
+                    .HasMaxLength(10)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+                entity.Property(e => e.Usuario).HasColumnType("numeric(18, 0)");
+                entity.Property(e => e.ValorAnticipo).HasColumnType("money");
+                entity.Property(e => e.VencimientoInicial).HasColumnType("smalldatetime");
+                entity.Property(e => e.Vendedor)
+                    .HasMaxLength(3)
+                    .IsUnicode(false);
             });
 
             OnModelCreatingPartial(modelBuilder);

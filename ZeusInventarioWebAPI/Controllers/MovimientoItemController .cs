@@ -466,18 +466,18 @@ namespace ZeusInventarioWebAPI.Controllers
 #pragma warning disable CS8604 // Posible argumento de referencia nulo
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = from mov in _context.Set<MovimientoItem>()
-                      from cli in _context.Set<Cliente>()
                       where mov.Vendedor.Contains(vendedor)
                             && mov.NombreVendedor.Contains(nombreVendedor)
                             && mov.CodigoArticulo.Contains(producto)
                             && mov.NombreArticulo.Contains(nombreProducto)
                             && mov.Tercero.Contains(cliente)
                             && mov.NombreTercero.Contains(nombreCliente)
-                            && mov.Tercero == cli.Idcliente
                             && mov.TipoDocumento == 9
                             && mov.FechaDocumento.Year >= ano1
                             && mov.FechaDocumento.Year <= ano2
-                      group mov by new
+                            && mov.Fuente == "FV"
+                            && mov.Estado == "Procesado"
+                      group mov  by new
                       {
                           Mes = mov.FechaDocumento.Month,
                           Ano = mov.FechaDocumento.Year,
@@ -499,16 +499,67 @@ namespace ZeusInventarioWebAPI.Controllers
                           mov.Key.Cliente,
                           mov.Key.Id_Producto,
                           mov.Key.Producto,
-                          Cantidad = mov.Sum(x => x.Cantidad),
+                          Cantidad = Convert.ToDecimal(mov.Sum(x => x.Cantidad)),
+                          Devolucion = Convert.ToDecimal(0),
                           mov.Key.Presentacion,
                           mov.Key.Precio,
-                          SubTotal = (mov.Key.Precio * mov.Sum(x => x.Cantidad)),
+                          SubTotal = Convert.ToDecimal(mov.Sum(x => x.PrecioTotal)),
                           mov.Key.Id_Vendedor,
-                          mov.Key.Vendedor,
+                          mov.Key.Vendedor, 
                       };
+
+            var devolucion = from mov in _context.Set<MovimientoItem>()
+                             from tr in _context.Set<Transac>()
+                             from dev in _context.Set<DevolucionVenta>()
+                             where tr.Idvende.Contains(vendedor)
+                                   && mov.CodigoDocumento == dev.Consecutivo
+                                   && mov.Vendedor.Contains(vendedor)
+                                   && mov.NombreVendedor.Contains(nombreVendedor)
+                                   && mov.CodigoArticulo.Contains(producto)
+                                   && mov.NombreArticulo.Contains(nombreProducto)
+                                   && mov.Tercero.Contains(cliente)
+                                   && mov.NombreTercero.Contains(nombreCliente)
+                                   && tr.Numdoctra == dev.Documento
+                                   && mov.TipoDocumento == 26
+                                   && tr.Idfuente == "DV"
+                                   && tr.Tipofac == "FA"
+                                   && tr.Indcpitra == "1"
+                                   && dev.Fuente == "DV"
+                                   && mov.FechaDocumento.Year >= ano1
+                                   && mov.FechaDocumento.Year <= ano2
+                             group new { mov, tr } by new
+                             {
+                                 Mes = mov.FechaDocumento.Month,
+                                 Ano = mov.FechaDocumento.Year,
+                                 Id_Cliente = mov.Tercero,
+                                 Cliente = mov.NombreTercero,
+                                 Id_Producto = mov.CodigoArticulo,
+                                 Producto = mov.NombreArticulo,
+                                 Presentacion = mov.Presentacion,
+                                 Precio = mov.PrecioUnidad,
+                                 Id_Vendedor = mov.Vendedor,
+                                 Vendedor = mov.NombreVendedor,
+                             } into mov
+                             orderby mov.Key.Ano ascending, mov.Key.Mes ascending
+                             select new
+                             {
+                                 mov.Key.Mes,
+                                 mov.Key.Ano,
+                                 mov.Key.Id_Cliente,
+                                 mov.Key.Cliente,
+                                 mov.Key.Id_Producto,
+                                 mov.Key.Producto,
+                                 Cantidad = Convert.ToDecimal(0),
+                                 Devolucion = Convert.ToDecimal(mov.Sum(x => x.mov.Cantidad)),
+                                 mov.Key.Presentacion,
+                                 mov.Key.Precio,
+                                 SubTotal = Convert.ToDecimal(mov.Sum(x => x.tr.Valortra)),
+                                 mov.Key.Id_Vendedor,
+                                 mov.Key.Vendedor
+                             };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 #pragma warning restore CS8604 // Posible argumento de referencia nulo
-            return Ok(con);
+            return Ok(con.Concat(devolucion));
         }
 
         [HttpGet("getArticulosxCliente/{idcliente}")]
@@ -598,6 +649,51 @@ namespace ZeusInventarioWebAPI.Controllers
 
             var datos = MovimientoItem - Transaccion1;
             return Ok(datos);
+        }
+
+        [HttpGet("GetTransac")]
+        public decimal GetTransac(int ano1, string vendedor, string producto, string cliente)
+        {
+#pragma warning disable CS8604 // Posible argumento de referencia nulo
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var devolucion = (from mov in _context.Set<MovimientoItem>()
+                             from tr in _context.Set<Transac>()
+                             from dev in _context.Set<DevolucionVenta>()
+                             where tr.Idvende == vendedor
+                                   && mov.CodigoDocumento == dev.Consecutivo
+                                   && mov.Vendedor == vendedor
+                                   && mov.CodigoArticulo == producto
+                                   && mov.Tercero == cliente
+                                   && tr.Numdoctra == dev.Documento
+                                   && mov.TipoDocumento == 26
+                                   && tr.Idfuente == "DV"
+                                   && tr.Tipofac == "FA"
+                                   && tr.Indcpitra == "1"
+                                   && dev.Fuente == "DV"
+                                   && mov.FechaDocumento.Year == ano1
+                             group tr by new
+                             {
+                                 Mes = mov.FechaDocumento.Month,
+                                 Ano = mov.FechaDocumento.Year,
+                                 Id_Cliente = mov.Tercero,
+                                 Cliente = mov.NombreTercero,
+                                 Id_Producto = mov.CodigoArticulo,
+                                 Producto = mov.NombreArticulo,
+                                 Presentacion = mov.Presentacion,
+                                 Precio = mov.PrecioUnidad,
+                                 Id_Vendedor = mov.Vendedor,
+                                 Vendedor = mov.NombreVendedor,
+                             } into mov
+                             select mov.Sum(x => x.Valortra));
+            if (devolucion.Count() == 0) return (Convert.ToDecimal(0));
+            else {
+                foreach (var item in devolucion) {
+                    return (Convert.ToDecimal(item));
+                }
+            }
+            return (Convert.ToDecimal(0));
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+#pragma warning restore CS8604 // Posible argumento de referencia nulo
         }
     }
 }
