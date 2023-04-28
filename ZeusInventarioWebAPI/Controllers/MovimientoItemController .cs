@@ -141,7 +141,6 @@ namespace ZeusInventarioWebAPI.Controllers
             return Ok(num1);
         }
 
-
         // GET: api/MovimientoItems/5
         [HttpGet("GetIvaCompraTodosMeses/{mes}")]
         public ActionResult GetIvaCompraTodosMeses(int mes)
@@ -163,7 +162,6 @@ namespace ZeusInventarioWebAPI.Controllers
                         select mov.TotalIvacompras).Sum();
             return Ok(num1);
         }
-
 
         [HttpGet("getPedidosAgrupados")]
         public ActionResult getPedidosAgrupados()
@@ -626,6 +624,20 @@ namespace ZeusInventarioWebAPI.Controllers
             return Ok(con);
         }
 
+        // Consulta que devolverá el costo total de las devoluciones en un lapso de años
+        [HttpGet("getDevoluciones/{anio1}/{anio2}")]
+        public ActionResult GetDevoluciones(int anio1, int anio2)
+        {
+            var Transaccion1 = (from tr in _context.Set<Transac>()
+                                where tr.Idfuente == "DV"
+                                && tr.Tipofac == "FA"
+                                && tr.Indcpitra == "1"
+                                && Convert.ToInt32(tr.Fechatra.Substring(0, 4)) >= anio1
+                                && Convert.ToInt32(tr.Fechatra.Substring(0, 4)) <= anio2
+                                select tr.Valortra).Sum();
+            return Ok(Transaccion1);
+        }
+
         //Consulta que devolver la costo facturado por mes de cada vendedor
         [HttpGet("getCostoFacturado_Vendedor/{vendedor}/{mes}/{anio}")]
         public ActionResult GetCostoFacturado_Vendedor(string vendedor, string mes, int anio)
@@ -651,49 +663,132 @@ namespace ZeusInventarioWebAPI.Controllers
             return Ok(datos);
         }
 
-        [HttpGet("GetTransac")]
-        public decimal GetTransac(int ano1, string vendedor, string producto, string cliente)
+        //Consulta que devolverá la informacion de los clientes que mas se han facturado en el mes y restará las devoluciones que han tenido estos mismos
+        [HttpGet("getClienteFacturadosMes")]
+        public ActionResult GetClientesFacturadosMes()
         {
-#pragma warning disable CS8604 // Posible argumento de referencia nulo
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var devolucion = (from mov in _context.Set<MovimientoItem>()
-                             from tr in _context.Set<Transac>()
-                             from dev in _context.Set<DevolucionVenta>()
-                             where tr.Idvende == vendedor
-                                   && mov.CodigoDocumento == dev.Consecutivo
-                                   && mov.Vendedor == vendedor
-                                   && mov.CodigoArticulo == producto
-                                   && mov.Tercero == cliente
-                                   && tr.Numdoctra == dev.Documento
-                                   && mov.TipoDocumento == 26
-                                   && tr.Idfuente == "DV"
-                                   && tr.Tipofac == "FA"
-                                   && tr.Indcpitra == "1"
-                                   && dev.Fuente == "DV"
-                                   && mov.FechaDocumento.Year == ano1
-                             group tr by new
-                             {
-                                 Mes = mov.FechaDocumento.Month,
-                                 Ano = mov.FechaDocumento.Year,
-                                 Id_Cliente = mov.Tercero,
-                                 Cliente = mov.NombreTercero,
-                                 Id_Producto = mov.CodigoArticulo,
-                                 Producto = mov.NombreArticulo,
-                                 Presentacion = mov.Presentacion,
-                                 Precio = mov.PrecioUnidad,
-                                 Id_Vendedor = mov.Vendedor,
-                                 Vendedor = mov.NombreVendedor,
-                             } into mov
-                             select mov.Sum(x => x.Valortra));
-            if (devolucion.Count() == 0) return (Convert.ToDecimal(0));
-            else {
-                foreach (var item in devolucion) {
-                    return (Convert.ToDecimal(item));
-                }
-            }
-            return (Convert.ToDecimal(0));
-#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-#pragma warning restore CS8604 // Posible argumento de referencia nulo
+#pragma warning disable CA1827 // Do not use Count() or LongCount() when Any() can be used
+            DateTime fecha = DateTime.Today;
+            var con = from fv in _context.Set<FacturaDeCliente>()
+                      from cli in _context.Set<Cliente>()
+                      where fv.Fuente == "FV"
+                            && fv.Estado == "Procesado"
+                            && fv.Fecha.Year == fecha.Year
+                            && fv.Fecha.Month == fecha.Month
+                            && cli.Idtercero == fv.Cliente
+                      group fv by new
+                      {
+                          Anio = fv.Fecha.Year,
+                          Mes = fv.Fecha.Month,
+                          Id_Cliente = fv.Cliente,
+                          Cliente = cli.Razoncial
+                      } into fv
+                      orderby fv.Count() descending
+                      select new
+                      {
+                          fv.Key.Anio,
+                          fv.Key.Mes,
+                          fv.Key.Id_Cliente,
+                          fv.Key.Cliente,
+                          Cantidad = fv.Count(),
+                          Costo = (from mov in _context.Set<MovimientoItem>()
+                                   where mov.TipoDocumento == 9
+                                         && mov.Fuente == "FV"
+                                         && mov.Estado == "Procesado"
+                                         && mov.FechaDocumento.Year == fecha.Year
+                                         && mov.FechaDocumento.Month == fecha.Month
+                                         && mov.Tercero == fv.Key.Id_Cliente
+                                         select mov.PrecioTotal).Sum() - (from tr in _context.Set<Transac>()
+                                                                          where tr.Idfuente == "DV"
+                                                                                && tr.Tipofac == "FA"
+                                                                                && tr.Indcpitra == "1"
+                                                                                && tr.Fechatra.Substring(5, 2) == Convert.ToString(fecha.Month)
+                                                                                && tr.Fechatra.Substring(0, 4) == Convert.ToString(fecha.Year)
+                                                                                && tr.Nittra == fv.Key.Id_Cliente
+                                                                          select tr.Valortra).Sum()
+                      };
+            if (con.Count() > 0) return Ok(con);
+            else return BadRequest("No se encontraron clientes con facturas en el mes");
+#pragma warning restore CA1827 // Do not use Count() or LongCount() when Any() can be used
+        }
+
+        //Consulta que devolverá la informacion de los productos que mas se han facturado en el mes 
+        [HttpGet("getProductosFaturadosMes")]
+        public ActionResult GetClientesFacturadoMes()
+        {
+            DateTime fecha = DateTime.Today;
+            var con = from mov in _context.Set<MovimientoItem>()
+                      where mov.TipoDocumento == 9
+                            && mov.Fuente == "FV"
+                            && mov.Estado == "Procesado"
+                            && mov.FechaDocumento.Year == fecha.Year
+                            && mov.FechaDocumento.Month == fecha.Month
+                      group mov by new
+                      {
+                          Anio = mov.FechaDocumento.Year,
+                          Mes = mov.FechaDocumento.Month,
+                          Id_Producto = mov.CodigoArticulo,
+                          Producto = mov.NombreArticulo
+                      } into mov
+                      orderby mov.Count() descending
+                      select new
+                      {
+                          mov.Key.Anio,
+                          mov.Key.Mes,
+                          mov.Key.Id_Producto,
+                          mov.Key.Producto,
+                          Cantidad = mov.Count(),
+                          Costo = mov.Sum(x => x.PrecioTotal)
+                      };
+            if (con.Count() > 0) return Ok(con);
+            else return BadRequest("No se encontraron clientes con facturas en el mes");
+        }
+
+        //Consulta que devolverá la informacion de los vendedores que mas han hecho facturas este mes
+        [HttpGet("getVendedoresFacturasMes")]
+        public ActionResult GetVendedoresFacturasMes()
+        {
+            DateTime fecha = DateTime.Today;
+            var con = from fv in _context.Set<FacturaDeCliente>()
+                      from ven in _context.Set<Maevende>()
+                      where fv.Fuente == "FV"
+                            && fv.Estado == "Procesado"
+                            && fv.Fecha.Year == fecha.Year
+                            && fv.Fecha.Month == fecha.Month
+                            && fv.Vendedor == ven.Idvende
+                      group fv by new
+                      {
+                          Anio = fv.Fecha.Year,
+                          Mes = fv.Fecha.Month,
+                          Id_Vendedor = fv.Vendedor,
+                          Vendedor = ven.Nombvende
+                      } into fv
+                      orderby fv.Count() descending
+                      select new
+                      {
+                          fv.Key.Anio,
+                          fv.Key.Mes,
+                          fv.Key.Id_Vendedor,
+                          fv.Key.Vendedor,
+                          Cantidad = fv.Count(),
+                          Costo = (from mov in _context.Set<MovimientoItem>()
+                                   where mov.TipoDocumento == 9
+                                         && mov.Fuente == "FV"
+                                         && mov.Estado == "Procesado"
+                                         && mov.FechaDocumento.Year == fecha.Year
+                                         && mov.FechaDocumento.Month == fecha.Month
+                                         && mov.Vendedor == fv.Key.Id_Vendedor
+                                   select mov.PrecioTotal).Sum() - (from tr in _context.Set<Transac>()
+                                                                    where tr.Idfuente == "DV"
+                                                                          && tr.Tipofac == "FA"
+                                                                          && tr.Indcpitra == "1"
+                                                                          && tr.Fechatra.Substring(5, 2) == Convert.ToString(fecha.Month)
+                                                                          && tr.Fechatra.Substring(0, 4) == Convert.ToString(fecha.Year)
+                                                                          && tr.Idvende == fv.Key.Id_Vendedor
+                                                                    select tr.Valortra).Sum()
+                      };
+            if (con.Count() > 0) return Ok(con);
+            else return BadRequest("No se encontraron vendedores con facturas en el mes");
         }
     }
 }
