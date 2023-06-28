@@ -164,6 +164,23 @@ namespace ZeusInventarioWebAPI.Controllers
             return Ok(clientes);
         }
 
+        [HttpGet("getCliente_Vendedor_LikeNombre/{idVendedor}/{nombre}")]
+        public ActionResult GetCliente_Vendedor_LikeNombre(string idVendedor, string nombre)
+        {
+
+            var clientes = from c in _context.Set<Cliente>()
+                           where c.Deshabilitado != 1
+                           && c.Idvende == idVendedor
+                           && c.Razoncial.Contains(nombre)
+                           select new
+                           {
+                               c.Idcliente,
+                               c.Razoncial
+                           };
+
+            return Ok(clientes);
+        }
+
 
         // PUT: api/Articulos/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
