@@ -52,14 +52,42 @@ namespace ZeusInventarioWebAPI.Controllers
 
         // -- Obtener los recibos de caja de la empresa.
         [HttpGet("getRecibosCaja/{fecha1}/{fecha2}")]
-        public async Task<ActionResult<Transac>> GetRecibosCaja(int id)
+        public ActionResult GetRecibosCaja(DateTime fecha1, DateTime fecha2)
         {
             if (_context.Transacs == null) return NotFound();
 
-            var transac = 
+            var transac = from t in _context.Set<Transac>()
+                          from m in _context.Set<Maevende>()
+                          from c in _context.Set<Cliente>()
+                          where t.Nittra == c.Idcliente &&
+                          t.Idvende == m.Idvende &&
+                          t.Idfuente == "RC" &&
+                          t.Tipofac == "FA" &&
+                          t.Fgratra >= fecha1 &&
+                          t.Fgratra <= fecha2
+                          orderby t.Fgratra descending
+                          select new
+                          {
+                              AnoMes = t.Anotra,
+                              Fuente = t.Idfuente,
+                              Documento = t.Numdoctra,
+                              Consecutivo = t.Consecutra,
+                              FechaTransac = t.Fechatra,
+                              IdCliente = t.Nittra,
+                              Cliente = c.Razoncial,
+                              Descripcion = t.Descritra.Trim(),
+                              Valor = t.Valortra,
+                              Cuenta = t.Codicta.Trim(),
+                              IdVendedor = t.Idvende,
+                              Vendedor = m.Nombvende,
+                              Factura = t.Numefac,
+                              Vencimiento = t.Vencefac,
+                              Usuario = t.Idusuario.Trim(),
+                              FechaRegistro = t.Fgratra
+                          };
 
             if (transac == null) return BadRequest("No se encontraron recibos de caja en el rango de fechas consultado.");
-            return transac;
+            else return Ok(transac);
         }
 
 
