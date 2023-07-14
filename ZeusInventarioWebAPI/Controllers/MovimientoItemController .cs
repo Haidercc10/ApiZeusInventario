@@ -790,5 +790,45 @@ namespace ZeusInventarioWebAPI.Controllers
             if (con.Count() > 0) return Ok(con);
             else return BadRequest("No se encontraron vendedores con facturas en el mes");
         }
+
+        /** Consulta que devolverá las compras realizadas por plasticaribe en cada mes */
+        [HttpGet("getComprasMes/{anio}/{mes}")]
+        public ActionResult GetComprasMes(string anio, string mes)
+        {
+            var con = (from mov in _context.Set<MovimientoItem>()
+                       from prov in _context.Set<Proveedore>()
+                       from ent in _context.Set<Entradum>()
+                       where mov.CodigoDocumento == ent.Consecutivo
+                             && ent.Proveedor == prov.Idprove  
+                             && ent.Proveedor != "900362200" 
+                             && ent.Proveedor != "900458314"
+                             && mov.TipoDocumento == 2
+                             && Convert.ToString(mov.FechaDocumento.Year) == anio
+                             && Convert.ToString(mov.FechaDocumento.Month) == mes
+                       select mov.CostoTotal).Sum();
+
+            if (con != null) return Ok(con);
+            else return BadRequest("No se encontraron clientes con facturas en el mes");
+        }
+
+        /** Consulta que devolverá las compras realizadas por plasticaribe en cada mes */
+        [HttpGet("getComprasMesInverGoal_InverSuez/{anio}/{mes}/{proveedor}")]
+        public ActionResult GetComprasMesInverGoal(string anio, string mes, string proveedor)
+        {
+            var con = (from mov in _context.Set<MovimientoItem>()
+                       from prov in _context.Set<Proveedore>()
+                       from ent in _context.Set<Entradum>()
+                       where mov.CodigoDocumento == ent.Consecutivo
+                             && ent.Proveedor == prov.Idprove
+                             && ent.Proveedor == proveedor
+                             && mov.TipoDocumento == 2
+                             && Convert.ToString(mov.FechaDocumento.Year) == anio
+                             && Convert.ToString(mov.FechaDocumento.Month) == mes
+                       select mov.CostoTotal).Sum();
+
+            if (con != null) return Ok(con);
+            else return BadRequest("No se encontraron clientes con facturas en el mes");
+        }
+
     }
 }

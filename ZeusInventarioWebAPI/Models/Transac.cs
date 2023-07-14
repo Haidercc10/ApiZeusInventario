@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace ZeusInventarioWebAPI.Models
 {
     public partial class Transac
     {
+        [Key]
+        public int Consecutra { get; set; }
         public string Anotra { get; set; } = null!;
         public string Idfuente { get; set; } = null!;
         public string Numdoctra { get; set; } = null!;
-        public int Consecutra { get; set; }
         public string Fechatra { get; set; } = null!;
         public string Codicta { get; set; } = null!;
         public string Nittra { get; set; } = null!;

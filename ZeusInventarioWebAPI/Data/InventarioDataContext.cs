@@ -42,6 +42,10 @@ namespace ZeusInventarioWebAPI.Data
 
         public virtual DbSet<DevolucionVenta> DevolucionVentas { get; set; } = null!;
 
+        public virtual DbSet<Entradum> Entrada { get; set; }
+
+        public virtual DbSet<Proveedore> Proveedores { get; set; }
+
 
         //CONEXIÓN A BASE DE DATOS QUE YA SE ENCUENTRA EN appsettings.json
         /*protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -1259,8 +1263,6 @@ namespace ZeusInventarioWebAPI.Data
 
             modelBuilder.Entity<Transac>(entity =>
             {
-                entity.HasNoKey();
-
                 entity.ToView("TRANSAC");
 
                 entity.Property(e => e.Adicional1)
@@ -2120,6 +2122,40 @@ namespace ZeusInventarioWebAPI.Data
                 entity.Property(e => e.Vendedor)
                     .HasMaxLength(3)
                     .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<Entradum>(entity =>
+            {
+                entity.HasKey(e => e.Consecutivo).IsClustered(false);
+
+                entity.Property(e => e.Anticipo).HasDefaultValueSql("('')");
+                entity.Property(e => e.Auxiliar).HasDefaultValueSql("('')");
+                entity.Property(e => e.CuentaAnticipo).HasDefaultValueSql("('')");
+                entity.Property(e => e.DiasCredito).HasDefaultValueSql("((0))");
+                entity.Property(e => e.IdenEntrada).ValueGeneratedOnAdd();
+                entity.Property(e => e.Moneda).HasDefaultValueSql("('')");
+                entity.Property(e => e.TasaCambio).HasDefaultValueSql("((1))");
+                entity.Property(e => e.TipoDocumento).HasDefaultValueSql("('')");
+                entity.Property(e => e.TipoFactura).HasDefaultValueSql("('FA')");
+                entity.Property(e => e.Usuario).IsFixedLength();
+                entity.Property(e => e.ValorAnticipo).HasDefaultValueSql("((0))");
+            });
+
+            modelBuilder.Entity<Proveedore>(entity =>
+            {
+                entity.ToView("PROVEEDORES");
+                
+                entity.Property(e => e.CentroCosto).IsFixedLength();
+                entity.Property(e => e.Codicta).IsFixedLength();
+                entity.Property(e => e.Codigodane).IsFixedLength();
+                entity.Property(e => e.Divpolitica).IsFixedLength();
+                entity.Property(e => e.IdenProveedores).ValueGeneratedOnAdd();
+                entity.Property(e => e.Idzona).IsFixedLength();
+                entity.Property(e => e.Segmento).IsFixedLength();
+                entity.Property(e => e.Tipo).IsFixedLength();
+                entity.Property(e => e.VersionDeLaFila)
+                    .IsRowVersion()
+                    .IsConcurrencyToken();
             });
 
             OnModelCreatingPartial(modelBuilder);
