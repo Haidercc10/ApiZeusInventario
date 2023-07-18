@@ -93,6 +93,37 @@ namespace ZeusInventarioWebAPI.Controllers
             return Ok(datos);
         }
 
+        // Consulta que devovlerá un array con cada uno de los meses y el valor que se facturó mes mes en el año que le sea pasado
+        [HttpGet("getFacturacion_Mes_Mes/{anio}")]
+        public ActionResult FacturacionTodosMeses(int anio)
+        {
+#pragma warning disable CS8604 // Posible argumento de referencia nulo
+            var datos = new List<object>();
+            for (int i = 0; i < 12; i++)
+            {
+                string mes = (i + 1).ToString().Length > 1 ? $"{i + 1}" : $"0{i + 1}";
+                var MovimientoItem = (from mi in _context.Set<MovimientoItem>()
+                                      where mi.Fuente == "FV"
+                                      && mi.Estado == "Procesado"
+                                      && mi.FechaDocumento.Month == Convert.ToInt32(mes)
+                                      && mi.FechaDocumento.Year == anio
+                                      select mi.PrecioTotal).Sum();
+
+                var Transaccion1 = (from tr in _context.Set<Transac>()
+                                    where tr.Idfuente == "DV"
+                                    && tr.Tipofac == "FA"
+                                    && tr.Indcpitra == "1"
+                                    && tr.Fechatra.Substring(5, 2) == Convert.ToString(mes)
+                                    && tr.Fechatra.Substring(0, 4) == Convert.ToString(anio)
+                                    select tr.Valortra).Sum();
+
+                datos.Add($"'Mes': '{mes}', 'Valor': '{Convert.ToDecimal(MovimientoItem - Transaccion1)}'");
+                if (i == 11) return Ok(datos);
+            }
+            return Ok(datos);
+#pragma warning restore CS8604 // Posible argumento de referencia nulo
+        }
+
         // GET: api/MovimientoItems/5
         [HttpGet("GetIvaVentaMensual/{fechaIni}/{fechaFin}")]
         public ActionResult GetIvaVentaMensual(DateTime fechaIni, DateTime fechaFin)
@@ -118,7 +149,6 @@ namespace ZeusInventarioWebAPI.Controllers
             var total = num1 - num2;
             return Ok(total);
         }
-
 
         // GET: api/MovimientoItems/5
         [HttpGet("GetIvaCompraMensual/{fechaIni}/{fechaFin}")]
@@ -830,5 +860,59 @@ namespace ZeusInventarioWebAPI.Controllers
             else return BadRequest("No se encontraron clientes con facturas en el mes");
         }
 
+        //Consulta que devolverá las compras de plasticaribe mes a mes en el año que le sea pasado
+        [HttpGet("getComprasMes_Mes_Plasticaribe/{anio}")]
+        public ActionResult GetComprasMes_Mes_Plasticaribe(string anio)
+        {
+#pragma warning disable CS8604 // Posible argumento de referencia nulo
+            var datos = new List<object>();
+            for (int i = 0; i < 12; i++)
+            {
+                string mes = (i + 1).ToString().Length > 1 ? $"{i + 1}" : $"0{i + 1}";
+                var con = (from mov in _context.Set<MovimientoItem>()
+                           from prov in _context.Set<Proveedore>()
+                           from ent in _context.Set<Entradum>()
+                           where mov.CodigoDocumento == ent.Consecutivo
+                                 && ent.Proveedor == prov.Idprove
+                                 && ent.Proveedor != "900362200"
+                                 && ent.Proveedor != "900458314"
+                                 && mov.TipoDocumento == 2
+                                 && Convert.ToString(mov.FechaDocumento.Year) == anio
+                                 && Convert.ToString(mov.FechaDocumento.Month) == $"{i + 1}"
+                           select mov.CostoTotal).Sum();
+
+                datos.Add($"'Mes': '{mes}', 'Valor': '{Convert.ToDecimal(con)}'");
+                if (i == 11) return Ok(datos);
+            }
+            return Ok(datos);
+#pragma warning restore CS8604 // Posible argumento de referencia nulo
+        }
+
+        //Consulta que devolverá las compras de invergoal e inversuez mes a mes en el año que le sea pasado
+        [HttpGet("getComprasMes_Mes_InverGoal_InverSuez/{anio}/{proveedor}")]
+        public ActionResult GetComprasMes_Mes_InverGoal_InverSuez(string anio, string proveedor)
+        {
+#pragma warning disable CS8604 // Posible argumento de referencia nulo
+            var datos = new List<object>();
+            for (int i = 0; i < 12; i++)
+            {
+                string mes = (i + 1).ToString().Length > 1 ? $"{i + 1}" : $"0{i + 1}";
+                var con = (from mov in _context.Set<MovimientoItem>()
+                           from prov in _context.Set<Proveedore>()
+                           from ent in _context.Set<Entradum>()
+                           where mov.CodigoDocumento == ent.Consecutivo
+                                 && ent.Proveedor == prov.Idprove
+                                 && ent.Proveedor == proveedor
+                                 && mov.TipoDocumento == 2
+                                 && Convert.ToString(mov.FechaDocumento.Year) == anio
+                                 && Convert.ToString(mov.FechaDocumento.Month) == $"{i + 1}"
+                           select mov.CostoTotal).Sum();
+
+                datos.Add($"'Mes': '{mes}', 'Valor': '{Convert.ToDecimal(con)}'");
+                if (i == 11) return Ok(datos);
+            }
+            return Ok(datos);
+#pragma warning restore CS8604 // Posible argumento de referencia nulo
+        }
     }
 }

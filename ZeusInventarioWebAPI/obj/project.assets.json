@@ -13273,23 +13273,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Desarrollo1\\.nuget\\packages\\": {},
+    "C:\\Users\\SANDRA\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Repositorio\\ApiZeusInventario\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj",
+      "projectUniqueName": "C:\\Users\\SANDRA\\Documents\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj",
       "projectName": "ZeusInventarioWebAPI",
-      "projectPath": "C:\\Repositorio\\ApiZeusInventario\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj",
-      "packagesPath": "C:\\Users\\Desarrollo1\\.nuget\\packages\\",
-      "outputPath": "C:\\Repositorio\\ApiZeusInventario\\ZeusInventarioWebAPI\\obj\\",
+      "projectPath": "C:\\Users\\SANDRA\\Documents\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj",
+      "packagesPath": "C:\\Users\\SANDRA\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\SANDRA\\Documents\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\Desarrollo1\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\SANDRA\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -13299,6 +13299,7 @@
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "C:\\Program Files\\dotnet\\library-packs": {},
+        "C:\\Program Files\\dotnet\\sdk\\7.0.304\\Sdks\\Microsoft.NET.Sdk.Web\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -13401,7 +13402,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.200\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.304\\RuntimeIdentifierGraph.json"
       }
     }
   },
