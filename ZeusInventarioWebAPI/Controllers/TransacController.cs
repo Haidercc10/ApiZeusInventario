@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +12,7 @@ using ZeusInventarioWebAPI.Models;
 namespace ZeusInventarioWebAPI.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
+    [ApiController, Authorize]
     public class TransacController : ControllerBase
     {
         private readonly InventarioDataContext _context;
@@ -56,6 +57,7 @@ namespace ZeusInventarioWebAPI.Controllers
         {
             if (_context.Transacs == null) return NotFound();
 
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var transac = from t in _context.Set<Transac>()
                           from m in _context.Set<Maevende>()
                           from c in _context.Set<Cliente>()
@@ -85,6 +87,7 @@ namespace ZeusInventarioWebAPI.Controllers
                               Usuario = t.Idusuario.Trim(),
                               FechaRegistro = t.Fgratra
                           };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
             if (transac == null) return BadRequest("No se encontraron recibos de caja en el rango de fechas consultado.");
             else return Ok(transac);

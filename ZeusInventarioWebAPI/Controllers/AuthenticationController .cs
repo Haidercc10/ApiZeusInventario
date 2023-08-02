@@ -22,6 +22,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost("login")]
         public IActionResult Login([FromBody] Login user)
         {
+#pragma warning disable CS8604 // Posible argumento de referencia nulo
             if (user is null)
             {
                 return BadRequest("Invalid user request!!!");
@@ -44,6 +45,7 @@ namespace PlasticaribeAPI.Controllers
                 });
             }
             return Unauthorized();
+#pragma warning restore CS8604 // Posible argumento de referencia nulo
         }
     }
 }

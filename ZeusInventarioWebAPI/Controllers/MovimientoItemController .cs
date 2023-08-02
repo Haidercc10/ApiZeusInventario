@@ -837,8 +837,7 @@ namespace ZeusInventarioWebAPI.Controllers
                              && Convert.ToString(mov.FechaDocumento.Month) == mes
                        select mov.CostoTotal).Sum();
 
-            if (con != null) return Ok(con);
-            else return BadRequest("No se encontraron clientes con facturas en el mes");
+            return Ok(con);
         }
 
         /** Consulta que devolverá las compras realizadas por plasticaribe en cada mes */
@@ -856,8 +855,7 @@ namespace ZeusInventarioWebAPI.Controllers
                              && Convert.ToString(mov.FechaDocumento.Month) == mes
                        select mov.CostoTotal).Sum();
 
-            if (con != null) return Ok(con);
-            else return BadRequest("No se encontraron clientes con facturas en el mes");
+            return Ok(con);
         }
 
         //Consulta que devolverá las compras de plasticaribe mes a mes en el año que le sea pasado

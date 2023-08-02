@@ -59,23 +59,12 @@ namespace ZeusInventarioWebAPI.Controllers
         {
             DateTime Hoy = DateTime.Today;
 
-            if (_context.FacturaDeClientes == null)
-            {
-                return NotFound();
-            }
+            if (_context.FacturaDeClientes == null) return NotFound();
             var facturado = (from FV in _context.Set<FacturaDeCliente>()
                             from DI in _context.Set<DocumentoItem>()
                             where FV.Consecutivo == DI.Documento &&
                             FV.Fecha == Hoy
                             select DI.PrecioTotal).Sum();
-
-
-
-            if (facturado == null)
-            {
-                return NotFound();
-            }
-
             return Ok(facturado);
         }
 

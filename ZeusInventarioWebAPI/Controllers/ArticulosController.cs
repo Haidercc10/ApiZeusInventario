@@ -57,6 +57,7 @@ namespace ZeusInventarioWebAPI.Controllers
         public ActionResult GetArticulos2(string item)
         {
 
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var articulo = from ar in _context.Set<Articulo>()
                            where ar.Tipo == "PRODUCTO TERMINADO"
                            && ar.Nombre.Contains(item)
@@ -65,7 +66,8 @@ namespace ZeusInventarioWebAPI.Controllers
                              ar.IdArticulo,
                              ar.Codigo,
                              ar.Nombre
-                           };     
+                           };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(articulo);
         }
 
