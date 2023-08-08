@@ -912,5 +912,41 @@ namespace ZeusInventarioWebAPI.Controllers
             return Ok(datos);
 #pragma warning restore CS8604 // Posible argumento de referencia nulo
         }
+
+        //Consulta que devolverá las compras de invergoal e inversuez mes a mes en el año que le sea pasado
+        [HttpGet("getComprasDetalladas/{proveedor}/{factura}")]
+        public ActionResult GetComprasDetalladas(string proveedor, string factura)
+        {
+#pragma warning disable CS8604 // Posible argumento de referencia nulo
+            var con = from mov in _context.Set<MovimientoItem>()
+                       from prov in _context.Set<Proveedore>()
+                       from ent in _context.Set<Entradum>()
+                       where mov.CodigoDocumento == ent.Consecutivo
+                             && ent.Proveedor == prov.Idprove
+                             && ent.Proveedor == proveedor
+                             && ent.FacturaProveedor == factura
+                             && mov.TipoDocumento == 2
+                       select new
+                       {
+                           Factura = ent.FacturaProveedor,
+                           FechaDoc = mov.FechaDocumento,
+                           FechaFactura = ent.FechaFactura,
+                           IdProveedor = ent.Proveedor,
+                           Proveedor = prov.Razoncial,
+                           CodigoMatPrima = mov.CodigoArticulo,
+                           MatPrima = mov.NombreArticulo, 
+                           Unidad = mov.Presentacion,
+                           Grupo = mov.NombreGrupo, 
+                           Cantidad = mov.Cantidad, 
+                           ValorNeto = mov.CostoTotal,
+                           IvaCompras = mov.TotalIvacompras,
+                           ValorMasIva = mov.CostoTotal + mov.TotalIvacompras,
+                           FechaVence = ent.Vencimiento, 
+                       };
+
+            if (con == null) return BadRequest("No se encontró la factura consultada para este proveedor");
+            else return Ok(con);
+#pragma warning restore CS8604 // Posible argumento de referencia nulo
+        }
     }
 }
