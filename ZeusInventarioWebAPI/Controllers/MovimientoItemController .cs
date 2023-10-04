@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ZeusInventarioWebAPI.Data;
 using ZeusInventarioWebAPI.Models;
 
 namespace ZeusInventarioWebAPI.Controllers
@@ -68,11 +62,6 @@ namespace ZeusInventarioWebAPI.Controllers
         [HttpGet("FacturacionTodosMeses/{mes}/{ano}")]
         public ActionResult FacturacionTodosMeses(string mes, int ano)
         {
-            if (_context.MovimientoItems == null)
-            {
-                return NotFound();
-            }
-
             var MovimientoItem = (from mi in _context.Set<MovimientoItem>()
                                   where mi.Fuente == "FV"
                                   && mi.Estado == "Procesado"
@@ -84,8 +73,8 @@ namespace ZeusInventarioWebAPI.Controllers
                                 where tr.Idfuente == "DV"
                                 && tr.Tipofac == "FA"
                                 && tr.Indcpitra == "1"
-                                && tr.Fechatra.Substring(5,2) == Convert.ToString(mes)
-                                && tr.Fechatra.Substring(0,4) == Convert.ToString(ano)
+                                && tr.Fechatra.Substring(5, 2) == Convert.ToString(mes)
+                                && tr.Fechatra.Substring(0, 4) == Convert.ToString(ano)
                                 select tr.Valortra).Sum();
 
             var datos = MovimientoItem - Transaccion1;
@@ -505,7 +494,7 @@ namespace ZeusInventarioWebAPI.Controllers
                             && mov.FechaDocumento.Year <= ano2
                             && mov.Fuente == "FV"
                             && mov.Estado == "Procesado"
-                      group mov  by new
+                      group mov by new
                       {
                           Mes = mov.FechaDocumento.Month,
                           Ano = mov.FechaDocumento.Year,
@@ -533,7 +522,7 @@ namespace ZeusInventarioWebAPI.Controllers
                           mov.Key.Precio,
                           SubTotal = Convert.ToDecimal(mov.Sum(x => x.PrecioTotal)),
                           mov.Key.Id_Vendedor,
-                          mov.Key.Vendedor, 
+                          mov.Key.Vendedor,
                       };
 
             var devolucion = from mov in _context.Set<MovimientoItem>()
@@ -578,10 +567,10 @@ namespace ZeusInventarioWebAPI.Controllers
                                  mov.Key.Id_Producto,
                                  mov.Key.Producto,
                                  Cantidad = Convert.ToDecimal(0),
-                                 Devolucion = Convert.ToDecimal(mov.Sum(x => x.mov.Cantidad)),
+                                 Devolucion = Convert.ToDecimal(mov.Sum(x => x.mov.Cantidad) * -1),
                                  mov.Key.Presentacion,
                                  mov.Key.Precio,
-                                 SubTotal = Convert.ToDecimal(mov.Sum(x => x.tr.Valortra)),
+                                 SubTotal = Convert.ToDecimal(mov.Sum(x => x.tr.Valortra) * -1),
                                  mov.Key.Id_Vendedor,
                                  mov.Key.Vendedor
                              };
@@ -594,13 +583,13 @@ namespace ZeusInventarioWebAPI.Controllers
         public ActionResult GetArticulosxCliente(string idcliente)
         {
             var items = (from mov in _context.Set<MovimientoItem>()
-                        where mov.TipoDocumento == 9
-                        && mov.Tercero == idcliente
-                        select new
-                        {
-                            codigo = mov.CodigoArticulo,
-                            nombre = mov.NombreArticulo
-                        }).Distinct();
+                         where mov.TipoDocumento == 9
+                         && mov.Tercero == idcliente
+                         select new
+                         {
+                             codigo = mov.CodigoArticulo,
+                             nombre = mov.NombreArticulo
+                         }).Distinct();
             return Ok(items);
         }
 
@@ -684,8 +673,8 @@ namespace ZeusInventarioWebAPI.Controllers
                                 where tr.Idfuente == "DV"
                                 && tr.Tipofac == "FA"
                                 && tr.Indcpitra == "1"
-                                && tr.Fechatra.Substring(5,2) == Convert.ToString(mes)
-                                && tr.Fechatra.Substring(0,4) == Convert.ToString(anio)
+                                && tr.Fechatra.Substring(5, 2) == Convert.ToString(mes)
+                                && tr.Fechatra.Substring(0, 4) == Convert.ToString(anio)
                                 && tr.Idvende == vendedor
                                 select tr.Valortra).Sum();
 
@@ -728,14 +717,14 @@ namespace ZeusInventarioWebAPI.Controllers
                                          && mov.FechaDocumento.Year == fecha.Year
                                          && mov.FechaDocumento.Month == fecha.Month
                                          && mov.Tercero == fv.Key.Id_Cliente
-                                         select mov.PrecioTotal).Sum() - (from tr in _context.Set<Transac>()
-                                                                          where tr.Idfuente == "DV"
-                                                                                && tr.Tipofac == "FA"
-                                                                                && tr.Indcpitra == "1"
-                                                                                && tr.Fechatra.Substring(5, 2) == Convert.ToString(fecha.Month)
-                                                                                && tr.Fechatra.Substring(0, 4) == Convert.ToString(fecha.Year)
-                                                                                && tr.Nittra == fv.Key.Id_Cliente
-                                                                          select tr.Valortra).Sum()
+                                   select mov.PrecioTotal).Sum() - (from tr in _context.Set<Transac>()
+                                                                    where tr.Idfuente == "DV"
+                                                                          && tr.Tipofac == "FA"
+                                                                          && tr.Indcpitra == "1"
+                                                                          && tr.Fechatra.Substring(5, 2) == Convert.ToString(fecha.Month)
+                                                                          && tr.Fechatra.Substring(0, 4) == Convert.ToString(fecha.Year)
+                                                                          && tr.Nittra == fv.Key.Id_Cliente
+                                                                    select tr.Valortra).Sum()
                       };
             if (con.Count() > 0) return Ok(con);
             else return BadRequest("No se encontraron clientes con facturas en el mes");
@@ -829,8 +818,8 @@ namespace ZeusInventarioWebAPI.Controllers
                        from prov in _context.Set<Proveedore>()
                        from ent in _context.Set<Entradum>()
                        where mov.CodigoDocumento == ent.Consecutivo
-                             && ent.Proveedor == prov.Idprove  
-                             && ent.Proveedor != "900362200" 
+                             && ent.Proveedor == prov.Idprove
+                             && ent.Proveedor != "900362200"
                              && ent.Proveedor != "900458314"
                              && mov.TipoDocumento == 2
                              && Convert.ToString(mov.FechaDocumento.Year) == anio
@@ -919,30 +908,30 @@ namespace ZeusInventarioWebAPI.Controllers
         {
 #pragma warning disable CS8604 // Posible argumento de referencia nulo
             var con = from mov in _context.Set<MovimientoItem>()
-                       from prov in _context.Set<Proveedore>()
-                       from ent in _context.Set<Entradum>()
-                       where mov.CodigoDocumento == ent.Consecutivo
-                             && ent.Proveedor == prov.Idprove
-                             && ent.Proveedor == proveedor
-                             && ent.FacturaProveedor == factura
-                             && mov.TipoDocumento == 2
-                       select new
-                       {
-                           Factura = ent.FacturaProveedor,
-                           FechaDoc = mov.FechaDocumento,
-                           FechaFactura = ent.FechaFactura,
-                           IdProveedor = ent.Proveedor,
-                           Proveedor = prov.Razoncial,
-                           CodigoMatPrima = mov.CodigoArticulo,
-                           MatPrima = mov.NombreArticulo, 
-                           Unidad = mov.Presentacion,
-                           Grupo = mov.NombreGrupo, 
-                           Cantidad = mov.Cantidad, 
-                           ValorNeto = mov.CostoTotal,
-                           IvaCompras = mov.TotalIvacompras,
-                           ValorMasIva = mov.CostoTotal + mov.TotalIvacompras,
-                           FechaVence = ent.Vencimiento, 
-                       };
+                      from prov in _context.Set<Proveedore>()
+                      from ent in _context.Set<Entradum>()
+                      where mov.CodigoDocumento == ent.Consecutivo
+                            && ent.Proveedor == prov.Idprove
+                            && ent.Proveedor == proveedor
+                            && ent.FacturaProveedor == factura
+                            && mov.TipoDocumento == 2
+                      select new
+                      {
+                          Factura = ent.FacturaProveedor,
+                          FechaDoc = mov.FechaDocumento,
+                          FechaFactura = ent.FechaFactura,
+                          IdProveedor = ent.Proveedor,
+                          Proveedor = prov.Razoncial,
+                          CodigoMatPrima = mov.CodigoArticulo,
+                          MatPrima = mov.NombreArticulo,
+                          Unidad = mov.Presentacion,
+                          Grupo = mov.NombreGrupo,
+                          Cantidad = mov.Cantidad,
+                          ValorNeto = mov.CostoTotal,
+                          IvaCompras = mov.TotalIvacompras,
+                          ValorMasIva = mov.CostoTotal + mov.TotalIvacompras,
+                          FechaVence = ent.Vencimiento,
+                      };
 
             if (con == null) return BadRequest("No se encontró la factura consultada para este proveedor");
             else return Ok(con);

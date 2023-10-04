@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ZeusInventarioWebAPI.Data;
 using ZeusInventarioWebAPI.Models;
 
 namespace ZeusInventarioWebAPI.Controllers
@@ -26,22 +20,22 @@ namespace ZeusInventarioWebAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Articulo>>> GetArticulos()
         {
-          if (_context.Articulos == null)
-          {
-              return NotFound();
-          }
+            if (_context.Articulos == null)
+            {
+                return NotFound();
+            }
             return await _context.Articulos.ToListAsync();
         }
 
-        
+
         // GET: api/Articulos/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Articulo>> GetArticulo(decimal id)
         {
-          if (_context.Articulos == null)
-          {
-              return NotFound();
-          }
+            if (_context.Articulos == null)
+            {
+                return NotFound();
+            }
             var articulo = await _context.Articulos.FindAsync(id);
 
             if (articulo == null)
@@ -63,9 +57,9 @@ namespace ZeusInventarioWebAPI.Controllers
                            && ar.Nombre.Contains(item)
                            select new
                            {
-                             ar.IdArticulo,
-                             ar.Codigo,
-                             ar.Nombre
+                               ar.IdArticulo,
+                               ar.Codigo,
+                               ar.Nombre
                            };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(articulo);
@@ -128,10 +122,10 @@ namespace ZeusInventarioWebAPI.Controllers
                            && c.Razoncial.Contains(nombre)
                            select new
                            {
-                               c.Idcliente, 
+                               c.Idcliente,
                                c.Razoncial
                            };
-            
+
             return Ok(clientes);
         }
 
@@ -183,7 +177,6 @@ namespace ZeusInventarioWebAPI.Controllers
             return Ok(clientes);
         }
 
-
         // PUT: api/Articulos/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -215,17 +208,15 @@ namespace ZeusInventarioWebAPI.Controllers
             return NoContent();
         }
 
-
-
         // POST: api/Articulos
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Articulo>> PostArticulo(Articulo articulo)
         {
-          if (_context.Articulos == null)
-          {
-              return Problem("Entity set 'InventarioDataContext.Articulos'  is null.");
-          }
+            if (_context.Articulos == null)
+            {
+                return Problem("Entity set 'InventarioDataContext.Articulos'  is null.");
+            }
             _context.Articulos.Add(articulo);
             await _context.SaveChangesAsync();
 
@@ -235,10 +226,8 @@ namespace ZeusInventarioWebAPI.Controllers
         [HttpGet("insertarArticulo/{Codigo}/{Nombre}/{Grupo}/{Presentacion}/{Tipo}/{Valorizacion}/{Categoria}/{PrecioVenta}/{Iva}")]
         public ActionResult PostArticulo2(string Codigo, string Nombre, string Grupo, string Presentacion, string Tipo, string Valorizacion, string Categoria, decimal PrecioVenta, decimal Iva)
         {
-            if (_context.Articulos == null)
-            {
-                return Problem("Entity set 'InventarioDataContext.Articulos'  is null.");
-            }
+            if (_context.Articulos == null) return Problem("Entity set 'InventarioDataContext.Articulos'  is null.");
+
             var insert = _context.Database.ExecuteSql($"INSERT INTO [dbo].[Articulo] ([Codigo] ,[Nombre] ,[Descripcion] ,[Grupo] ,[GrupoAuxiliar] ,[Presentacion] ,[Tipo] ,[Valorización] ,[Categoria] ,[PorcentajeIva] ,[CuentaIVA] ,[PrecioVenta] ,[DescripcionOtroIdioma] ,[ComplementoCosto] ,[DesHabilitado] ,[DiasGarantia] ,[ComplementoVenta] ,[ConfiguracionPrecioVenta] ,[ComplementoInventario] ,[ComplementoDevolucionVentas1] ,[CuentaIVAVentas] ,[CuentaIVADevolucionVentas] ,[ComplementoInventarioRemisionado] ,[ComplementoCentroCosto] ,[ComplementoVenta1] ,[TipoArticulo] ,[UnidadesContenidaEmpaque] ,[ArticuloBolsaAgropecuaria] ,[MaximoIVADescontable] ,[ModificarCantidadAlistamientoPorVerificacion]) VALUES ({Codigo} , {Nombre} , {Nombre} , {Grupo} , {Grupo} , {Presentacion}, {Tipo} , {Valorizacion} , {Categoria} , {Iva} , 24081005 , {PrecioVenta}, {Nombre} , 2 , 0 , 0 , 2 , 4 , 4 , 2 , 24080505 , 24081020 , 4 , 4 , 4 , 'G' , 1 , 'N' , {Iva} , 0 )");
 
             return Ok(insert);
