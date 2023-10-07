@@ -939,26 +939,21 @@ namespace ZeusInventarioWebAPI.Controllers
         }
 
         //Consulta que devolverá las facturas de exportaciones falsas que se le mostrarán a Ecopetrol
-        [HttpGet("getFacturasEcopetrol/{fecha1}/{fecha2}")]
-        public ActionResult GetFacturasEcopetrol(DateTime fecha1, DateTime fecha2)
+        [HttpGet("getFacturasEcopetrol/{factura}")]
+        public ActionResult GetFacturasEcopetrol(string factura)
         {
 #pragma warning disable CS8604 // Posible argumento de referencia nulo
             var con = from mov in _context.Set<MovimientoItem>()
-                      from fac in _context.Set<FacturaDeCliente>()
-                      from cli in _context.Set<Cliente>()
-                      from mae in _context.Set<Maevende>()
-                      where fac.Consecutivo == mov.CodigoDocumento &&
-                      cli.Idcliente == fac.Cliente &&
-                      cli.Idvende == mae.Idvende &&
-                      cli.Idcliente == mov.Tercero &&
-                      mov.Vendedor == mae.Idvende &&
-                      mov.TipoDocumento == 9 &&
-                      mov.FechaDocumento >= fecha1 &&
-                      mov.FechaRequerida <= fecha2 
+                      from ent in _context.Set<Entradum>()
+                      from prv in _context.Set<Proveedore>()
+                      where ent.Consecutivo == mov.CodigoDocumento &&
+                      ent.Proveedor == prv.Idprove &&
+                      mov.TipoDocumento == 2 &&
+                      ent.FacturaProveedor == factura
                       select new
                       {
-                          NroFv = fac.Documento.Replace("0000", "PC"),
-                          NroInterno = "FV-" + (fac.Documento),
+                          NroFv = (from fac in _context.Set<FacturaDeCliente>() where fac.Fecha == mov.FechaDocumento.AddDays(4) select fac.Documento).FirstOrDefault(),
+                          NroInterno = (from fac in _context.Set<FacturaDeCliente>() where fac.Fecha == mov.FechaDocumento.AddDays(4) select fac.Documento).FirstOrDefault(),
                           Bu = mov.Bu,
                           ConsecBu = mov.ConsecutivoBu,
                           Fecha = mov.FechaDocumento.ToString("yyyy/MM/dd"),
@@ -971,24 +966,24 @@ namespace ZeusInventarioWebAPI.Controllers
                           Vendedor = "VENTA DIRECTA",
                           Moneda = "USD",
                           Medio_Pago = "Acuerdo mutuo",
-                          Forma_Pago = mov.FormaPago,
-                          Estado_Factura = fac.Estado,
+                          Forma_Pago = "Anticipado",
+                          Estado_Factura = "Procesado",
                           Relacionado = "",
-                          Codigo_Articulo = mov.CodigoArticulo,
-                          Nombre_Articulo = mov.NombreArticulo,
-                          Presentacion = mov.Presentacion,
-                          Bodega = mov.CodigoBodega,
-                          Lote = mov.CodigoLote,
+                          Codigo_Articulo = 101,
+                          Nombre_Articulo = "POLIFEN 641 NEAR PRIME Bolsa 1 25",
+                          Presentacion = "KLS",
+                          Bodega = "003",
+                          Lote = 0,
                           Cantidad = mov.Cantidad,
-                          Precio = mov.PrecioUnidad,
+                          Precio = mov.ValorUnidad,
                           Descuento = 0.00,
                           Iva = 0.00,
                           INC = 0.00,
-                          TotalBruto = "USD " + (Convert.ToString(mov.PrecioTotal)),
+                          TotalBruto = (Convert.ToDecimal(mov.ValorUnidad) * mov.Cantidad),
                           Observacion = "",
-                          Total_Bruto = "USD " + (Convert.ToString(mov.PrecioTotal)),
+                          Total_Bruto = (Convert.ToDecimal(mov.ValorUnidad) * mov.Cantidad),
                           Total_Descuento = 0.00,
-                          Total_Neta = "USD " + (Convert.ToString(mov.PrecioTotal)),
+                          Total_Neta = (Convert.ToDecimal(mov.ValorUnidad) * mov.Cantidad),
                           Total_Iva = 0.00,
                           Total_INC = 0.00,
                           Retefuente = 0.00,
@@ -996,8 +991,8 @@ namespace ZeusInventarioWebAPI.Controllers
                           ReteIca = 0.00,
                           OtrosConceptos = 0.00,
                           Anticipo = 0.00,
-                          Total_FactElectronica = "USD " + (Convert.ToString(mov.PrecioTotal)),
-                          Usuario = "YAIR ESCALANTE MARTINEZ"
+                          Total_FactElectronica = (Convert.ToDecimal(mov.ValorUnidad) * mov.Cantidad),
+                          Usuario = "SISTEMAS"
                       };
 
             if (con == null) return BadRequest("No se encontraron facturas en las fechas consultadas!");
