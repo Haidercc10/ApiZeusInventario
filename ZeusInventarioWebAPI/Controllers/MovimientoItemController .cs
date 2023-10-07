@@ -940,7 +940,7 @@ namespace ZeusInventarioWebAPI.Controllers
 
         //Consulta que devolverá las facturas de exportaciones falsas que se le mostrarán a Ecopetrol
         [HttpGet("getFacturasEcopetrol/{fecha1}/{fecha2}")]
-        public ActionResult GetComprasDetalladas(DateTime fecha1, DateTime fecha2)
+        public ActionResult GetFacturasEcopetrol(DateTime fecha1, DateTime fecha2)
         {
 #pragma warning disable CS8604 // Posible argumento de referencia nulo
             var con = from mov in _context.Set<MovimientoItem>()
