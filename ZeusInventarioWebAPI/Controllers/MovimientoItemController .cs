@@ -939,9 +939,26 @@ namespace ZeusInventarioWebAPI.Controllers
         }
 
         //Consulta que devolverá las facturas de exportaciones falsas que se le mostrarán a Ecopetrol
-        [HttpGet("getFacturasEcopetrol/{factura}")]
-        public ActionResult GetFacturasEcopetrol(string factura)
+        [HttpGet("getFacturasEcopetrol/{factura}/{trm}/{valorFinal}/{fecha}")]
+        public ActionResult GetFacturasEcopetrol(string factura, double trm, decimal valorFinal, DateTime fecha)
         {
+            var Codigofactura = (from fac in _context.Set<FacturaDeCliente>()
+                                 where fac.Fecha >= fecha.AddDays(2) &&
+                                       fac.Fecha <= fecha.AddDays(5)
+                                 orderby fecha descending
+                                 select fac.Documento).FirstOrDefault();
+
+            var fechaDocumento = (from fac in _context.Set<FacturaDeCliente>()
+                                  where fac.Documento == Codigofactura
+                                  orderby fecha descending
+                                  select fac.Fecha).FirstOrDefault();
+
+            var consecutivoBu = (from fac in _context.Set<FacturaDeCliente>()
+                                 join mov in _context.Set<MovimientoItem>() on fac.Consecutivo equals mov.CodigoDocumento
+                                 where fac.Documento == Codigofactura
+                                 orderby fecha descending
+                                 select mov.ConsecutivoBu).FirstOrDefault();
+
 #pragma warning disable CS8604 // Posible argumento de referencia nulo
             var con = from mov in _context.Set<MovimientoItem>()
                       from ent in _context.Set<Entradum>()
@@ -952,12 +969,12 @@ namespace ZeusInventarioWebAPI.Controllers
                       ent.FacturaProveedor == factura
                       select new
                       {
-                          NroFv = (from fac in _context.Set<FacturaDeCliente>() where fac.Fecha == mov.FechaDocumento.AddDays(4) select fac.Documento).FirstOrDefault(),
-                          NroInterno = (from fac in _context.Set<FacturaDeCliente>() where fac.Fecha == mov.FechaDocumento.AddDays(4) select fac.Documento).FirstOrDefault(),
+                          NroFv = Codigofactura,
+                          NroInterno = Codigofactura,
                           Bu = mov.Bu,
-                          ConsecBu = mov.ConsecutivoBu,
-                          Fecha = mov.FechaDocumento.ToString("yyyy/MM/dd"),
-                          Cliente = "444444025 " + "IMPORTADORA IDEA CA",
+                          ConsecBu = consecutivoBu,
+                          Fecha = fechaDocumento,
+                          Cliente = "IMPORTADORA IDEA CA",
                           Direccion = "SAN CRISTOBAL, CALLE 12 CRA 15 ESQUINA 11 77",
                           NitCc_Cliente = "444444025",
                           Ciudad = "SAN CRISTOBAL",
@@ -979,11 +996,11 @@ namespace ZeusInventarioWebAPI.Controllers
                           Descuento = 0.00,
                           Iva = 0.00,
                           INC = 0.00,
-                          TotalBruto = (Convert.ToDecimal(mov.ValorUnidad) * mov.Cantidad),
+                          TotalBruto = valorFinal,
                           Observacion = "",
-                          Total_Bruto = (Convert.ToDecimal(mov.ValorUnidad) * mov.Cantidad),
+                          Total_Bruto = valorFinal,
                           Total_Descuento = 0.00,
-                          Total_Neta = (Convert.ToDecimal(mov.ValorUnidad) * mov.Cantidad),
+                          Total_Neta = valorFinal,
                           Total_Iva = 0.00,
                           Total_INC = 0.00,
                           Retefuente = 0.00,
@@ -991,7 +1008,7 @@ namespace ZeusInventarioWebAPI.Controllers
                           ReteIca = 0.00,
                           OtrosConceptos = 0.00,
                           Anticipo = 0.00,
-                          Total_FactElectronica = (Convert.ToDecimal(mov.ValorUnidad) * mov.Cantidad),
+                          Total_FactElectronica = valorFinal,
                           Usuario = "SISTEMAS"
                       };
 
