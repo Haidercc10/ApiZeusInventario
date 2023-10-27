@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Sistemas\\Documents\\GitHub\\ZeusInventario\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj": {}
+    "C:\\Users\\Sistemas\\Source\\Repos\\Haidercc10\\ApiZeusInventario\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Sistemas\\Documents\\GitHub\\ZeusInventario\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj": {
+    "C:\\Users\\Sistemas\\Source\\Repos\\Haidercc10\\ApiZeusInventario\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Sistemas\\Documents\\GitHub\\ZeusInventario\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj",
+        "projectUniqueName": "C:\\Users\\Sistemas\\Source\\Repos\\Haidercc10\\ApiZeusInventario\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj",
         "projectName": "ZeusInventarioWebAPI",
-        "projectPath": "C:\\Users\\Sistemas\\Documents\\GitHub\\ZeusInventario\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj",
+        "projectPath": "C:\\Users\\Sistemas\\Source\\Repos\\Haidercc10\\ApiZeusInventario\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj",
         "packagesPath": "C:\\Users\\Sistemas\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Sistemas\\Documents\\GitHub\\ZeusInventario\\ZeusInventarioWebAPI\\obj\\",
+        "outputPath": "C:\\Users\\Sistemas\\Source\\Repos\\Haidercc10\\ApiZeusInventario\\ZeusInventarioWebAPI\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -128,7 +128,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.401\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.400\\RuntimeIdentifierGraph.json"
         }
       }
     }

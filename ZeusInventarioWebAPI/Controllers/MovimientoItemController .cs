@@ -1,6 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
+using NuGet.Protocol;
+using System.Data.Entity;
+using System.Globalization;
+using System.Linq;
+using System.Text.Json.Nodes;
+using ZeusInventarioWebAPI.Data;
 using ZeusInventarioWebAPI.Models;
 
 namespace ZeusInventarioWebAPI.Controllers
@@ -1016,5 +1023,103 @@ namespace ZeusInventarioWebAPI.Controllers
             else return Ok(con);
 #pragma warning restore CS8604 // Posible argumento de referencia nulo
         }
-    }
+
+        //Consulta que retornará las ventas detalladas por vendedor en las fechas consultadas
+        [HttpGet("getFacturacionDetallada/{fecha1}/{fecha2}")]
+        public ActionResult GetFacturacionDetallada(DateTime fecha1, DateTime fecha2, string? cliente = "", string? vendedor = "", string? item = "")
+        {
+            var facturacion = from f in _context.Set<FacturaDeCliente>()
+                              from m in _context.Set<MovimientoItem>()
+                              from c in _context.Set<Cliente>()
+                              from v in _context.Set<Maevende>()
+                              where f.Consecutivo == m.CodigoDocumento &&
+                              f.Cliente == c.Idcliente &&
+                              m.TipoDocumento == 9 &&
+                              f.Vendedor == v.Idvende &&
+                              f.Fecha >= fecha1 &&
+                              f.Fecha <= fecha2 &&
+                              f.Cliente.Contains(cliente) &&
+                              f.Vendedor.Contains(vendedor) &&
+                              m.CodigoArticulo.Contains(item)
+                              select new
+                              {
+                                  IdVendedor = v.Idvende,
+                                  Vendedor = v.Nombvende,
+                                  Cliente = c.Razoncial,
+                                  Factura = f.Documento,
+                                  Fecha = f.Fecha.ToString("yyyy/MM/dd"),
+                                  Factura2 = f.Documento.Replace("0000", ""),
+                                  Item = m.CodigoArticulo,
+                                  Referencia = m.NombreArticulo,
+                                  Presentacion = m.Presentacion,
+                                  Cantidad = m.Cantidad,
+                                  Precio = m.PrecioUnidad,
+                                  ValorTotal = m.PrecioTotal
+                              };
+
+            if (facturacion == null) return Ok("No se encontraron resultados de búsqueda");
+            else return Ok(facturacion);
+        }
+
+        //Consulta que retornará las ventas detalladas por vendedor en las fechas consultadas
+        [HttpGet("getFacturacionConsolidada/{fecha1}/{fecha2}")]
+        public ActionResult GetFacturacionConsolidada (DateTime fecha1, DateTime fecha2, string? cliente = "", string? vendedor = "", string? item = "")
+        {
+            var facturacion = from f in _context.Set<FacturaDeCliente>()
+                              from m in _context.Set<MovimientoItem>()
+                              from c in _context.Set<Cliente>()
+                              from v in _context.Set<Maevende>()
+                              where f.Consecutivo == m.CodigoDocumento &&
+                              f.Cliente == c.Idcliente &&
+                              m.TipoDocumento == 9 &&
+                              f.Vendedor == v.Idvende &&
+                              f.Fecha >= fecha1 &&
+                              f.Fecha <= fecha2 &&
+                              f.Cliente.Contains(cliente) &&
+                              f.Vendedor.Contains(vendedor) &&
+                              m.CodigoArticulo.Contains(item)
+                              group new { f, m } by new {
+                                 Fecha = f.Fecha,
+                                 Factura = f.Documento,
+                                 Cliente = c.Razoncial,
+                                 ReciboCaja = ""
+                              } into a 
+                              select new  
+                              {
+                                 Fecha = a.Key.Fecha,
+                                 Factura = a.Key.Factura,
+                                 Cliente = a.Key.Cliente,
+                                 Recibo = a.Key.ReciboCaja,
+                                 Suma = (a.Sum(x => x.m.PrecioTotal) + (a.Sum(x => x.m.PrecioTotal) * 0.19m))
+                              };
+
+            if (facturacion == null) return Ok("No se encontraron resultados de búsqueda");
+            else return Ok(facturacion);
+        }
+
+        //Consulta que retornará las devoluciones detalladas en las fechas consultadas
+        [HttpGet("getDevolucionesDetalladas/{fecha1}/{fecha2}")]
+        public ActionResult GetDevolucionesVentas(DateTime fecha1, DateTime fecha2, string? cliente, string? vendedor)
+        {
+            var devolucion = _context.Set<Transac>().FromSql($"SELECT\r\nT.*\r\nFROM \r\nTRANSAC T, \r\nMAEVENDE V\r\nWHERE \r\nV.IDVENDE = T.IDVENDE\r\nAND T.IDFUENTE = 'DV'\r\nAND t.TIPOFAC = 'FA'\r\nAND CAST(CONVERT(char(10), FECHATRA, 112) as date) BETWEEN {fecha1} AND {fecha2}\r\nAND T.VALORTRA > 0\r\nAND t.INDCPITRA = 1 AND T.NITTRA LIKE '%%' AND T.IDVENDE LIKE '%%' ").ToList();
+
+            if (cliente != null && vendedor != null)
+            {
+                 devolucion = _context.Set<Transac>().FromSql($"SELECT\r\nT.*\r\nFROM \r\nTRANSAC T, \r\nMAEVENDE V\r\nWHERE \r\nV.IDVENDE = T.IDVENDE\r\nAND T.IDFUENTE = 'DV'\r\nAND t.TIPOFAC = 'FA'\r\nAND CAST(CONVERT(char(10), FECHATRA, 112) as date) BETWEEN {fecha1} AND {fecha2}\r\nAND T.VALORTRA > 0\r\nAND t.INDCPITRA = 1 AND T.NITTRA LIKE '%{cliente}%' AND T.IDVENDE LIKE '%{vendedor}%') ").ToList();
+                 return Ok(devolucion);
+            }
+            else if (cliente != null)
+            {
+                 devolucion = _context.Set<Transac>().FromSql($"SELECT\r\nT.*\r\nFROM \r\nTRANSAC T, \r\nMAEVENDE V\r\nWHERE \r\nV.IDVENDE = T.IDVENDE\r\nAND T.IDFUENTE = 'DV'\r\nAND t.TIPOFAC = 'FA'\r\nAND CAST(CONVERT(char(10), FECHATRA, 112) as date) BETWEEN {fecha1} AND {fecha2}\r\nAND T.VALORTRA > 0\r\nAND t.INDCPITRA = 1 AND T.NITTRA LIKE '%{cliente}%' ").ToList();
+                 return Ok(devolucion);
+            }
+            else if (vendedor != null)
+            {
+                 devolucion = _context.Set<Transac>().FromSql($"SELECT\r\nT.*\r\nFROM \r\nTRANSAC T, \r\nMAEVENDE V\r\nWHERE \r\nV.IDVENDE = T.IDVENDE\r\nAND T.IDFUENTE = 'DV'\r\nAND t.TIPOFAC = 'FA'\r\nAND CAST(CONVERT(char(10), FECHATRA, 112) as date) BETWEEN {fecha1} AND {fecha2}\r\nAND T.VALORTRA > 0\r\nAND t.INDCPITRA = 1\r\n AND T.IDVENDE LIKE '%{vendedor}%' AND T.NITTRA LIKE '%%'").ToList();
+                 return Ok(devolucion);
+            }
+            
+            return Ok(devolucion);
+        }
+    }    
 }
