@@ -1099,26 +1099,24 @@ namespace ZeusInventarioWebAPI.Controllers
 
         //Consulta que retornará las devoluciones detalladas en las fechas consultadas
         [HttpGet("getDevolucionesDetalladas/{fecha1}/{fecha2}")]
-        public ActionResult GetDevolucionesVentas(DateTime fecha1, DateTime fecha2, string? cliente, string? vendedor)
+        public ActionResult GetDevolucionesVentas(DateTime fecha1, DateTime fecha2, string? cliente = "", string? vendedor = "")
         {
-            var devolucion = _context.Set<Transac>().FromSql($"SELECT\r\nT.*\r\nFROM \r\nTRANSAC T, \r\nMAEVENDE V\r\nWHERE \r\nV.IDVENDE = T.IDVENDE\r\nAND T.IDFUENTE = 'DV'\r\nAND t.TIPOFAC = 'FA'\r\nAND CAST(CONVERT(char(10), FECHATRA, 112) as date) BETWEEN {fecha1} AND {fecha2}\r\nAND T.VALORTRA > 0\r\nAND t.INDCPITRA = 1 AND T.NITTRA LIKE '%%' AND T.IDVENDE LIKE '%%' ").ToList();
-
-            if (cliente != null && vendedor != null)
+            if (cliente != "" && vendedor != "")
             {
-                 devolucion = _context.Set<Transac>().FromSql($"SELECT\r\nT.*\r\nFROM \r\nTRANSAC T, \r\nMAEVENDE V\r\nWHERE \r\nV.IDVENDE = T.IDVENDE\r\nAND T.IDFUENTE = 'DV'\r\nAND t.TIPOFAC = 'FA'\r\nAND CAST(CONVERT(char(10), FECHATRA, 112) as date) BETWEEN {fecha1} AND {fecha2}\r\nAND T.VALORTRA > 0\r\nAND t.INDCPITRA = 1 AND T.NITTRA LIKE '%{cliente}%' AND T.IDVENDE LIKE '%{vendedor}%') ").ToList();
-                 return Ok(devolucion);
+                 return Ok(_context.Set<Transac>().FromSql($"SELECT\r\nT.*\r\nFROM \r\nTRANSAC T, \r\nMAEVENDE V\r\nWHERE \r\nV.IDVENDE = T.IDVENDE\r\nAND T.IDFUENTE = 'DV'\r\nAND t.TIPOFAC = 'FA'\r\nAND CAST(CONVERT(char(10), FECHATRA, 112) as date) BETWEEN {fecha1} AND {fecha2}\r\nAND T.VALORTRA > 0\r\nAND t.INDCPITRA = 1 AND T.NITTRA = cliente AND T.IDVENDE = {vendedor}) ").ToList());
             }
-            else if (cliente != null)
+            else if (cliente != "")
             {
-                 devolucion = _context.Set<Transac>().FromSql($"SELECT\r\nT.*\r\nFROM \r\nTRANSAC T, \r\nMAEVENDE V\r\nWHERE \r\nV.IDVENDE = T.IDVENDE\r\nAND T.IDFUENTE = 'DV'\r\nAND t.TIPOFAC = 'FA'\r\nAND CAST(CONVERT(char(10), FECHATRA, 112) as date) BETWEEN {fecha1} AND {fecha2}\r\nAND T.VALORTRA > 0\r\nAND t.INDCPITRA = 1 AND T.NITTRA LIKE '%{cliente}%' ").ToList();
-                 return Ok(devolucion);
+                 return Ok(_context.Set<Transac>().FromSql(
+                     $"SELECT T.* FROM TRANSAC T JOIN MAEVENDE V ON V.IDVENDE = T.IDVENDE WHERE T.IDFUENTE = 'DV' AND T.TIPOFAC = 'FA' AND CAST(CONVERT(char(10),T.FECHATRA, 112) as date) BETWEEN {fecha1} AND {fecha2} AND T.VALORTRA > 0 AND T.INDCPITRA = 1 AND T.NITTRA = {cliente}").ToList());
             }
-            else if (vendedor != null)
+            else if (vendedor != "")
             {
-                 devolucion = _context.Set<Transac>().FromSql($"SELECT\r\nT.*\r\nFROM \r\nTRANSAC T, \r\nMAEVENDE V\r\nWHERE \r\nV.IDVENDE = T.IDVENDE\r\nAND T.IDFUENTE = 'DV'\r\nAND t.TIPOFAC = 'FA'\r\nAND CAST(CONVERT(char(10), FECHATRA, 112) as date) BETWEEN {fecha1} AND {fecha2}\r\nAND T.VALORTRA > 0\r\nAND t.INDCPITRA = 1\r\n AND T.IDVENDE LIKE '%{vendedor}%' AND T.NITTRA LIKE '%%'").ToList();
-                 return Ok(devolucion);
+                 return Ok(_context.Set<Transac>().FromSql($"SELECT\r\nT.*\r\nFROM \r\nTRANSAC T, \r\nMAEVENDE V\r\nWHERE \r\nV.IDVENDE = T.IDVENDE\r\nAND T.IDFUENTE = 'DV'\r\nAND t.TIPOFAC = 'FA'\r\nAND CAST(CONVERT(char(10), FECHATRA, 112) as date) BETWEEN {fecha1} AND {fecha2}\r\nAND T.VALORTRA > 0\r\nAND t.INDCPITRA = 1\r\n AND T.IDVENDE = {vendedor} AND T.NITTRA LIKE '%%'").ToList());
             }
             
+            var devolucion = _context.Set<Transac>().FromSql($"SELECT\r\nT.*\r\nFROM \r\nTRANSAC T, \r\nMAEVENDE V\r\nWHERE \r\nV.IDVENDE = T.IDVENDE\r\nAND T.IDFUENTE = 'DV'\r\nAND t.TIPOFAC = 'FA'\r\nAND CAST(CONVERT(char(10), FECHATRA, 112) as date) BETWEEN {fecha1} AND {fecha2}\r\nAND T.VALORTRA > 0\r\nAND t.INDCPITRA = 1 AND T.NITTRA LIKE '%%' AND T.IDVENDE LIKE '%%' ").ToList();
+
             return Ok(devolucion);
         }
     }    
