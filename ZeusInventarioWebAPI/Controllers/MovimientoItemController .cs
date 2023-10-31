@@ -1103,7 +1103,7 @@ namespace ZeusInventarioWebAPI.Controllers
         {
             if (cliente != "" && vendedor != "")
             {
-                 return Ok(_context.Set<Transac>().FromSql($"SELECT\r\nT.*\r\nFROM \r\nTRANSAC T, \r\nMAEVENDE V\r\nWHERE \r\nV.IDVENDE = T.IDVENDE\r\nAND T.IDFUENTE = 'DV'\r\nAND t.TIPOFAC = 'FA'\r\nAND CAST(CONVERT(char(10), FECHATRA, 112) as date) BETWEEN {fecha1} AND {fecha2}\r\nAND T.VALORTRA > 0\r\nAND t.INDCPITRA = 1 AND T.NITTRA = cliente AND T.IDVENDE = {vendedor}) ").ToList());
+                 return Ok(_context.Set<Transac>().FromSql($"SELECT\r\nT.*\r\nFROM \r\nTRANSAC T, \r\nMAEVENDE V\r\nWHERE \r\nV.IDVENDE = T.IDVENDE\r\nAND T.IDFUENTE = 'DV'\r\nAND t.TIPOFAC = 'FA'\r\nAND CAST(CONVERT(char(10), FECHATRA, 112) as date) BETWEEN {fecha1} AND {fecha2}\r\nAND T.VALORTRA > 0\r\nAND t.INDCPITRA = 1 AND T.NITTRA = {cliente} AND T.IDVENDE = {vendedor}").ToList());
             }
             else if (cliente != "")
             {
