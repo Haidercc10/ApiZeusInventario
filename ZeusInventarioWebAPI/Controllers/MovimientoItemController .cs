@@ -1061,41 +1061,6 @@ namespace ZeusInventarioWebAPI.Controllers
             else return Ok(facturacion);
         }
 
-        //Consulta que retornará las ventas detalladas por vendedor en las fechas consultadas
-        /*[HttpGet("getFacturacionConsolidada/{fecha1}/{fecha2}")]
-        public ActionResult GetFacturacionConsolidada (DateTime fecha1, DateTime fecha2, string? cliente = "", string? vendedor = "", string? item = "")
-        {
-            var facturacion = from f in _context.Set<FacturaDeCliente>()
-                              from m in _context.Set<MovimientoItem>()
-                              from c in _context.Set<Cliente>()
-                              from v in _context.Set<Maevende>()
-                              where f.Consecutivo == m.CodigoDocumento &&
-                              f.Cliente == c.Idcliente &&
-                              m.TipoDocumento == 9 &&
-                              f.Vendedor == v.Idvende &&
-                              f.Fecha >= fecha1 &&
-                              f.Fecha <= fecha2 &&
-                              f.Cliente.Contains(cliente) &&
-                              f.Vendedor.Contains(vendedor) &&
-                              m.CodigoArticulo.Contains(item)
-                              group new { f, m } by new {
-                                 Fecha = f.Fecha,
-                                 Factura = f.Documento,
-                                 Cliente = c.Razoncial,
-                                 ReciboCaja = ""
-                              } into a 
-                              select new  
-                              {
-                                 Fecha = a.Key.Fecha,
-                                 Factura = a.Key.Factura,
-                                 Cliente = a.Key.Cliente,
-                                 Recibo = a.Key.ReciboCaja,
-                                 Suma = (a.Sum(x => x.m.PrecioTotal) + (a.Sum(x => x.m.PrecioTotal) * 0.19m))
-                              };
-
-            if (facturacion == null) return Ok("No se encontraron resultados de búsqueda");
-            else return Ok(facturacion);
-        }*/
 
         //Consulta que retornará las devoluciones detalladas en las fechas consultadas
         [HttpGet("getDevolucionesDetalladas/{fecha1}/{fecha2}/{indicadorCPI}")]
@@ -1123,7 +1088,7 @@ namespace ZeusInventarioWebAPI.Controllers
             return Ok(devolucion);
         }
 
-        //Consulta que retornará las devoluciones detalladas en las fechas consultadas
+        //Consulta que retornará las facturas consolidadas en las fechas consultadas
         [HttpGet("getFacturacionConsolidada/{fecha1}/{fecha2}")]
         public ActionResult getFacturacionConsolidada(DateTime fecha1, DateTime fecha2, string? cliente = "", string? vendedor = "")
         {
