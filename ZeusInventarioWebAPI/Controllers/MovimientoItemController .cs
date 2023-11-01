@@ -1062,7 +1062,7 @@ namespace ZeusInventarioWebAPI.Controllers
         }
 
         //Consulta que retornará las ventas detalladas por vendedor en las fechas consultadas
-        [HttpGet("getFacturacionConsolidada/{fecha1}/{fecha2}")]
+        /*[HttpGet("getFacturacionConsolidada/{fecha1}/{fecha2}")]
         public ActionResult GetFacturacionConsolidada (DateTime fecha1, DateTime fecha2, string? cliente = "", string? vendedor = "", string? item = "")
         {
             var facturacion = from f in _context.Set<FacturaDeCliente>()
@@ -1095,29 +1095,60 @@ namespace ZeusInventarioWebAPI.Controllers
 
             if (facturacion == null) return Ok("No se encontraron resultados de búsqueda");
             else return Ok(facturacion);
-        }
+        }*/
 
         //Consulta que retornará las devoluciones detalladas en las fechas consultadas
-        [HttpGet("getDevolucionesDetalladas/{fecha1}/{fecha2}")]
-        public ActionResult GetDevolucionesVentas(DateTime fecha1, DateTime fecha2, string? cliente = "", string? vendedor = "")
+        [HttpGet("getDevolucionesDetalladas/{fecha1}/{fecha2}/{indicadorCPI}")]
+        public ActionResult GetDevolucionesVentas(DateTime fecha1, DateTime fecha2, char indicadorCPI, string? cliente = "", string? vendedor = "")
         {
             if (cliente != "" && vendedor != "")
             {
-                 return Ok(_context.Set<Transac>().FromSql($"SELECT\r\nT.*\r\nFROM \r\nTRANSAC T, \r\nMAEVENDE V\r\nWHERE \r\nV.IDVENDE = T.IDVENDE\r\nAND T.IDFUENTE = 'DV'\r\nAND t.TIPOFAC = 'FA'\r\nAND CAST(CONVERT(char(10), FECHATRA, 112) as date) BETWEEN {fecha1} AND {fecha2}\r\nAND T.VALORTRA > 0\r\nAND t.INDCPITRA = 1 AND T.NITTRA = {cliente} AND T.IDVENDE = {vendedor}").ToList());
+                 return Ok(_context.Set<Transac>().FromSql(
+                     $"SELECT T.* FROM TRANSAC T WHERE T.IDFUENTE = 'DV' AND T.TIPOFAC = 'FA' AND CAST(CONVERT(char(10), T.FECHATRA, 112) as date) BETWEEN {fecha1} AND {fecha2} AND T.INDCPITRA = {indicadorCPI} AND T.NITTRA = {cliente} AND T.IDVENDE = {vendedor}").ToList());
             }
             else if (cliente != "")
             {
                  return Ok(_context.Set<Transac>().FromSql(
-                     $"SELECT T.* FROM TRANSAC T JOIN MAEVENDE V ON V.IDVENDE = T.IDVENDE WHERE T.IDFUENTE = 'DV' AND T.TIPOFAC = 'FA' AND CAST(CONVERT(char(10),T.FECHATRA, 112) as date) BETWEEN {fecha1} AND {fecha2} AND T.VALORTRA > 0 AND T.INDCPITRA = 1 AND T.NITTRA = {cliente}").ToList());
+                     $"SELECT T.* FROM TRANSAC T WHERE T.IDFUENTE = 'DV' AND T.TIPOFAC = 'FA' AND CAST(CONVERT(char(10),T.FECHATRA, 112) as date) BETWEEN {fecha1} AND {fecha2} AND T.INDCPITRA = {indicadorCPI} AND T.NITTRA = {cliente}").ToList());
             }
             else if (vendedor != "")
             {
-                 return Ok(_context.Set<Transac>().FromSql($"SELECT\r\nT.*\r\nFROM \r\nTRANSAC T, \r\nMAEVENDE V\r\nWHERE \r\nV.IDVENDE = T.IDVENDE\r\nAND T.IDFUENTE = 'DV'\r\nAND t.TIPOFAC = 'FA'\r\nAND CAST(CONVERT(char(10), FECHATRA, 112) as date) BETWEEN {fecha1} AND {fecha2}\r\nAND T.VALORTRA > 0\r\nAND t.INDCPITRA = 1\r\n AND T.IDVENDE = {vendedor} AND T.NITTRA LIKE '%%'").ToList());
+                 return Ok(_context.Set<Transac>().FromSql(
+                     $"SELECT T.* FROM TRANSAC T WHERE T.IDFUENTE = 'DV' AND T.TIPOFAC = 'FA' AND CAST(CONVERT(char(10), T.FECHATRA, 112) as date) BETWEEN {fecha1} AND {fecha2} AND T.INDCPITRA = {indicadorCPI}  AND T.IDVENDE = {vendedor}").ToList());
             }
             
-            var devolucion = _context.Set<Transac>().FromSql($"SELECT\r\nT.*\r\nFROM \r\nTRANSAC T, \r\nMAEVENDE V\r\nWHERE \r\nV.IDVENDE = T.IDVENDE\r\nAND T.IDFUENTE = 'DV'\r\nAND t.TIPOFAC = 'FA'\r\nAND CAST(CONVERT(char(10), FECHATRA, 112) as date) BETWEEN {fecha1} AND {fecha2}\r\nAND T.VALORTRA > 0\r\nAND t.INDCPITRA = 1 AND T.NITTRA LIKE '%%' AND T.IDVENDE LIKE '%%' ").ToList();
+            var devolucion = _context.Set<Transac>().FromSql(
+                     $"SELECT T.* FROM TRANSAC T WHERE T.IDFUENTE = 'DV' AND T.TIPOFAC = 'FA' AND CAST(CONVERT(char(10), T.FECHATRA, 112) as date) BETWEEN {fecha1} AND {fecha2} AND T.INDCPITRA = {indicadorCPI}").ToList();
 
             return Ok(devolucion);
         }
+
+        //Consulta que retornará las devoluciones detalladas en las fechas consultadas
+        [HttpGet("getFacturacionConsolidada/{fecha1}/{fecha2}")]
+        public ActionResult getFacturacionConsolidada(DateTime fecha1, DateTime fecha2, string? cliente = "", string? vendedor = "")
+        {
+            if (cliente != "" && vendedor != "")
+            {
+                return Ok(_context.Set<Transac>().FromSql(
+                    $"SELECT T.* FROM TRANSAC T WHERE T.IDFUENTE = 'FV' AND T.TIPOFAC = 'FA' AND CAST(CONVERT(char(10), T.FECHATRA, 112) as date) BETWEEN {fecha1} AND {fecha2} AND T.INDCPITRA = 2 AND T.NITTRA = {cliente} AND T.IDVENDE = {vendedor}").ToList());
+            }
+            else if (cliente != "")
+            {
+                return Ok(_context.Set<Transac>().FromSql(
+                    $"SELECT T.* FROM TRANSAC T WHERE T.IDFUENTE = 'FV' AND T.TIPOFAC = 'FA' AND CAST(CONVERT(char(10), T.FECHATRA, 112) as date) BETWEEN {fecha1} AND {fecha2} AND T.INDCPITRA = 2 AND T.NITTRA = {cliente}").ToList());
+            }
+            else if (vendedor != "")
+            {
+                return Ok(_context.Set<Transac>().FromSql(
+                    $"SELECT T.* FROM TRANSAC T VWHERE T.IDFUENTE = 'FV' AND T.TIPOFAC = 'FA' AND CAST(CONVERT(char(10), T.FECHATRA, 112) as date) BETWEEN {fecha1} AND {fecha2} AND t.INDCPITRA = 2 AND T.IDVENDE = {vendedor}").ToList());
+            }
+
+            var devolucion = _context.Set<Transac>().FromSql(
+                    $"SELECT T.* FROM TRANSAC T WHERE  T.IDFUENTE = 'FV' AND T.TIPOFAC = 'FA' AND CAST(CONVERT(char(10), T.FECHATRA, 112) as date) BETWEEN {fecha1} AND {fecha2} AND T.INDCPITRA = 2 AND T.NITTRA LIKE '%%' AND T.IDVENDE LIKE '%%' ").ToList();
+
+            return Ok(devolucion);
+        }
+
+
     }    
 }
