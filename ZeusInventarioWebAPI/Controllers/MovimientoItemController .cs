@@ -1054,13 +1054,12 @@ namespace ZeusInventarioWebAPI.Controllers
                                   Presentacion = m.Presentacion,
                                   Cantidad = m.Cantidad,
                                   Precio = m.PrecioUnidad,
-                                  ValorTotal = m.PrecioTotal
+                                  ValorTotal = (m.Cantidad * m.PrecioUnidad)
                               };
 
             if (facturacion == null) return Ok("No se encontraron resultados de búsqueda");
             else return Ok(facturacion);
         }
-
 
         //Consulta que retornará las devoluciones detalladas en las fechas consultadas
         [HttpGet("getDevolucionesDetalladas/{fecha1}/{fecha2}/{indicadorCPI}")]
