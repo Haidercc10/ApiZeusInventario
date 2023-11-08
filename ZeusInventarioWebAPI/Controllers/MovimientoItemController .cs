@@ -1120,15 +1120,17 @@ namespace ZeusInventarioWebAPI.Controllers
         [HttpPost("ajusteExistencia")]
         public async Task<ActionResult> AjusteExistencia(string ordenTrabajo, string articulo, string presentacion, string rollo, decimal cantidad, decimal costo)
         {
-            DateTime today = DateTime.Today;
+            string today = DateTime.Today.ToString("yyyy-MM-dd");
             SoapRequestAction request = new SoapRequestAction();
             request.User = "wsZeusInvProd";
             request.Password = "wsZeusInvProd";
-            request.Body = $"<Ajuste><Op>I</Op><Cabecera>" +
+            request.Body = $"<Ajuste>" +
+                                $"<Op>I</Op>" +
+                                $"<Cabecera>" +
                                     $"<Detalle>{ordenTrabajo}</Detalle>" +
                                     "<Concepto>001</Concepto>" +
                                     "<Consecutivo>0</Consecutivo>" +
-                                    $"<Fecha>{Convert.ToString(today.ToString("yyyy-MM-dd"))}</Fecha>" +
+                                    $"<Fecha>{today}</Fecha>" +
                                     "<Estado></Estado>" +
                                     "<Solicitante>7200000</Solicitante>" +
                                     "<Aprueba></Aprueba>" +
