@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "p+Zg2x6fP1Lw8scU0eSGN9H0zGBbHzg3W20VQWCiGrQo21qBXWaSiofSoVhea9GQFi/kf3b9nC2gWo/+gF8m/w==",
+  "dgSpecHash": "Vt843ZLITOb1rEnRP7WA/jC6XvMxvbRGrFIyScidemjkddpcYE1wFHGOWmATi+MtICb0cfUdJu2V1AWR6dkO3A==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Sistemas\\Documents\\GitHub\\ZeusInventario\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj",
+  "projectFilePath": "C:\\Users\\Sistemas\\source\\repos\\Haidercc10\\ApiZeusInventario\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Sistemas\\.nuget\\packages\\azure.core\\1.24.0\\azure.core.1.24.0.nupkg.sha512",
     "C:\\Users\\Sistemas\\.nuget\\packages\\azure.identity\\1.6.0\\azure.identity.1.6.0.nupkg.sha512",
@@ -291,7 +291,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'Intercom.Dotnet.Client 2.1.1' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net7.0'. This package may not be fully compatible with your project.",
+      "message": "El paquete \"Intercom.Dotnet.Client 2.1.1\" se restauró con \".NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1\" en lugar de la plataforma de destino del proyecto \"net7.0\". Puede que el paquete no sea totalmente compatible con el proyecto.",
       "libraryId": "Intercom.Dotnet.Client",
       "targetGraphs": [
         "net7.0"

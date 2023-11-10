@@ -488,8 +488,8 @@ namespace ZeusInventarioWebAPI.Controllers
         }
 
         //GET: Consullta para obtener un consolidad de los productos comprados por cliente cada mes año a año, esta consultará entre un ragon de años y/o un vendedor y/o un cliente y/o un producto
-        [HttpGet("getConsolidadoClientesArticulo/{ano1}/{ano2}")]
-        public ActionResult GetConsolidadClientesArticulo(int ano1, int ano2, string? vendedor = "", string? nombreVendedor = "", string? producto = "", string? nombreProducto = "", string? cliente = "", string? nombreCliente = "")
+        [HttpGet("getConsolidadoClientesArticulo/{fecha1}/{fecha2}")]
+        public ActionResult GetConsolidadClientesArticulo(DateTime fecha1, DateTime fecha2, string? vendedor = "", string? nombreVendedor = "", string? producto = "", string? nombreProducto = "", string? cliente = "", string? nombreCliente = "")
         {
 #pragma warning disable CS8604 // Posible argumento de referencia nulo
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -501,8 +501,8 @@ namespace ZeusInventarioWebAPI.Controllers
                             && mov.Tercero.Contains(cliente)
                             && mov.NombreTercero.Contains(nombreCliente)
                             && mov.TipoDocumento == 9
-                            && mov.FechaDocumento.Year >= ano1
-                            && mov.FechaDocumento.Year <= ano2
+                            && mov.FechaDocumento >= fecha1
+                            && mov.FechaDocumento <= fecha2
                             && mov.Fuente == "FV"
                             && mov.Estado == "Procesado"
                       group mov by new
@@ -553,8 +553,8 @@ namespace ZeusInventarioWebAPI.Controllers
                                    && tr.Tipofac == "FA"
                                    && tr.Indcpitra == "1"
                                    && dev.Fuente == "DV"
-                                   && mov.FechaDocumento.Year >= ano1
-                                   && mov.FechaDocumento.Year <= ano2
+                                   && mov.FechaDocumento >= fecha1
+                                   && mov.FechaDocumento <= fecha2
                              group new { mov, tr } by new
                              {
                                  Mes = mov.FechaDocumento.Month,
