@@ -1219,6 +1219,101 @@ namespace ZeusInventarioWebAPI.Controllers
             return Convert.ToString(response.Status) == "SUCCESS" ? Ok(response) : BadRequest(response);
         }
 
+        //Consulta que devolverá la facturación consolidada dependiendo los parametros consultados
+        [HttpGet("getNuevaFacturacionConsolidada/{fecha1}/{fecha2}")]
+        public ActionResult getNuevaFacturacionConsolidada(DateTime fecha1, DateTime fecha2, string? vendedor = "", string? item = "", string? cliente = "")
+        {
+#pragma warning disable CS8604 // Posible argumento de referencia nulo
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+
+            var fact = from mov in _context.Set<MovimientoItem>()
+                      from tr in _context.Set<Transac>()
+                      from f in _context.Set<FacturaDeCliente>()
+                      where mov.CodigoDocumento == f.Consecutivo
+                            && mov.Vendedor.Contains(vendedor)
+                            && mov.CodigoArticulo.Contains(item)
+                            && mov.Tercero.Contains(cliente)
+                            && tr.Numdoctra == f.Documento
+                            && mov.TipoDocumento == 9
+                            && mov.Fuente == "FV"
+                            && mov.Estado == "Procesado"
+                            && tr.Indcpitra == "2"
+                            && tr.Idfuente == "FV"
+                            && tr.Tipofac == "FA"
+                            && mov.FechaDocumento >= fecha1
+                            && mov.FechaDocumento <= fecha2
+                       select new
+                      {
+                          IdCliente = Convert.ToString(f.Cliente),
+                          Cliente = Convert.ToString(mov.NombreTercero),
+                          Item = Convert.ToString(mov.CodigoArticulo),
+                          Referencia = Convert.ToString(mov.NombreArticulo),
+                          Cantidad = Convert.ToDecimal(mov.Cantidad),
+                          Devolucion = Convert.ToDecimal(0),
+                          Presentacion = Convert.ToString(mov.Presentacion),
+                          Precio = Convert.ToDecimal(mov.PrecioUnidad),
+                          SubTotal = Convert.ToDecimal(mov.PrecioUnidad) * Convert.ToDecimal(mov.Cantidad),
+                          Suma = item == "" ? Convert.ToDecimal(tr.Valortra) : Convert.ToDecimal(mov.PrecioUnidad) * Convert.ToDecimal(mov.Cantidad),
+                          IdVendedor = Convert.ToString(mov.Vendedor),
+                          Vendedor = Convert.ToString(mov.NombreVendedor),
+                          Fecha = Convert.ToString(f.Fecha.ToString("yyyy-MM-dd")),
+                          Factura = Convert.ToString(f.Documento),
+                          Recibo = Convert.ToString("------------------------"), 
+                      };
+            
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+#pragma warning restore CS8604 // Posible argumento de referencia nulo
+            return Ok(fact);
+        }
+
+        //Consulta que devolverá las devoluciones consolidadas dependiendo los parametros consultados
+        [HttpGet("getNuevaDevolucionConsolidada/{fecha1}/{fecha2}")]
+        public ActionResult GetNuevaDevolucionConsolidada(DateTime fecha1, DateTime fecha2, string? vendedor = "", string? item = "", string? cliente = "")
+        {
+#pragma warning disable CS8604 // Posible argumento de referencia nulo
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+
+            var devolucion = from mov in _context.Set<MovimientoItem>()
+                             from tr in _context.Set<Transac>()
+                             from dev in _context.Set<DevolucionVenta>()
+                             where mov.CodigoDocumento == dev.Consecutivo
+                                   && mov.Vendedor.Contains(vendedor)
+                                   && mov.CodigoArticulo.Contains(item)
+                                   && mov.Tercero.Contains(cliente)
+                                   && tr.Numdoctra == dev.Documento
+                                   && mov.TipoDocumento == 26
+                                   && tr.Idfuente == "DV"
+                                   && tr.Tipofac == "FA"
+                                   && tr.Indcpitra == "2"
+                                   && dev.Fuente == "DV"
+                                   && mov.FechaDocumento >= fecha1
+                                   && mov.FechaDocumento <= fecha2
+                             select new
+                             {
+                                 IdCliente = Convert.ToString(dev.Cliente),
+                                 Cliente = Convert.ToString(mov.NombreTercero),
+                                 Item = Convert.ToString(mov.CodigoArticulo),
+                                 Referencia = Convert.ToString(mov.NombreArticulo),
+                                 Cantidad = Convert.ToDecimal(0),
+                                 Devolucion = Convert.ToDecimal(mov.Cantidad),
+                                 Presentacion = Convert.ToString(mov.Presentacion),
+                                 Precio = Convert.ToDecimal(mov.PrecioUnidad),
+                                 SubTotal = Convert.ToDecimal(mov.Cantidad) * Convert.ToDecimal(mov.PrecioUnidad),
+                                 Suma = item == "" ? Convert.ToDecimal(tr.Valortra) : Convert.ToDecimal(mov.PrecioUnidad) * Convert.ToDecimal(mov.Cantidad),
+                                 IdVendedor = Convert.ToString(mov.Vendedor),
+                                 Vendedor = Convert.ToString(mov.NombreVendedor),
+                                 Fecha = Convert.ToString(dev.Fecha.ToString("yyyy-MM-dd")),
+                                 Factura = Convert.ToString(tr.Numefac),
+                                 Recibo = Convert.ToString("DEVOLUCIÓN"),
+                             };
+
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+#pragma warning restore CS8604 // Posible argumento de referencia nulo
+            return Ok(devolucion);
+        }
+
+
+
     }
 
 }
