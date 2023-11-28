@@ -1299,7 +1299,7 @@ namespace ZeusInventarioWebAPI.Controllers
                                  Presentacion = Convert.ToString(mov.Presentacion),
                                  Precio = Convert.ToDecimal(mov.PrecioUnidad),
                                  SubTotal = Convert.ToDecimal(mov.Cantidad) * Convert.ToDecimal(mov.PrecioUnidad),
-                                 Suma = item == "" ? Convert.ToDecimal(tr.Valortra) : Convert.ToDecimal(mov.PrecioUnidad) * Convert.ToDecimal(mov.Cantidad),
+                                 Suma = item == "" ? (Convert.ToDecimal(tr.Valortra) * -1) : (Convert.ToDecimal(mov.PrecioUnidad) * Convert.ToDecimal(mov.Cantidad) * -1),
                                  IdVendedor = Convert.ToString(mov.Vendedor),
                                  Vendedor = Convert.ToString(mov.NombreVendedor),
                                  Fecha = Convert.ToString(dev.Fecha.ToString("yyyy-MM-dd")),
