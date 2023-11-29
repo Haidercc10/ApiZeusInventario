@@ -430,7 +430,8 @@ namespace ZeusInventarioWebAPI.Controllers
                       select new
                       {
                           mov.Key.Estado,
-                          Costo = (mov.Sum(x => x.Cantidad * x.PrecioUnidad)),
+                          Costo = (mov.Sum(x => (x.Cantidad - x.Faltantes) * x.PrecioUnidad)),
+                          CostoTotal = (mov.Sum(x => x.Cantidad * x.PrecioUnidad)),
                           Cantidad = mov.Count()
                       };
             return Ok(con);
