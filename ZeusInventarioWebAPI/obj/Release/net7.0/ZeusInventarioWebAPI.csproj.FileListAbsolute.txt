@@ -1214,3 +1214,4 @@ C:\Users\Sistemas\source\repos\Haidercc10\ApiZeusInventario\ZeusInventarioWebAPI
 C:\Users\Sistemas\source\repos\Haidercc10\ApiZeusInventario\ZeusInventarioWebAPI\bin\Release\net7.0\tr\System.ServiceModel.Federation.resources.dll
 C:\Users\Sistemas\source\repos\Haidercc10\ApiZeusInventario\ZeusInventarioWebAPI\bin\Release\net7.0\zh-Hans\System.ServiceModel.Federation.resources.dll
 C:\Users\Sistemas\source\repos\Haidercc10\ApiZeusInventario\ZeusInventarioWebAPI\bin\Release\net7.0\zh-Hant\System.ServiceModel.Federation.resources.dll
+C:\Users\Sistemas\source\repos\Haidercc10\ApiZeusInventario\ZeusInventarioWebAPI\obj\Release\net7.0\ZeusInventarioWebAPI.sourcelink.json

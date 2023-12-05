@@ -93,6 +93,29 @@ namespace ZeusInventarioWebAPI.Controllers
             else return Ok(transac);
         }
 
+        // GET: Valor Facturado el día de hoy.
+        [HttpGet("ValorTotalFacturadoHoy")]
+        public ActionResult ValorTotalFacturadoHoy()
+        {
+            DateTime Hoy = DateTime.Today;
+
+            if (_context.FacturaDeClientes == null) return NotFound();
+            var facturado = (from t in _context.Set<Transac>()
+                             where t.Idfuente == "FV"
+                             && t.Tipofac == "FA"
+                             && t.Indcpitra == "1"
+                             && t.Fechatra == Convert.ToString(Hoy.ToString("yyyy/MM/dd"))
+                             select Math.Abs(t.Valortra)).Sum();
+
+            var devuelto = (from t in _context.Set<Transac>()
+                             where t.Idfuente == "DV"
+                             && t.Tipofac == "FA"
+                             && t.Indcpitra == "1"
+                             && t.Fechatra == Convert.ToString(Hoy.ToString("yyyy/MM/dd"))
+                            select t.Valortra).Sum();
+
+            return Ok(facturado - devuelto);
+        }
 
         // PUT: api/Transac/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
