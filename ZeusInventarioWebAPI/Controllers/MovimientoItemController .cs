@@ -1313,7 +1313,68 @@ namespace ZeusInventarioWebAPI.Controllers
             return Ok(devolucion);
         }
 
+        //Consulta para obtener el valor de Ventas y Devoluciones, Iva y Totales mes a mes, dependiendo el año elegido. 
+        [HttpGet("getEstadisticaVentasAnio/{anio}")]
+        public ActionResult GetEstadisticaVentasAnio(int anio, string? vendedor = "", string? cliente = "")
+        {
+            var data = new List<object>();
 
+            for (int i = 1; i <= 12; i++)
+            {
+                string mes = (i).ToString().Length > 1 ? $"{i}" : $"0{i}";
+
+                var facturado = (from m in _context.Set<MovimientoItem>()
+                                 where m.Estado == "Procesado"
+                                 && m.Fuente == "FV" 
+                                 && m.FechaDocumento.Year == anio
+                                 && m.FechaDocumento.Month == Convert.ToInt32(mes)
+                                 && m.Vendedor.Contains(vendedor)
+                                 && m.Tercero.Contains(cliente)
+                                 select m.PrecioTotal).Sum();
+
+                var devuelto = (from t in _context.Set<Transac>()
+                                where t.Idfuente == "DV"
+                                && t.Tipofac == "FA"
+                                && t.Indcpitra == "1"
+                                && t.Fechatra.Substring(0, 4) == Convert.ToString(anio)
+                                && t.Fechatra.Substring(5, 2) == mes
+                                && t.Idvende.Contains(vendedor)
+                                && t.Nittra.Contains(cliente)
+                                select t.Valortra).Sum();
+
+                var iva = (from m in _context.Set<MovimientoItem>()
+                                 where m.Estado == "Procesado"
+                                 && m.Fuente == "FV"
+                                 && m.FechaDocumento.Year == anio
+                                 && m.FechaDocumento.Month == Convert.ToInt32(mes)
+                                 && m.Vendedor.Contains(vendedor)
+                                 && m.Tercero.Contains(cliente)
+                           select m.TotalIvaventas).Sum();
+
+                data.Add($"'Anio' : '{anio}', " +
+                         $"'Mes' : '{ (mes == "01" ? "Enero" :
+                                       mes == "02" ? "Febrero" :
+                                       mes == "03" ? "Marzo" :
+                                       mes == "04" ? "Abril" :
+                                       mes == "05" ? "Mayo" :
+                                       mes == "06" ? "Junio" :
+                                       mes == "07" ? "Julio" :
+                                       mes == "08" ? "Agosto" :
+                                       mes == "09" ? "Septiembre" :
+                                       mes == "10" ? "Octubre" :
+                                       mes == "11" ? "Noviembre" :
+                                       mes == "12" ? "Diciembre" : 
+                                       mes) }', " +
+                         $"'Facturado' : '{facturado}', " +
+                         $"'Devuelto' : '{devuelto}', " +
+                         $"'Total' : '{facturado - devuelto}', " +
+                         $"'Iva' : '{iva}', " +
+                         $"'TotalMasIva' : '{(facturado - devuelto) + iva}' ");
+
+                if (Convert.ToInt32(mes) == 12) return Ok(data);
+            }
+            return Ok(data);
+        }
 
     }
 
