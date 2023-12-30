@@ -46,6 +46,8 @@ namespace ZeusInventarioWebAPI.Data
 
         public virtual DbSet<Proveedore> Proveedores { get; set; }
 
+        public virtual DbSet<CruceDocumentosRelacionado> CruceDocumentosRelacionados { get; set; }
+
 
         //CONEXIÓN A BASE DE DATOS QUE YA SE ENCUENTRA EN appsettings.json
         /*protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
