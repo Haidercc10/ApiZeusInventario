@@ -1376,6 +1376,41 @@ namespace ZeusInventarioWebAPI.Controllers
             return Ok(data);
         }
 
-    }
+        [HttpGet("getBillsByClient/{start}/{end}")]
+        public ActionResult GetBillsByClient(DateTime start, DateTime end, string? client = "", string? item = "")
+        {
+            var con = from mov in _context.Set<MovimientoItem>()
+                      join cli in _context.Set<Cliente>() on mov.Tercero equals cli.Idcliente
+                      join fac in _context.Set<FacturaDeCliente>() on mov.CodigoDocumento equals fac.Consecutivo
+                      where mov.TipoDocumento == 9 &&
+                            mov.FechaDocumento >= start &&
+                            mov.FechaDocumento <= end &&
+                            mov.Cantidad > 0 &&
+                            (item != "" ? mov.CodigoArticulo == item : true) &&
+                            (client != "" ? mov.Tercero == client : true)
+                      select new
+                      {
+                          Month = mov.FechaDocumento.Month,
+                          Year = mov.FechaDocumento.Year,
+                          Date = mov.FechaDocumento,
+                          Bill = fac.Documento,
+                          Id_Client = cli.Idcliente,
+                          Client = cli.Razoncial,
+                          Item = mov.CodigoArticulo,
+                          Reference = mov.NombreArticulo,
+                          Quantity = mov.Cantidad,
+                          Presentation = mov.Presentacion,
+                          Price = mov.PrecioUnidad,
+                          SubTotal = (mov.Cantidad * mov.PrecioUnidad),
+                          PercentageDiscount = mov.PorcentajeDcto,
+                          Discount = mov.TotalDescuentoVenta,
+                          PercentageIVA = mov.PorcentajeIva,
+                          IVA = mov.TotalIvaventas,
+                          SubTotalLessDiscount = (mov.Cantidad * mov.PrecioUnidad) - mov.TotalDescuentoVenta,
+                          FinalSubTotal = ((mov.Cantidad * mov.PrecioUnidad) - mov.TotalDescuentoVenta) + mov.TotalIvaventas
+                      };
 
+            return con.Any() ? Ok(con) : NotFound();
+        }
+    }
 }

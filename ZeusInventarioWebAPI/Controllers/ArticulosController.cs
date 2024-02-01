@@ -27,7 +27,6 @@ namespace ZeusInventarioWebAPI.Controllers
             return await _context.Articulos.ToListAsync();
         }
 
-
         // GET: api/Articulos/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Articulo>> GetArticulo(decimal id)
@@ -44,6 +43,28 @@ namespace ZeusInventarioWebAPI.Controllers
             }
 
             return articulo;
+        }
+
+        [HttpGet("getItemsByName/{name}")]
+        public ActionResult GetItemsByName(string name)
+        {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            var items = from a in _context.Set<Articulo>()
+                        where a.Tipo == "PRODUCTO TERMINADO" &&
+                              a.Nombre.Contains(name)
+                        select a;
+            return Ok(items);
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+        }
+
+        [HttpGet("getItemsByNumber/{number}")]
+        public ActionResult GetItemsByNumber(string number)
+        {
+            var items = from a in _context.Set<Articulo>()
+                        where a.Tipo == "PRODUCTO TERMINADO" &&
+                              a.Codigo == number
+                        select a;
+            return Ok(items);
         }
 
         /** */

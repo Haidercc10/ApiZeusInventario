@@ -16,7 +16,7 @@ namespace ZeusInventarioWebAPI.Controllers
         }
 
         [HttpGet("getClientByName/{name}")]
-        public ActionResult getClientBtName(string name)
+        public ActionResult getClientByName(string name)
         {
             var clients = from c in _context.Set<Cliente>()
                           where c.Razoncial.Contains(name)
