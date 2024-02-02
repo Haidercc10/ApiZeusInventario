@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ZeusInventarioWebAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8926ca12798dc994a83abefde698a905f1af58d7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+17afeaad2b24036cb2887c6ca778d6290b54069f")]
 [assembly: System.Reflection.AssemblyProductAttribute("ZeusInventarioWebAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ZeusInventarioWebAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

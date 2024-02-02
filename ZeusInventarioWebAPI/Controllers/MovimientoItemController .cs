@@ -1407,10 +1407,49 @@ namespace ZeusInventarioWebAPI.Controllers
                           PercentageIVA = mov.PorcentajeIva,
                           IVA = mov.TotalIvaventas,
                           SubTotalLessDiscount = (mov.Cantidad * mov.PrecioUnidad) - mov.TotalDescuentoVenta,
-                          FinalSubTotal = ((mov.Cantidad * mov.PrecioUnidad) - mov.TotalDescuentoVenta) + mov.TotalIvaventas
+                          FinalSubTotal = ((mov.Cantidad * mov.PrecioUnidad) - mov.TotalDescuentoVenta) + mov.TotalIvaventas,
+                          IdTypeDocument = mov.TipoDocumento,
+                          TypeDocument = mov.NombreTipoDocumento,
                       };
 
-            return con.Any() ? Ok(con) : NotFound();
+            var devs = from mov in _context.Set<MovimientoItem>()
+                       join cli in _context.Set<Cliente>() on mov.Tercero equals cli.Idcliente
+                       join dev in _context.Set<DevolucionVenta>() on mov.CodigoDocumento equals dev.Consecutivo
+                       join tra in _context.Set<Transac>() on dev.Documento equals tra.Numdoctra
+                       where mov.TipoDocumento == 26 &&
+                             mov.FechaDocumento >= start &&
+                             mov.FechaDocumento <= end &&
+                             mov.Cantidad > 0 &&
+                             tra.Tipofac == "FA" &&
+                             tra.Idfuente == "DV" &&
+                             tra.Vencefac != "" &&
+                             (item != "" ? mov.CodigoArticulo == item : true) &&
+                             (client != "" ? mov.Tercero == client : true)
+                       select new
+                       {
+                           Month = mov.FechaDocumento.Month,
+                           Year = mov.FechaDocumento.Year,
+                           Date = mov.FechaDocumento,
+                           Bill = tra.Numefac,
+                           Id_Client = cli.Idcliente,
+                           Client = cli.Razoncial,
+                           Item = mov.CodigoArticulo,
+                           Reference = mov.NombreArticulo,
+                           Quantity = mov.Cantidad * -1,
+                           Presentation = mov.Presentacion,
+                           Price = mov.PrecioUnidad,
+                           SubTotal = (mov.Cantidad * -1 * mov.PrecioUnidad),
+                           PercentageDiscount = Convert.ToDecimal(0),
+                           Discount = Convert.ToDecimal(0),
+                           PercentageIVA = Convert.ToDecimal(0),
+                           IVA = Convert.ToDecimal(0),
+                           SubTotalLessDiscount = (mov.Cantidad * -1 * mov.PrecioUnidad) - mov.TotalDescuentoVenta,
+                           FinalSubTotal = ((mov.Cantidad * -1 * mov.PrecioUnidad) - mov.TotalDescuentoVenta) + mov.TotalIvaventas,
+                           IdTypeDocument = mov.TipoDocumento,
+                           TypeDocument = mov.NombreTipoDocumento,
+                       };
+
+            return con.Any() ? Ok(con.Concat(devs)) : NotFound();
         }
     }
 }
