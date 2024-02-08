@@ -26,18 +26,26 @@ namespace ZeusInventarioWebAPI.Controllers
         public ActionResult GetFactura(decimal pedido)
         {
 #pragma warning disable CS8604 // Possible null reference argument.
-            var consecutivoFactura = (from c in _context.Set<CruceDocumentosRelacionado>()
-                                      where c.TipoImportador == 9 &&
+            var consecutivoFactura = (from c in _context.Set<DocumentosRelacionado>()
+                                      where (c.TipoImportador == 9 || c.TipoImportador == 20) &&
                                             c.TipoExportador == 7 &&
                                             c.Exportador == pedido
-                                      orderby c.SpId descending
+                                      orderby c.IdenDocumentosrelacionados descending
                                       select c.Importador).FirstOrDefault();
 
             var numeroFactura = from f in _context.Set<FacturaDeCliente>()
-                                where f.Consecutivo == consecutivoFactura
+                                where f.Consecutivo == consecutivoFactura &&
+                                      f.Fecha >= Convert.ToDateTime("2024-01-01")
                                 select f;
 
-            return numeroFactura.Any() ? Ok(numeroFactura.FirstOrDefault()) : NotFound();
+            var numeroRemision = from r in _context.Set<Remision>()
+                                 where r.Consecutivo == consecutivoFactura &&
+                                       r.Fecha >= Convert.ToDateTime("2024-01-01")
+                                 select r;
+
+            if (numeroFactura.Any()) return Ok(numeroFactura.FirstOrDefault());
+            else if (numeroRemision.Any()) return Ok(numeroRemision.FirstOrDefault());
+            else return NotFound();
 #pragma warning restore CS8604 // Possible null reference argument.
         }
 
@@ -45,18 +53,24 @@ namespace ZeusInventarioWebAPI.Controllers
         public IActionResult GetFactura_PorPedidos([FromBody] List<string> pedidos)
         {
 #pragma warning disable CS8604 // Possible null reference argument.
-            var consecutivoFactura = (from c in _context.Set<CruceDocumentosRelacionado>()
-                                      where c.TipoImportador == 9 &&
-                                            c.TipoExportador == 7 /*&&
-                                            pedidos.Contains(Convert.ToString(c.Exportador))*/
-                                      orderby c.SpId descending
+            var consecutivoFactura = (from c in _context.Set<DocumentosRelacionado>()
+                                      where (c.TipoImportador == 9 || c.TipoImportador == 20) &&
+                                            c.TipoExportador == 7 &&
+                                            pedidos.Contains(Convert.ToString(c.Exportador))
+                                      orderby c.IdenDocumentosrelacionados descending
                                       select c.Importador).FirstOrDefault();
 
             var numeroFactura = from f in _context.Set<FacturaDeCliente>()
                                 where f.Consecutivo == consecutivoFactura
                                 select f;
 
-            return numeroFactura.Any() ? Ok(numeroFactura.FirstOrDefault()) : NotFound();
+            var numeroRemision = from r in _context.Set<Remision>()
+                                 where r.Consecutivo == consecutivoFactura
+                                 select r;
+
+            if (numeroFactura.Any()) return Ok(numeroFactura.FirstOrDefault());
+            else if (numeroRemision.Any()) return Ok(numeroRemision.FirstOrDefault());
+            else return NotFound();
 #pragma warning restore CS8604 // Possible null reference argument.
         }
     }

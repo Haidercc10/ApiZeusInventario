@@ -48,6 +48,10 @@ namespace ZeusInventarioWebAPI.Data
 
         public virtual DbSet<CruceDocumentosRelacionado> CruceDocumentosRelacionados { get; set; }
 
+        public virtual DbSet<Remision> Remisions { get; set; }
+
+        public virtual DbSet<DocumentosRelacionado> DocumentosRelacionados { get; set; }
+
 
         //CONEXIÓN A BASE DE DATOS QUE YA SE ENCUENTRA EN appsettings.json
         /*protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -2158,6 +2162,37 @@ namespace ZeusInventarioWebAPI.Data
                 entity.Property(e => e.VersionDeLaFila)
                     .IsRowVersion()
                     .IsConcurrencyToken();
+            });
+
+            modelBuilder.Entity<Remision>(entity =>
+            {
+                entity.HasIndex(e => e.Consecutivo, "Consecutivo").IsClustered();
+
+                entity.Property(e => e.Cliente).HasDefaultValue("");
+                entity.Property(e => e.DespachoCiudad).HasDefaultValue("");
+                entity.Property(e => e.DespachoCliente).HasDefaultValue("");
+                entity.Property(e => e.DespachoDireccion).HasDefaultValue("");
+                entity.Property(e => e.DespachoTransportadora).HasDefaultValue("");
+                entity.Property(e => e.Detalle).HasDefaultValue("");
+                entity.Property(e => e.Documento).HasDefaultValue("");
+                entity.Property(e => e.DocumentoRev).HasDefaultValue(0m);
+                entity.Property(e => e.Estado).HasDefaultValue("");
+                entity.Property(e => e.Facturada).HasDefaultValue(false);
+                entity.Property(e => e.Fecha).HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.Fuente).HasDefaultValue("");
+                entity.Property(e => e.IdenRemision).ValueGeneratedOnAdd();
+                entity.Property(e => e.ListaDePrecios).HasDefaultValue("");
+                entity.Property(e => e.Moneda).HasDefaultValue("");
+                entity.Property(e => e.ObservacionInterna).HasDefaultValue("");
+                entity.Property(e => e.Serie).HasDefaultValue("");
+                entity.Property(e => e.Tasacambio).HasDefaultValue(1m);
+                entity.Property(e => e.Usuario).HasDefaultValue(0m);
+                entity.Property(e => e.Vendedor).HasDefaultValue("");
+            });
+
+            modelBuilder.Entity<DocumentosRelacionado>(entity =>
+            {
+                entity.Property(e => e.IdenDocumentosrelacionados).ValueGeneratedOnAdd();
             });
 
             OnModelCreatingPartial(modelBuilder);
