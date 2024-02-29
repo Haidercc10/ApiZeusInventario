@@ -10,7 +10,7 @@
     <WebStackScaffolding_LayoutPageFile />
     <WebStackScaffolding_DbContextTypeFullName>ZeusInventarioWebAPI.Data.InventarioDataContext</WebStackScaffolding_DbContextTypeFullName>
     <WebStackScaffolding_IsAsyncSelected>False</WebStackScaffolding_IsAsyncSelected>
-    <NameOfLastUsedPublishProfile>C:\Users\Sistemas\Documents\GitHub\ZeusInventario\ZeusInventarioWebAPI\Properties\PublishProfiles\Servidor.pubxml</NameOfLastUsedPublishProfile>
+    <NameOfLastUsedPublishProfile>C:\Users\Sistemas\source\repos\Haidercc10\ApiZeusInventario\ZeusInventarioWebAPI\Properties\PublishProfiles\API_Local.pubxml</NameOfLastUsedPublishProfile>
     <WebStackScaffolding_DbContextDialogWidth>650</WebStackScaffolding_DbContextDialogWidth>
   </PropertyGroup>
 </Project>

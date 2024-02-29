@@ -106,6 +106,9 @@ namespace ZeusInventarioWebAPI.Controllers
                       from art in _context.Set<Articulo>()
                       where exis.Articulo == art.IdArticulo
                             && art.Codigo == producto
+                            && art.Tipo == "PRODUCTO TERMINADO"
+                            && exis.Bodega == "003"
+                            && art.DesHabilitado == false
                             && art.Presentacion == presentacion
                       select exis;
             return Ok(con);
