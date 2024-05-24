@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "8WySKh2vVmH/usCBuQWkSw5vH8DOxpQSwkE1BIVAcXU=",
+  "Hash": "kN2avl2KaDz5qfN73CCNgdfbgkD2L19wKsy1CK8WthA=",
   "Source": "ZeusInventarioWebAPI",
   "BasePath": "_content/ZeusInventarioWebAPI",
   "Mode": "Default",
@@ -47,10 +47,10 @@
       "OriginalItemSpec": "C:\\Users\\Sistemas\\.nuget\\packages\\microsoft.aspnetcore.components.quickgrid\\8.0.1\\staticwebassets\\QuickGrid.razor.js"
     },
     {
-      "Identity": "C:\\Users\\Sistemas\\source\\repos\\Haidercc10\\ApiZeusInventario\\ZeusInventarioWebAPI\\obj\\Release\\net8.0\\scopedcss\\bundle\\ZeusInventarioWebAPI.styles.css",
+      "Identity": "C:\\Users\\Sistemas\\Source\\Repos\\Haidercc10\\ApiZeusInventario\\ZeusInventarioWebAPI\\obj\\Release\\net8.0\\scopedcss\\bundle\\ZeusInventarioWebAPI.styles.css",
       "SourceId": "ZeusInventarioWebAPI",
       "SourceType": "Computed",
-      "ContentRoot": "C:\\Users\\Sistemas\\source\\repos\\Haidercc10\\ApiZeusInventario\\ZeusInventarioWebAPI\\obj\\Release\\net8.0\\scopedcss\\bundle\\",
+      "ContentRoot": "C:\\Users\\Sistemas\\Source\\Repos\\Haidercc10\\ApiZeusInventario\\ZeusInventarioWebAPI\\obj\\Release\\net8.0\\scopedcss\\bundle\\",
       "BasePath": "_content/ZeusInventarioWebAPI",
       "RelativePath": "ZeusInventarioWebAPI.styles.css",
       "AssetKind": "All",
@@ -63,7 +63,7 @@
       "AssetTraitValue": "ApplicationBundle",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "C:\\Users\\Sistemas\\source\\repos\\Haidercc10\\ApiZeusInventario\\ZeusInventarioWebAPI\\obj\\Release\\net8.0\\scopedcss\\bundle\\ZeusInventarioWebAPI.styles.css"
+      "OriginalItemSpec": "C:\\Users\\Sistemas\\Source\\Repos\\Haidercc10\\ApiZeusInventario\\ZeusInventarioWebAPI\\obj\\Release\\net8.0\\scopedcss\\bundle\\ZeusInventarioWebAPI.styles.css"
     }
   ]
 }

@@ -46,17 +46,18 @@ namespace ZeusInventarioWebAPI.Controllers
             var Bodega = "003";
             var CodArticulo = _context.Existencia.Where(a => a.ArticuloNavigation.Tipo == TipoProd
                                                 && a.Bodega == Bodega
+                                                && a.ArticuloNavigation.DesHabilitado == false
                                                 && a.Existencias >= 1
                                                 && a.Articulo == a.ArticuloNavigation.IdArticulo)
                                                .Include(a => a.ArticuloNavigation)
                                                .OrderByDescending(x => x.Existencias)
                                                .Select(ART => new {
-                                                   ART.Articulo,
-                                                   ART.ArticuloNavigation.Codigo,
-                                                   ART.ArticuloNavigation.Nombre,
-                                                   ART.Existencias,
-                                                   ART.ArticuloNavigation.PrecioVenta,
-                                                   ART.ArticuloNavigation.Presentacion,
+                                                   Articulo =  ART.Articulo,
+                                                   Codigo = ART.ArticuloNavigation.Codigo,
+                                                   Nombre = ART.ArticuloNavigation.Nombre,
+                                                   Existencias = ART.Existencias,
+                                                   PrecioVenta = ART.ArticuloNavigation.PrecioVenta,
+                                                   Presentacion = ART.ArticuloNavigation.Presentacion == "UND" ? "Und" : ART.ArticuloNavigation.Presentacion == "KLS" ? "Kg" : "Paquete",
                                                    Precio_Total = ART.Existencias * ART.ArticuloNavigation.PrecioVenta
                                                }).ToList();
 
