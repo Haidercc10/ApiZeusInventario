@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Any;
 using Microsoft.VisualBasic;
+using Newtonsoft.Json.Linq;
 using NuGet.Protocol;
 using ServiceReference1;
 using System.Data.Entity;
@@ -11,6 +12,7 @@ using System.Globalization;
 using System.Linq;
 using System.ServiceModel;
 using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
 using ZeusInventarioWebAPI.Data;
 using ZeusInventarioWebAPI.Models;
 
@@ -90,6 +92,46 @@ namespace ZeusInventarioWebAPI.Controllers
 
             var datos = MovimientoItem - Transaccion1;
 
+            return Ok(datos);
+        }
+
+        // Consulta para obtener la cantidad total facturada de cada item por año y mes.
+        [HttpGet("KilosFacturadosMes/{year}")]
+        public ActionResult KilosFacturadosMes(int year)
+        {
+            if (_context.MovimientoItems == null)
+            {
+                return NotFound();
+            }
+
+            var datos = new List<object>();
+            for (int i = 0; i < 12; i++)
+            {
+                string mes = (i + 1).ToString().Length > 1 ? $"{i + 1}" : $"0{i + 1}";
+
+                var value = from mi in _context.Set<MovimientoItem>()
+                            where mi.Fuente == "FV"
+                            && mi.Estado == "Procesado"
+                            && mi.FechaDocumento.Month == Convert.ToInt32(mes)
+                            && mi.FechaDocumento.Year == year
+                            group mi by new
+                            {
+                                mi.CodigoArticulo,
+                                mi.NombreArticulo,
+                                mi.Presentacion
+                            }
+                            into s
+                            select new
+                            {
+                                Item = s.Key.CodigoArticulo,
+                                Reference = s.Key.NombreArticulo,
+                                Qty = s.Sum(x => x.Cantidad),
+                                Und = s.Key.Presentacion
+                            };
+                datos.Add(value);
+                //datos.Add($"'Mes': '{mes}', 'Valor': '{Convert.ToDecimal(value)}'");
+                if (i == 11) return Ok(datos);
+            }
             return Ok(datos);
         }
 
