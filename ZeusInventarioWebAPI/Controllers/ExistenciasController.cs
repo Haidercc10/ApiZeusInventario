@@ -83,6 +83,28 @@ namespace ZeusInventarioWebAPI.Controllers
             return Ok(con);
         }
 
+        [HttpGet("getInventoryZeus")]
+        public ActionResult getInventoryZeus()
+        {
+            var con = from exis in _context.Set<Existencia>()
+                      from art in _context.Set<Articulo>()
+                      where exis.Articulo == art.IdArticulo
+                      && exis.Bodega == "003"
+                      && art.Tipo == "PRODUCTO TERMINADO"
+                      && exis.Existencias >= 1
+                      select new //art.Codigo + "-" + art.Presentacion;
+                      {
+                          Item = art.Codigo,
+                          Reference = art.Nombre,
+                          Qty = exis.Existencias,
+                          Presentation = art.Presentacion,
+                          Price = art.PrecioVenta,
+                          Subtotal = (art.PrecioVenta * exis.Existencias)
+                      }; 
+
+            return Ok(con);
+        }
+
         //
         [HttpGet("getPrecioUltimoPrecioFacturado/{producto}/{presentacion}")]
         public ActionResult getPrecioUltimoPrecioFacturado(string producto, string presentacion)

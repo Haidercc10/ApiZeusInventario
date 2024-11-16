@@ -57,6 +57,7 @@ namespace ZeusInventarioWebAPI.Controllers
                                   && mi.Estado == "Procesado"
                                   && mi.FechaDocumento.Month == ano.Month
                                   && mi.FechaDocumento.Year == ano.Year
+                                  && mi.Consecutivo != 35454
                                   select mi.PrecioTotal).Sum();
 
             var Transaccion1 = (from tr in _context.Set<Transac>()
@@ -80,6 +81,7 @@ namespace ZeusInventarioWebAPI.Controllers
                                   && mi.Estado == "Procesado"
                                   && mi.FechaDocumento.Month == Convert.ToInt32(mes)
                                   && mi.FechaDocumento.Year == ano
+                                  && mi.Consecutivo != 35454
                                   select mi.PrecioTotal).Sum();
 
             var Transaccion1 = (from tr in _context.Set<Transac>()
@@ -139,16 +141,18 @@ namespace ZeusInventarioWebAPI.Controllers
         [HttpGet("getFacturacion_Mes_Mes/{anio}")]
         public ActionResult FacturacionTodosMeses(int anio)
         {
-#pragma warning disable CS8604 // Posible argumento de referencia nulo
+            
             var datos = new List<object>();
             for (int i = 0; i < 12; i++)
             {
                 string mes = (i + 1).ToString().Length > 1 ? $"{i + 1}" : $"0{i + 1}";
                 var MovimientoItem = (from mi in _context.Set<MovimientoItem>()
-                                      where mi.Fuente == "FV"
+                                      where
+                                      mi.Fuente == "FV"
                                       && mi.Estado == "Procesado"
                                       && mi.FechaDocumento.Month == Convert.ToInt32(mes)
                                       && mi.FechaDocumento.Year == anio
+                                      && mi.Consecutivo != 35454
                                       select mi.PrecioTotal).Sum();
 
                 var Transaccion1 = (from tr in _context.Set<Transac>()
@@ -214,6 +218,79 @@ namespace ZeusInventarioWebAPI.Controllers
         }
 
         // GET: api/MovimientoItems/5
+        [HttpGet("getFacturacionPorItem/{item}")]
+        public ActionResult getFacturacionPorItem(string item)
+        {
+            var fact = from m in _context.Set<MovimientoItem>()
+                          join f in _context.Set<FacturaDeCliente>() on m.CodigoDocumento equals f.Consecutivo
+                          where m.FechaDocumento >= Convert.ToDateTime("2024-02-04") &&
+                          m.TipoDocumento == 9 &&
+                          m.CodigoArticulo == item
+                          select new
+                          {
+                              Doc = m.Consecutivo,
+                              Date = f.Fecha,
+                              Fact = f.Documento,
+                              Client_Id = f.Cliente,
+                              Client = m.NombreTercero,
+                              Status = f.Estado,
+                              SaleOrder = "0",
+                              Item = m.CodigoArticulo,
+                              Reference = m.NombreArticulo,
+                              Qty = m.Cantidad,
+                              Presentation = m.Presentacion,
+                              Observation = m.DetalleDocumento
+                          };
+
+            var rem = from m in _context.Set<MovimientoItem>()
+                          join f in _context.Set<Remision>() on m.CodigoDocumento equals f.Consecutivo
+                          where m.FechaDocumento >= Convert.ToDateTime("2024-02-04") &&
+                          m.TipoDocumento == 20 &&
+                          m.CodigoArticulo == item
+                          select new
+                          {
+                              Doc = m.Consecutivo,
+                              Date = f.Fecha,
+                              Fact = f.Documento,
+                              Client_Id = f.Cliente,
+                              Client = m.NombreTercero,
+                              Status = f.Estado,
+                              SaleOrder = "0",
+                              Item = m.CodigoArticulo,
+                              Reference = m.NombreArticulo,
+                              Qty = m.Cantidad,
+                              Presentation = m.Presentacion,
+                              Observation = m.DetalleDocumento
+                          };
+
+            var adj = from m in _context.Set<MovimientoItem>()
+                      where m.FechaDocumento >= Convert.ToDateTime("2024-02-04") &&
+                      m.TipoDocumento == 12 &&
+                      (m.Detalle == "0" ||
+                      m.DetalleDocumento.StartsWith("Ajuste") || 
+                      m.DetalleDocumento.StartsWith("CHRIS")) &&
+                      m.CodigoArticulo == item
+                      select new
+                      {
+                          Doc = m.Consecutivo,
+                          Date = m.FechaDocumento,
+                          Fact = m.Documento,
+                          Client_Id = m.Tercero,
+                          Client = m.NombreTercero,
+                          Status = m.Estado,
+                          SaleOrder = "0",
+                          Item = m.CodigoArticulo,
+                          Reference = m.NombreArticulo,
+                          Qty = m.Cantidad,
+                          Presentation = m.Presentacion,
+                          Observation = m.DetalleDocumento
+                      };
+
+            if (fact.Concat(rem.Concat(adj)) == null) return NotFound();  
+            return Ok(fact.Concat(rem.Concat(adj)));
+        }
+
+            // GET: api/MovimientoItems/5
         [HttpGet("GetIvaCompraTodosMeses/{mes}")]
         public ActionResult GetIvaCompraTodosMeses(int mes)
         {
@@ -721,6 +798,8 @@ namespace ZeusInventarioWebAPI.Controllers
                                   && mi.FechaDocumento.Month == Convert.ToInt32(mes)
                                   && mi.FechaDocumento.Year == anio
                                   && mi.Vendedor == vendedor
+                                  && mi.Consecutivo != 34839
+                                  && mi.Consecutivo != 35454
                                   select mi.PrecioTotal).Sum();
 
             var Transaccion1 = (from tr in _context.Set<Transac>()
