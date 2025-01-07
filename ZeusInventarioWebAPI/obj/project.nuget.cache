@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Oll8yZF8a1eB7Uriav70l25Zfgm/+znYC993nPKO/tZrrANXkaLcJrulWELeM5AU1X7a7he0hqrWr/uXHB2fxg==",
+  "dgSpecHash": "rQCxQi54fisHKWHjBD2gGi7wjiRfmqt1yffmUhEKYg0oLteFjo/3MAim2NGXXVuXVyDrSWC5r2fqcB0l0qasGQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Sistemas\\source\\repos\\Haidercc10\\ApiZeusInventario\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj",
+  "projectFilePath": "C:\\Users\\Sistemas\\Source\\Repos\\Haidercc10\\ApiZeusInventario\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Sistemas\\.nuget\\packages\\azure.core\\1.25.0\\azure.core.1.25.0.nupkg.sha512",
     "C:\\Users\\Sistemas\\.nuget\\packages\\azure.identity\\1.7.0\\azure.identity.1.7.0.nupkg.sha512",

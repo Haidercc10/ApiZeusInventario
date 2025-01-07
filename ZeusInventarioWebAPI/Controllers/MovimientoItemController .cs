@@ -239,7 +239,8 @@ namespace ZeusInventarioWebAPI.Controllers
                               Reference = m.NombreArticulo,
                               Qty = m.Cantidad,
                               Presentation = m.Presentacion,
-                              Observation = m.DetalleDocumento
+                              Observation = m.DetalleDocumento,
+                              Type = "FV"
                           };
 
             var rem = from m in _context.Set<MovimientoItem>()
@@ -260,7 +261,8 @@ namespace ZeusInventarioWebAPI.Controllers
                               Reference = m.NombreArticulo,
                               Qty = m.Cantidad,
                               Presentation = m.Presentacion,
-                              Observation = m.DetalleDocumento
+                              Observation = m.DetalleDocumento,
+                              Type = "REM"
                           };
 
             var adj = from m in _context.Set<MovimientoItem>()
@@ -283,7 +285,30 @@ namespace ZeusInventarioWebAPI.Controllers
                           Reference = m.NombreArticulo,
                           Qty = m.Cantidad,
                           Presentation = m.Presentacion,
-                          Observation = m.DetalleDocumento
+                          Observation = m.DetalleDocumento,
+                          Type = "AJUS"
+                      };
+
+            var dv = from m in _context.Set<MovimientoItem>()
+                     join d in _context.Set<DevolucionVenta>() on m.CodigoDocumento equals d.Consecutivo
+                     where m.FechaDocumento >= Convert.ToDateTime("2024-02-04") &&
+                     m.TipoDocumento == 26 &&
+                     m.CodigoArticulo == item
+                     select new
+                     {
+                          Doc = m.Consecutivo,
+                          Date = m.FechaDocumento,
+                          Fact = m.Documento,
+                          Client_Id = m.Tercero,
+                          Client = m.NombreTercero,
+                          Status = m.Estado,
+                          SaleOrder = "0",
+                          Item = m.CodigoArticulo,
+                          Reference = m.NombreArticulo,
+                          Qty = m.Cantidad,
+                          Presentation = m.Presentacion,
+                          Observation = m.DetalleDocumento,
+                          Type = "DV"
                       };
 
             if (fact.Concat(rem.Concat(adj)) == null) return NotFound();  
