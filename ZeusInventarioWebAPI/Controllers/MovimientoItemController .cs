@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Microsoft.OpenApi.Any;
 using Microsoft.VisualBasic;
 using Newtonsoft.Json.Linq;
@@ -1596,6 +1597,34 @@ namespace ZeusInventarioWebAPI.Controllers
                        };
 
             return con.Any() ? Ok(con.Concat(devs)) : NotFound();
+        }
+
+        [HttpGet("getClientsForLastFact/{start}/{end}")]
+        public ActionResult GetClientsForLastFact(DateTime start, DateTime end, string? client = "")
+        {
+            var fact = from fac in _context.Set<FacturaDeCliente>()
+                       where fac.Fecha >= start &&
+                       fac.Fecha <= end &&
+                       (client != "" ? fac.Cliente.Contains(client) : true)
+                       select fac.Cliente;
+
+            var con = from cli in _context.Set<Cliente>()
+                      join v in _context.Set<Maevende>() on cli.Idvende equals v.Idvende
+                      where (fact.Any() ? fact.Contains(cli.Idcliente) : true)
+                      select new
+                      {
+                          Id_Client = cli.Idcliente,
+                          Client = cli.Razoncial,
+                          City = cli.Ciudad, 
+                          Address = cli.Direccion,
+                          Phone = cli.Telefono,
+                          Email = cli.Email,
+                          IdSales = cli.Idvende,
+                          Sales = v.Nombvende,
+                          Date = (from fv in _context.Set<FacturaDeCliente>() where fv.Cliente == cli.Idcliente orderby fv.Consecutivo descending select Convert.ToDateTime(fv.Fecha) == null ? DateTime.Now : Convert.ToDateTime(fv.Fecha)).FirstOrDefault(),
+                      };
+
+            return Ok(con);
         }
     }
 }
