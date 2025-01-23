@@ -68,6 +68,26 @@ namespace ZeusInventarioWebAPI.Controllers
             return Ok(facturado);
         }
 
+        // GET: Valor Facturado el día de hoy.
+        [HttpGet("getDataFactura/{fact}")]
+        public ActionResult getDataFactura(string fact)
+        {
+            
+            if (_context.FacturaDeClientes == null) return NotFound();
+            var factura = (from FV in _context.Set<FacturaDeCliente>()
+                           join T in _context.Set<Transac>() on FV.Documento equals T.Numdoctra
+                           where FV.Documento == fact
+                           && T.Numdoctra == fact
+                           && T.Indcpitra == "2"
+                           select new
+                           {
+                               Fact = FV.Documento,
+                               Total = T.Valortra,
+                               TypePay = FV.DiasCreditos >= 2 ? "CREDITO" : "CONTADO"
+                           }).FirstOrDefault();
+
+            return Ok(factura);
+        }
 
         // PUT: api/Factura de Cliente/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
