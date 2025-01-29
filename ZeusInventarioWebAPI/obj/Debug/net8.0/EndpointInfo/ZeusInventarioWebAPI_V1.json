@@ -1616,6 +1616,29 @@
         }
       }
     },
+    "/api/FacturaDeCliente/getDataFactura/{fact}": {
+      "get": {
+        "tags": [
+          "FacturaDeCliente"
+        ],
+        "parameters": [
+          {
+            "name": "fact",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/api/Items": {
       "get": {
         "tags": [

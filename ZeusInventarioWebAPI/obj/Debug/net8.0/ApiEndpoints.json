@@ -971,6 +971,22 @@
   },
   {
     "ContainingType": "ZeusInventarioWebAPI.Controllers.FacturaDeClienteController",
+    "Method": "getDataFactura",
+    "RelativePath": "api/FacturaDeCliente/getDataFactura/{fact}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "fact",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ZeusInventarioWebAPI.Controllers.FacturaDeClienteController",
     "Method": "GetFacturado",
     "RelativePath": "api/FacturaDeCliente/ValorFacturadoHoy",
     "HttpMethod": "GET",

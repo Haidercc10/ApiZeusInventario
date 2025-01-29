@@ -960,8 +960,9 @@ namespace ZeusInventarioWebAPI.Controllers
                                                                     where tr.Idfuente == "DV"
                                                                           && tr.Tipofac == "FA"
                                                                           && tr.Indcpitra == "1"
-                                                                          && tr.Fechatra.Substring(5, 2) == Convert.ToString(fecha.Month)
-                                                                          && tr.Fechatra.Substring(0, 4) == Convert.ToString(fecha.Year)
+                                                                          && tr.Anotra == Convert.ToString(fecha.Year) + (Convert.ToString(fecha.Month > 9 ? fecha.Month : "0" + fecha.Month)) 
+                                                                          //&& tr.Fechatra.Substring(5, 2) == Convert.ToString(fecha.Month)
+                                                                          //&& tr.Fechatra.Substring(0, 4) == Convert.ToString(fecha.Year)
                                                                           && tr.Idvende == fv.Key.Id_Vendedor
                                                                     select tr.Valortra).Sum()
                       };
