@@ -1,7 +1,12 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\Users\\PC-SISTEMAS\\Documents\\GitHub\\ApiZeusInventario\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{FAAA80AF-8C20-4E43-8EB9-39D2BFB22E69}|ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj|c:\\users\\pc-sistemas\\documents\\github\\apizeusinventario\\zeusinventariowebapi\\controllers\\transaccontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FAAA80AF-8C20-4E43-8EB9-39D2BFB22E69}|ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj|solutionrelative:zeusinventariowebapi\\controllers\\transaccontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 1,
@@ -9,7 +14,7 @@
       "DocumentGroups": [
         {
           "DockedHeight": 200,
-          "SelectedChildIndex": -1,
+          "SelectedChildIndex": 8,
           "Children": [
             {
               "$type": "Bookmark",
@@ -42,6 +47,19 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{57d563b6-44a5-47df-85be-f4199ad6b651}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "TransacController.cs",
+              "DocumentMoniker": "C:\\Users\\PC-SISTEMAS\\Documents\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\Controllers\\TransacController.cs",
+              "RelativeDocumentMoniker": "ZeusInventarioWebAPI\\Controllers\\TransacController.cs",
+              "ToolTip": "C:\\Users\\PC-SISTEMAS\\Documents\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\Controllers\\TransacController.cs",
+              "RelativeToolTip": "ZeusInventarioWebAPI\\Controllers\\TransacController.cs",
+              "ViewState": "AgIAAC8AAAAAAAAAAAAwwDUAAAAuAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-29T21:11:01.719Z",
+              "EditorCaption": ""
             }
           ]
         },
