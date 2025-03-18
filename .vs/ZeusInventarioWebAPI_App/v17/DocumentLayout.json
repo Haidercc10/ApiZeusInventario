@@ -3,6 +3,14 @@
   "WorkspaceRootPath": "C:\\Users\\PC-SISTEMAS\\Documents\\GitHub\\ApiZeusInventario\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{FAAA80AF-8C20-4E43-8EB9-39D2BFB22E69}|ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj|c:\\users\\pc-sistemas\\documents\\github\\apizeusinventario\\zeusinventariowebapi\\controllers\\existenciascontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FAAA80AF-8C20-4E43-8EB9-39D2BFB22E69}|ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj|solutionrelative:zeusinventariowebapi\\controllers\\existenciascontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FAAA80AF-8C20-4E43-8EB9-39D2BFB22E69}|ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj|c:\\users\\pc-sistemas\\documents\\github\\apizeusinventario\\zeusinventariowebapi\\controllers\\movimientoitemcontroller .cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FAAA80AF-8C20-4E43-8EB9-39D2BFB22E69}|ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj|solutionrelative:zeusinventariowebapi\\controllers\\movimientoitemcontroller .cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{FAAA80AF-8C20-4E43-8EB9-39D2BFB22E69}|ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj|c:\\users\\pc-sistemas\\documents\\github\\apizeusinventario\\zeusinventariowebapi\\controllers\\transaccontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{FAAA80AF-8C20-4E43-8EB9-39D2BFB22E69}|ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj|solutionrelative:zeusinventariowebapi\\controllers\\transaccontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
@@ -51,12 +59,38 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "ExistenciasController.cs",
+              "DocumentMoniker": "C:\\Users\\PC-SISTEMAS\\Documents\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\Controllers\\ExistenciasController.cs",
+              "RelativeDocumentMoniker": "ZeusInventarioWebAPI\\Controllers\\ExistenciasController.cs",
+              "ToolTip": "C:\\Users\\PC-SISTEMAS\\Documents\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\Controllers\\ExistenciasController.cs",
+              "RelativeToolTip": "ZeusInventarioWebAPI\\Controllers\\ExistenciasController.cs",
+              "ViewState": "AgIAAAoAAAAAAAAAAAAEwBwAAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-13T22:35:00.376Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "MovimientoItemController .cs",
+              "DocumentMoniker": "C:\\Users\\PC-SISTEMAS\\Documents\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\Controllers\\MovimientoItemController .cs",
+              "RelativeDocumentMoniker": "ZeusInventarioWebAPI\\Controllers\\MovimientoItemController .cs",
+              "ToolTip": "C:\\Users\\PC-SISTEMAS\\Documents\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\Controllers\\MovimientoItemController .cs",
+              "RelativeToolTip": "ZeusInventarioWebAPI\\Controllers\\MovimientoItemController .cs",
+              "ViewState": "AgIAAHsAAAAAAAAAAAAIwBIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-12T19:29:18.4Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "TransacController.cs",
               "DocumentMoniker": "C:\\Users\\PC-SISTEMAS\\Documents\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\Controllers\\TransacController.cs",
               "RelativeDocumentMoniker": "ZeusInventarioWebAPI\\Controllers\\TransacController.cs",
               "ToolTip": "C:\\Users\\PC-SISTEMAS\\Documents\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\Controllers\\TransacController.cs",
               "RelativeToolTip": "ZeusInventarioWebAPI\\Controllers\\TransacController.cs",
-              "ViewState": "AgIAAC8AAAAAAAAAAAAwwDUAAAAuAAAAAAAAAA==",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAAAB0AAAALAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-01-29T21:11:01.719Z",
               "EditorCaption": ""

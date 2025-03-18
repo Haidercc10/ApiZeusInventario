@@ -125,11 +125,14 @@ namespace ZeusInventarioWebAPI.Controllers
         [HttpGet("getExistenciasProductos/{producto}/{presentacion}")]
         public ActionResult GetExistenciasProducto(string producto, string presentacion)
         {
+            //string[] productTypes = { "PRODUCTO TERMINADO", "PRODUCTO EN PROCESO" }; 
+
             var con = from exis in _context.Set<Existencia>()
                       from art in _context.Set<Articulo>()
                       where exis.Articulo == art.IdArticulo
                             && art.Codigo == producto
-                            && art.Tipo == "PRODUCTO TERMINADO"
+                            && (art.Tipo == "PRODUCTO TERMINADO"
+                            || art.Tipo == "PRODUCTO EN PROCESO")
                             && exis.Bodega == "003"
                             && art.DesHabilitado == false
                             && art.Presentacion == presentacion
