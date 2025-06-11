@@ -456,6 +456,8 @@ namespace ZeusInventarioWebAPI.Controllers
         [HttpGet("getPedidos")]
         public ActionResult getPedidos()
         {
+            DateTime fechaInicio = new DateTime(2024, 2, 4);
+
             var con = from mov in _context.Set<MovimientoItem>()
                       from cli in _context.Set<Cliente>()
                       from ped in _context.Set<PedidoDeCliente>()
@@ -491,7 +493,76 @@ namespace ZeusInventarioWebAPI.Controllers
                                                && art.Presentacion == mov.Presentacion
                                          group ext by ext.Articulo into ext
                                          select ext.Sum(x => x.Existencias)).FirstOrDefault(),
-                          mov.Estado
+                          mov.Estado,
+                          Fecha_Factura = (
+                            from f in _context.Set<FacturaDeCliente>()
+                            where 
+                            f.Fecha >= fechaInicio &&
+                            f.Consecutivo == (from c in _context.Set<DocumentosRelacionado>()
+                                                  where c.TipoImportador == 9 &&
+                                                        c.TipoExportador == 7 &&
+                                                        c.Exportador == ped.Consecutivo
+                                                  orderby c.IdenDocumentosrelacionados descending
+                                                  select c.Importador).FirstOrDefault()
+                            select f.Fecha.ToString("yyyy-MM-dd") == null ? Convert.ToString("") : f.Fecha.ToString("yyyy-MM-dd")
+                        ).FirstOrDefault()
+                      };
+            return Ok(con);
+        }
+
+        //
+        [HttpGet("getTodosPedidos")]
+        public ActionResult getTodosPedidos()
+        {
+            DateTime fechaInicioPedidos = new DateTime(2025, 1, 1);
+
+            var con = from mov in _context.Set<MovimientoItem>()
+                      from cli in _context.Set<Cliente>()
+                      from ped in _context.Set<PedidoDeCliente>()
+                      where mov.TipoDocumento == 7
+                            && cli.Idcliente == mov.Tercero
+                            && ped.Consecutivo == mov.Consecutivo
+                            && ped.Fecha >= fechaInicioPedidos
+                      select new
+                      {
+                          mov.Consecutivo,
+                          Fecha_Creacion = mov.FechaDocumento,
+                          Id_Cliente = mov.Tercero,
+                          Cliente = mov.NombreTercero,
+                          cli.Ciudad,
+                          Id_Producto = mov.CodigoArticulo,
+                          Producto = mov.NombreArticulo,
+                          Cant_Pedida = mov.Cantidad,
+                          Cant_Pendiente = (mov.Cantidad - mov.Faltantes),
+                          Cant_Facturada = mov.Faltantes,
+                          mov.Presentacion,
+                          mov.PrecioUnidad,
+                          Id_Vendedor = mov.Vendedor,
+                          Vendedor = mov.NombreVendedor,
+                          Orden_Compra_CLiente = ped.OrdenCompraCliente,
+                          Costo_Cant_Pendiente = ((mov.Cantidad - mov.Faltantes) * mov.PrecioUnidad),
+                          Costo_Cant_Total = (mov.Cantidad * mov.PrecioUnidad),
+                          Fecha_Entrega = ped.FechaEntrega,
+                          Existencias = (from art in _context.Set<Articulo>()
+                                         join ext in _context.Set<Existencia>() on art.IdArticulo equals ext.Articulo
+                                         where art.Codigo == mov.CodigoArticulo
+                                               && art.DesHabilitado == false
+                                               && art.Presentacion == mov.Presentacion
+                                         group ext by ext.Articulo into ext
+                                         select ext.Sum(x => x.Existencias)).FirstOrDefault(),
+                          mov.Estado,
+                          Fecha_Factura = (
+                            from f in _context.Set<FacturaDeCliente>()
+                            where
+                            f.Fecha >= fechaInicioPedidos &&
+                            f.Consecutivo == (from c in _context.Set<DocumentosRelacionado>()
+                                              where c.TipoImportador == 9 &&
+                                                    c.TipoExportador == 7 &&
+                                                    c.Exportador == ped.Consecutivo
+                                              orderby c.IdenDocumentosrelacionados descending
+                                              select c.Importador).FirstOrDefault()
+                            select f.Fecha.ToString("yyyy-MM-dd") == null ? Convert.ToString("") : f.Fecha.ToString("yyyy-MM-dd")
+                        ).FirstOrDefault()
                       };
             return Ok(con);
         }
@@ -548,6 +619,7 @@ namespace ZeusInventarioWebAPI.Controllers
                           NIT = 800188732,
                           Direccion = "Calle 42 #52-105",
                           Ciudad_Empresa = "Barranquilla",
+                          Cant_Facturar = 0,
                       };
             return Ok(con);
         }
