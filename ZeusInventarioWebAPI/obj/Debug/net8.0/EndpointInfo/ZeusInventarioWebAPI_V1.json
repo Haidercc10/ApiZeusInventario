@@ -1899,6 +1899,90 @@
         }
       }
     },
+    "/api/MovimientoItems/getFactWithoutIva/{document}": {
+      "get": {
+        "tags": [
+          "MovimientoItems"
+        ],
+        "parameters": [
+          {
+            "name": "document",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/MovimientoItems/getInformeTransacciones/{date1}/{date2}": {
+      "get": {
+        "tags": [
+          "MovimientoItems"
+        ],
+        "parameters": [
+          {
+            "name": "date1",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "date2",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "vendedor",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "item",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "cliente",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/api/MovimientoItems/FacturacionTodosMeses/{mes}/{ano}": {
       "get": {
         "tags": [
@@ -2108,6 +2192,18 @@
       }
     },
     "/api/MovimientoItems/getPedidos": {
+      "get": {
+        "tags": [
+          "MovimientoItems"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/MovimientoItems/getTodosPedidos": {
       "get": {
         "tags": [
           "MovimientoItems"
@@ -3523,6 +3619,67 @@
             "schema": {
               "type": "integer",
               "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Transac/getInformeTransaccione/{date1}/{date2}": {
+      "get": {
+        "tags": [
+          "Transac"
+        ],
+        "parameters": [
+          {
+            "name": "date1",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "date2",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "vendedor",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "item",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "cliente",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "default": ""
             }
           }
         ],

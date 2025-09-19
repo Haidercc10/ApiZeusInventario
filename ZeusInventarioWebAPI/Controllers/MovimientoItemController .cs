@@ -99,6 +99,114 @@ namespace ZeusInventarioWebAPI.Controllers
             return Ok(datos);
         }
 
+        // Función para buscar facturas que no tienen IVA.
+        [HttpGet("getFactWithoutIva/{document}")]
+        public ActionResult getFactWithoutIva(string document)
+        {
+            var facturacion = (from mi in _context.Set<MovimientoItem>()
+                              where mi.Fuente == "FV"
+                              && mi.Estado == "Procesado"
+                              && mi.Documento == document
+                              && mi.TipoDocumento == 9m
+                              && mi.Consecutivo != 35454
+                              group mi by new {
+                                  Fecha = mi.FechaDocumento,
+                                  Factura = mi.Documento,
+                                  Cliente = mi.NombreTercero, 
+                                  Documento = Convert.ToString("FV"), 
+                                  Recibo = Convert.ToString("------------------------") 
+                              } into mi
+                              //&& mi.Consecutivo != 38155
+                              select new
+                              {
+                                  Fecha = Convert.ToDateTime(mi.Key.Fecha),
+                                  Factura = Convert.ToString(mi.Key.Factura),
+                                  Cliente = Convert.ToString(mi.Key.Cliente),
+                                  Suma = Convert.ToDecimal(mi.Sum(x => x.PrecioTotal)),
+                                  Iva = Convert.ToDecimal(mi.Sum(x => x.TotalIvaventas)),
+                                  Descuentos = Convert.ToDecimal(mi.Sum(x => x.TotalDescuentoVenta)),
+                                  Documento = Convert.ToString(mi.Key.Documento),
+                                  Recibo = Convert.ToString(mi.Key.Recibo),
+                              }).ToList();
+
+            /*var arriendo = (from tr in _context.Set<Transac>().AsEnumerable()
+                            join cl in _context.Set<Cliente>() on tr.Cliprv equals cl.Idcliente
+                            let fechaValida = DateTime.TryParse(tr.Fechafact, out var f) ? f : (DateTime?)null
+                            where tr.Idfuente == "FV"
+                            && tr.Tipofac == "FA"
+                            && tr.Indcpitra == "1"
+                            && tr.Codicta == Convert.ToString(422010)
+                            && fechaValida != null
+                            && fechaValida >= date1 && fechaValida <= date2
+                            select new
+                           {
+                               Fecha = fechaValida.Value,
+                               Factura = Convert.ToString(tr.Numefac),
+                               Cliente = Convert.ToString(cl.Razoncial),
+                               Suma = Convert.ToDecimal(tr.Valortra),
+                               Iva = Convert.ToDecimal(0),
+                               Descuentos = Convert.ToDecimal(0),
+                               Documento = Convert.ToString("FV"),
+                               Recibo = Convert.ToString("ARRIENDO")
+                           }).ToList();*/         
+            /*var devoluciones = (from tr in _context.Set<Transac>()
+                               join cl in _context.Set<Cliente>() on tr.Cliprv equals cl.Idcliente
+                               where tr.Idfuente == "DV"
+                               && tr.Tipofac == "FA"
+                               && tr.Indcpitra == "1"
+                               && Convert.ToDateTime(Convert.ToDateTime(tr.Fechafact).ToString("yyyy-MM-dd")) >= date1
+                               && Convert.ToDateTime(Convert.ToDateTime(tr.Fechafact).ToString("yyyy-MM-dd")) <= date2
+                               select new
+                               {
+                                   Fecha = Convert.ToDateTime(tr.Fechafact),
+                                   Factura = Convert.ToString(tr.Numefac),
+                                   Cliente = Convert.ToString(cl.Razoncial),
+                                   Suma = Convert.ToDecimal(tr.Valortra),
+                                   Iva = Convert.ToDecimal(0),
+                                   Descuentos = Convert.ToDecimal(0),
+                                   Documento = Convert.ToString("DV"),
+                                   Recibo = Convert.ToString("DEVOLUCIÓN")
+                               }).ToList();*/
+            /*var notas_ventas = (from tr in _context.Set<Transac>()
+                               join cl in _context.Set<Cliente>() on tr.Cliprv equals cl.Idcliente
+                               where tr.Idfuente == "NV"
+                               && tr.Tipofac == "FA"
+                               && tr.Indcpitra == "1"
+                               && Convert.ToDateTime(Convert.ToDateTime(tr.Fechafact).ToString("yyyy-MM-dd")) >= date1
+                                && Convert.ToDateTime(Convert.ToDateTime(tr.Fechafact).ToString("yyyy-MM-dd")) <= date2
+                               select new
+                               {
+                                   Fecha = Convert.ToDateTime(tr.Fechafact),
+                                   Factura = Convert.ToString(tr.Numefac),
+                                   Cliente = Convert.ToString(cl.Razoncial),
+                                   Suma = Convert.ToDecimal(tr.Valortra),
+                                   Iva = Convert.ToDecimal(0),
+                                   Descuentos = Convert.ToDecimal(0),
+                                   Documento = Convert.ToString("NV"),
+                                   Recibo = Convert.ToString("DEVOLUCIÓN")
+                               }).ToList();*/
+
+            return Ok(facturacion);
+        }
+
+        // Informe de transacciones (arriendos, devoluciones y notas de venta) entre dos fechas.
+        [HttpGet("getInformeTransacciones/{date1}/{date2}")]
+        public ActionResult getInformeTransacciones(DateTime date1, DateTime date2, string? vendedor = "", string? item = "", string? cliente = "")
+        {
+            string client = string.IsNullOrWhiteSpace(cliente) ? "" : cliente;
+            string sales = string.IsNullOrWhiteSpace(vendedor) ? "" : vendedor;
+
+            var transac = _context.Set<Transac>().FromSql(
+                $@"
+                SELECT T.* 
+                FROM TRANSAC T 
+                WHERE T.IDFUENTE = 'FV' 
+                AND CAST(CONVERT(char(10), T.FECHATRA, 112) AS date) BETWEEN {date1} AND {date2} 
+                "
+            ).ToList();
+            return Ok(transac);
+        }
+
         // GET: api/MovimientoItems/5
         [HttpGet("FacturacionTodosMeses/{mes}/{ano}")]
         public ActionResult FacturacionTodosMeses(string mes, int ano)
@@ -1372,21 +1480,21 @@ namespace ZeusInventarioWebAPI.Controllers
             if (cliente != "" && vendedor != "")
             {
                  return Ok(_context.Set<Transac>().FromSql(
-                     $"SELECT T.* FROM TRANSAC T WHERE T.IDFUENTE = 'DV' AND T.TIPOFAC = 'FA' AND CAST(CONVERT(char(10), T.FECHATRA, 112) as date) BETWEEN {fecha1} AND {fecha2} AND T.INDCPITRA = {indicadorCPI} AND T.NITTRA = {cliente} AND T.IDVENDE = {vendedor}").ToList());
+                     $"SELECT T.* FROM TRANSAC T WHERE T.IDFUENTE IN ('DV', 'NV') AND T.TIPOFAC = 'FA' AND CAST(CONVERT(char(10), T.FECHATRA, 112) as date) BETWEEN {fecha1} AND {fecha2} AND T.INDCPITRA = {indicadorCPI} AND T.NITTRA = {cliente} AND T.IDVENDE = {vendedor}").ToList());
             }
             else if (cliente != "")
             {
                  return Ok(_context.Set<Transac>().FromSql(
-                     $"SELECT T.* FROM TRANSAC T WHERE T.IDFUENTE = 'DV' AND T.TIPOFAC = 'FA' AND CAST(CONVERT(char(10),T.FECHATRA, 112) as date) BETWEEN {fecha1} AND {fecha2} AND T.INDCPITRA = {indicadorCPI} AND T.NITTRA = {cliente}").ToList());
+                     $"SELECT T.* FROM TRANSAC T WHERE T.IDFUENTE IN ('DV', 'NV') AND T.TIPOFAC = 'FA' AND CAST(CONVERT(char(10),T.FECHATRA, 112) as date) BETWEEN {fecha1} AND {fecha2} AND T.INDCPITRA = {indicadorCPI} AND T.NITTRA = {cliente}").ToList());
             }
             else if (vendedor != "")
             {
                  return Ok(_context.Set<Transac>().FromSql(
-                     $"SELECT T.* FROM TRANSAC T WHERE T.IDFUENTE = 'DV' AND T.TIPOFAC = 'FA' AND CAST(CONVERT(char(10), T.FECHATRA, 112) as date) BETWEEN {fecha1} AND {fecha2} AND T.INDCPITRA = {indicadorCPI}  AND T.IDVENDE = {vendedor}").ToList());
+                     $"SELECT T.* FROM TRANSAC T WHERE T.IDFUENTE IN ('DV', 'NV') AND T.TIPOFAC = 'FA' AND CAST(CONVERT(char(10), T.FECHATRA, 112) as date) BETWEEN {fecha1} AND {fecha2} AND T.INDCPITRA = {indicadorCPI}  AND T.IDVENDE = {vendedor}").ToList());
             }
             
             var devolucion = _context.Set<Transac>().FromSql(
-                     $"SELECT T.* FROM TRANSAC T WHERE T.IDFUENTE = 'DV' AND T.TIPOFAC = 'FA' AND CAST(CONVERT(char(10), T.FECHATRA, 112) as date) BETWEEN {fecha1} AND {fecha2} AND T.INDCPITRA = {indicadorCPI}").ToList();
+                     $"SELECT T.* FROM TRANSAC T WHERE T.IDFUENTE IN ('DV', 'NV') AND T.TIPOFAC = 'FA' AND CAST(CONVERT(char(10), T.FECHATRA, 112) as date) BETWEEN {fecha1} AND {fecha2} AND T.INDCPITRA = {indicadorCPI}").ToList();
 
             return Ok(devolucion);
         }
@@ -1559,8 +1667,10 @@ namespace ZeusInventarioWebAPI.Controllers
                           Vendedor = Convert.ToString(mov.NombreVendedor),
                           Fecha = Convert.ToString(f.Fecha.ToString("yyyy-MM-dd")),
                           Factura = Convert.ToString(f.Documento),
-                          Recibo = Convert.ToString("------------------------"), 
-                      };
+                          Recibo = Convert.ToString("------------------------"),
+                          TotalIvaVentas = Convert.ToDecimal(mov.TotalIvaventas),
+                          PrecioTotal = Convert.ToDecimal(mov.PrecioTotal),
+                       }; 
             
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 #pragma warning restore CS8604 // Posible argumento de referencia nulo
@@ -1606,6 +1716,8 @@ namespace ZeusInventarioWebAPI.Controllers
                                  Fecha = Convert.ToString(dev.Fecha.ToString("yyyy-MM-dd")),
                                  Factura = Convert.ToString(tr.Numefac),
                                  Recibo = Convert.ToString("DEVOLUCIÓN"),
+                                 TotalIvaVentas = Convert.ToDecimal(mov.TotalIvaventas),
+                                 PrecioTotal = Convert.ToDecimal(mov.PrecioTotal),
                              };
 
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.

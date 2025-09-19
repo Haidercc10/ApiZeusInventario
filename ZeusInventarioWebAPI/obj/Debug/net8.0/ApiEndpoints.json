@@ -1687,6 +1687,22 @@
   },
   {
     "ContainingType": "ZeusInventarioWebAPI.Controllers.MovimientoItemsController",
+    "Method": "getFactWithoutIva",
+    "RelativePath": "api/MovimientoItems/getFactWithoutIva/{document}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "document",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ZeusInventarioWebAPI.Controllers.MovimientoItemsController",
     "Method": "GetInfoPedido_Consecutivo",
     "RelativePath": "api/MovimientoItems/getInfoPedido_Consecutivo/{id}",
     "HttpMethod": "GET",
@@ -1697,6 +1713,42 @@
         "Name": "id",
         "Type": "System.Int32",
         "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ZeusInventarioWebAPI.Controllers.MovimientoItemsController",
+    "Method": "getInformeTransacciones",
+    "RelativePath": "api/MovimientoItems/getInformeTransacciones/{date1}/{date2}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "date1",
+        "Type": "System.DateTime",
+        "IsRequired": true
+      },
+      {
+        "Name": "date2",
+        "Type": "System.DateTime",
+        "IsRequired": true
+      },
+      {
+        "Name": "vendedor",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "item",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "cliente",
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
@@ -1921,6 +1973,16 @@
     "ContainingType": "ZeusInventarioWebAPI.Controllers.MovimientoItemsController",
     "Method": "GetClientesFacturadoMes",
     "RelativePath": "api/MovimientoItems/getProductosFaturadosMes",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ZeusInventarioWebAPI.Controllers.MovimientoItemsController",
+    "Method": "getTodosPedidos",
+    "RelativePath": "api/MovimientoItems/getTodosPedidos",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -2167,6 +2229,42 @@
         "Name": "id",
         "Type": "System.Int32",
         "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ZeusInventarioWebAPI.Controllers.TransacController",
+    "Method": "getInformeTransaccione",
+    "RelativePath": "api/Transac/getInformeTransaccione/{date1}/{date2}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "date1",
+        "Type": "System.DateTime",
+        "IsRequired": true
+      },
+      {
+        "Name": "date2",
+        "Type": "System.DateTime",
+        "IsRequired": true
+      },
+      {
+        "Name": "vendedor",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "item",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "cliente",
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
