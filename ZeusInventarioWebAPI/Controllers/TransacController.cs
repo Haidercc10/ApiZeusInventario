@@ -109,6 +109,7 @@ namespace ZeusInventarioWebAPI.Controllers
 
             var devuelto = (from t in _context.Set<Transac>()
                              where t.Idfuente == "DV"
+                             && t.Idfuente == "NV"
                              && t.Tipofac == "FA"
                              && t.Indcpitra == "1"
                              && t.Fechatra == Convert.ToString(Hoy.ToString("yyyy/MM/dd"))

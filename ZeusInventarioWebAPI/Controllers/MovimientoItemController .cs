@@ -193,17 +193,21 @@ namespace ZeusInventarioWebAPI.Controllers
         [HttpGet("getInformeTransacciones/{date1}/{date2}")]
         public ActionResult getInformeTransacciones(DateTime date1, DateTime date2, string? vendedor = "", string? item = "", string? cliente = "")
         {
-            string client = string.IsNullOrWhiteSpace(cliente) ? "" : cliente;
-            string sales = string.IsNullOrWhiteSpace(vendedor) ? "" : vendedor;
+            var query = _context.Transacs
+            .Where(t => t.Idfuente == "FV" || t.Idfuente == "DV" || t.Idfuente == "NV")
+            .Where(t => string.Compare(t.Fechatra, date1.ToString("yyyy/MM/dd")) >= 0 && string.Compare(t.Fechatra, date2.ToString("yyyy/MM/dd")) <= 0);
 
-            var transac = _context.Set<Transac>().FromSql(
-                $@"
-                SELECT T.* 
-                FROM TRANSAC T 
-                WHERE T.IDFUENTE = 'FV' 
-                AND CAST(CONVERT(char(10), T.FECHATRA, 112) AS date) BETWEEN {date1} AND {date2} 
-                "
-            ).ToList();
+                    if (!string.IsNullOrWhiteSpace(vendedor))
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+                query = query.Where(t => t.Idvende.Contains(vendedor));
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+
+            if (!string.IsNullOrWhiteSpace(cliente))
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+                query = query.Where(t => t.Cliprv.Contains(cliente));
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+
+            var transac = query.ToList();
             return Ok(transac);
         }
 

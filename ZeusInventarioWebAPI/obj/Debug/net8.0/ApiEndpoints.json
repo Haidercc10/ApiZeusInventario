@@ -2235,42 +2235,6 @@
   },
   {
     "ContainingType": "ZeusInventarioWebAPI.Controllers.TransacController",
-    "Method": "getInformeTransaccione",
-    "RelativePath": "api/Transac/getInformeTransaccione/{date1}/{date2}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "date1",
-        "Type": "System.DateTime",
-        "IsRequired": true
-      },
-      {
-        "Name": "date2",
-        "Type": "System.DateTime",
-        "IsRequired": true
-      },
-      {
-        "Name": "vendedor",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "item",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "cliente",
-        "Type": "System.String",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "ZeusInventarioWebAPI.Controllers.TransacController",
     "Method": "GetRecibosCaja",
     "RelativePath": "api/Transac/getRecibosCaja/{fecha1}/{fecha2}",
     "HttpMethod": "GET",
