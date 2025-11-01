@@ -52,18 +52,25 @@ namespace ZeusInventarioWebAPI.Controllers
             var items = from a in _context.Set<Articulo>()
                         where a.Tipo == "PRODUCTO TERMINADO" &&
                               a.Nombre.Contains(name)
-                        select a;
+                        select new
+                        {
+                            Codigo = a.Codigo,
+                            Nombre = a.Nombre,
+                        };
             return Ok(items);
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
-        [HttpGet("getItemsByNumber/{number}")]
-        public ActionResult GetItemsByNumber(string number)
+        [HttpGet("getItemsByNumber/{item}")]
+        public ActionResult GetItemsByNumber(string item)
         {
             var items = from a in _context.Set<Articulo>()
                         where a.Tipo == "PRODUCTO TERMINADO" &&
-                              a.Codigo == number
-                        select a;
+                              a.Codigo == item
+                        select new { 
+                          Codigo = a.Codigo,
+                          Nombre = a.Nombre,
+                        };
             return Ok(items);
         }
 

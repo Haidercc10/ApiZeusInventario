@@ -228,13 +228,13 @@
   {
     "ContainingType": "ZeusInventarioWebAPI.Controllers.ArticulosController",
     "Method": "GetItemsByNumber",
-    "RelativePath": "api/Articulos/getItemsByNumber/{number}",
+    "RelativePath": "api/Articulos/getItemsByNumber/{item}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "number",
+        "Name": "item",
         "Type": "System.String",
         "IsRequired": true
       }
@@ -1248,6 +1248,11 @@
       },
       {
         "Name": "item",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "asesor",
         "Type": "System.String",
         "IsRequired": false
       }

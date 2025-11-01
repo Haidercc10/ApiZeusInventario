@@ -217,14 +217,14 @@
         }
       }
     },
-    "/api/Articulos/getItemsByNumber/{number}": {
+    "/api/Articulos/getItemsByNumber/{item}": {
       "get": {
         "tags": [
           "Articulos"
         ],
         "parameters": [
           {
-            "name": "number",
+            "name": "item",
             "in": "path",
             "required": true,
             "style": "simple",
@@ -3198,6 +3198,15 @@
           },
           {
             "name": "item",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "asesor",
             "in": "query",
             "style": "form",
             "schema": {

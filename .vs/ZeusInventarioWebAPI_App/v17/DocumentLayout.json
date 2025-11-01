@@ -3,12 +3,12 @@
   "WorkspaceRootPath": "C:\\Users\\HaiderCarrillo\\OneDrive - PLASTICARIBE S.A.S\\Documentos\\GitHub\\ApiZeusInventario\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{FAAA80AF-8C20-4E43-8EB9-39D2BFB22E69}|ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj|c:\\users\\haidercarrillo\\onedrive - plasticaribe s.a.s\\documentos\\github\\apizeusinventario\\zeusinventariowebapi\\controllers\\transaccontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{FAAA80AF-8C20-4E43-8EB9-39D2BFB22E69}|ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj|solutionrelative:zeusinventariowebapi\\controllers\\transaccontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{FAAA80AF-8C20-4E43-8EB9-39D2BFB22E69}|ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj|c:\\users\\haidercarrillo\\onedrive - plasticaribe s.a.s\\documentos\\github\\apizeusinventario\\zeusinventariowebapi\\controllers\\movimientoitemcontroller .cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{FAAA80AF-8C20-4E43-8EB9-39D2BFB22E69}|ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj|solutionrelative:zeusinventariowebapi\\controllers\\movimientoitemcontroller .cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FAAA80AF-8C20-4E43-8EB9-39D2BFB22E69}|ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj|c:\\users\\haidercarrillo\\onedrive - plasticaribe s.a.s\\documentos\\github\\apizeusinventario\\zeusinventariowebapi\\controllers\\articuloscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FAAA80AF-8C20-4E43-8EB9-39D2BFB22E69}|ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj|solutionrelative:zeusinventariowebapi\\controllers\\articuloscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{FAAA80AF-8C20-4E43-8EB9-39D2BFB22E69}|ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj|c:\\users\\haidercarrillo\\onedrive - plasticaribe s.a.s\\documentos\\github\\apizeusinventario\\zeusinventariowebapi\\controllers\\clientescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -17,6 +17,10 @@
     {
       "AbsoluteMoniker": "D:0:0:{FAAA80AF-8C20-4E43-8EB9-39D2BFB22E69}|ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj|c:\\users\\haidercarrillo\\onedrive - plasticaribe s.a.s\\documentos\\github\\apizeusinventario\\zeusinventariowebapi\\controllers\\documentoitemscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{FAAA80AF-8C20-4E43-8EB9-39D2BFB22E69}|ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj|solutionrelative:zeusinventariowebapi\\controllers\\documentoitemscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FAAA80AF-8C20-4E43-8EB9-39D2BFB22E69}|ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj|c:\\users\\haidercarrillo\\onedrive - plasticaribe s.a.s\\documentos\\github\\apizeusinventario\\zeusinventariowebapi\\controllers\\transaccontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FAAA80AF-8C20-4E43-8EB9-39D2BFB22E69}|ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj|solutionrelative:zeusinventariowebapi\\controllers\\transaccontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,7 +30,7 @@
       "DocumentGroups": [
         {
           "DockedHeight": 200,
-          "SelectedChildIndex": 8,
+          "SelectedChildIndex": 9,
           "Children": [
             {
               "$type": "Bookmark",
@@ -62,16 +66,40 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "TransacController.cs",
-              "DocumentMoniker": "C:\\Users\\HaiderCarrillo\\OneDrive - PLASTICARIBE S.A.S\\Documentos\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\Controllers\\TransacController.cs",
-              "RelativeDocumentMoniker": "ZeusInventarioWebAPI\\Controllers\\TransacController.cs",
-              "ToolTip": "C:\\Users\\HaiderCarrillo\\OneDrive - PLASTICARIBE S.A.S\\Documentos\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\Controllers\\TransacController.cs",
-              "RelativeToolTip": "ZeusInventarioWebAPI\\Controllers\\TransacController.cs",
-              "ViewState": "AgIAAC8AAAAAAAAAAAAwwGoAAABaAAAAAAAAAA==",
+              "DocumentIndex": 1,
+              "Title": "ArticulosController.cs",
+              "DocumentMoniker": "C:\\Users\\HaiderCarrillo\\OneDrive - PLASTICARIBE S.A.S\\Documentos\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\Controllers\\ArticulosController.cs",
+              "RelativeDocumentMoniker": "ZeusInventarioWebAPI\\Controllers\\ArticulosController.cs",
+              "ToolTip": "C:\\Users\\HaiderCarrillo\\OneDrive - PLASTICARIBE S.A.S\\Documentos\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\Controllers\\ArticulosController.cs",
+              "RelativeToolTip": "ZeusInventarioWebAPI\\Controllers\\ArticulosController.cs",
+              "ViewState": "AgIAADQAAAAAAAAAAAAAwD4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-18T22:52:00.162Z",
+              "WhenOpened": "2025-10-29T14:40:15.272Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "MovimientoItemController .cs",
+              "DocumentMoniker": "C:\\Users\\HaiderCarrillo\\OneDrive - PLASTICARIBE S.A.S\\Documentos\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\Controllers\\MovimientoItemController .cs",
+              "RelativeDocumentMoniker": "ZeusInventarioWebAPI\\Controllers\\MovimientoItemController .cs",
+              "ToolTip": "C:\\Users\\HaiderCarrillo\\OneDrive - PLASTICARIBE S.A.S\\Documentos\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\Controllers\\MovimientoItemController .cs",
+              "RelativeToolTip": "ZeusInventarioWebAPI\\Controllers\\MovimientoItemController .cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADgHAAAYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-25T19:05:00.657Z",
               "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ClientesController.cs",
+              "DocumentMoniker": "C:\\Users\\HaiderCarrillo\\OneDrive - PLASTICARIBE S.A.S\\Documentos\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\Controllers\\ClientesController.cs",
+              "RelativeDocumentMoniker": "ZeusInventarioWebAPI\\Controllers\\ClientesController.cs",
+              "ToolTip": "C:\\Users\\HaiderCarrillo\\OneDrive - PLASTICARIBE S.A.S\\Documentos\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\Controllers\\ClientesController.cs",
+              "RelativeToolTip": "ZeusInventarioWebAPI\\Controllers\\ClientesController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAArAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-07T20:03:40.972Z"
             },
             {
               "$type": "Document",
@@ -87,27 +115,15 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "MovimientoItemController .cs",
-              "DocumentMoniker": "C:\\Users\\HaiderCarrillo\\OneDrive - PLASTICARIBE S.A.S\\Documentos\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\Controllers\\MovimientoItemController .cs",
-              "RelativeDocumentMoniker": "ZeusInventarioWebAPI\\Controllers\\MovimientoItemController .cs",
-              "ToolTip": "C:\\Users\\HaiderCarrillo\\OneDrive - PLASTICARIBE S.A.S\\Documentos\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\Controllers\\MovimientoItemController .cs",
-              "RelativeToolTip": "ZeusInventarioWebAPI\\Controllers\\MovimientoItemController .cs",
-              "ViewState": "AgIAAEcAAAAAAAAAAAAwwNAAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 4,
+              "Title": "TransacController.cs",
+              "DocumentMoniker": "C:\\Users\\HaiderCarrillo\\OneDrive - PLASTICARIBE S.A.S\\Documentos\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\Controllers\\TransacController.cs",
+              "RelativeDocumentMoniker": "ZeusInventarioWebAPI\\Controllers\\TransacController.cs",
+              "ToolTip": "C:\\Users\\HaiderCarrillo\\OneDrive - PLASTICARIBE S.A.S\\Documentos\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\Controllers\\TransacController.cs",
+              "RelativeToolTip": "ZeusInventarioWebAPI\\Controllers\\TransacController.cs",
+              "ViewState": "AgIAAC8AAAAAAAAAAAAwwGoAAABaAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-25T19:05:00.657Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "ClientesController.cs",
-              "DocumentMoniker": "C:\\Users\\HaiderCarrillo\\OneDrive - PLASTICARIBE S.A.S\\Documentos\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\Controllers\\ClientesController.cs",
-              "RelativeDocumentMoniker": "ZeusInventarioWebAPI\\Controllers\\ClientesController.cs",
-              "ToolTip": "C:\\Users\\HaiderCarrillo\\OneDrive - PLASTICARIBE S.A.S\\Documentos\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\Controllers\\ClientesController.cs",
-              "RelativeToolTip": "ZeusInventarioWebAPI\\Controllers\\ClientesController.cs",
-              "ViewState": "AgIAAAQAAAAAAAAAAAAuwBwAAAAJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-07T20:03:40.972Z"
+              "WhenOpened": "2025-09-18T22:52:00.162Z"
             }
           ]
         },

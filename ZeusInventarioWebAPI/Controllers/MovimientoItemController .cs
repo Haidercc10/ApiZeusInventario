@@ -1793,7 +1793,7 @@ namespace ZeusInventarioWebAPI.Controllers
         }
 
         [HttpGet("getBillsByClient/{start}/{end}")]
-        public ActionResult GetBillsByClient(DateTime start, DateTime end, string? client = "", string? item = "")
+        public ActionResult GetBillsByClient(DateTime start, DateTime end, string? client = "", string? item = "", string? asesor = "")
         {
             var con = from mov in _context.Set<MovimientoItem>()
                       join cli in _context.Set<Cliente>() on mov.Tercero equals cli.Idcliente
@@ -1803,7 +1803,8 @@ namespace ZeusInventarioWebAPI.Controllers
                             mov.FechaDocumento <= end &&
                             mov.Cantidad > 0 &&
                             (item != "" ? mov.CodigoArticulo == item : true) &&
-                            (client != "" ? mov.Tercero == client : true)
+                            (client != "" ? mov.Tercero == client : true) &&
+                            (asesor != "" ? mov.NombreVendedor == asesor : true)
                       select new
                       {
                           Month = mov.FechaDocumento.Month,
@@ -1812,6 +1813,8 @@ namespace ZeusInventarioWebAPI.Controllers
                           Bill = fac.Documento,
                           Id_Client = cli.Idcliente,
                           Client = cli.Razoncial,
+                          Id_Sales = Convert.ToString(mov.Vendedor),
+                          Sales = Convert.ToString(mov.NombreVendedor),
                           Item = mov.CodigoArticulo,
                           Reference = mov.NombreArticulo,
                           Quantity = mov.Cantidad,
@@ -1840,7 +1843,8 @@ namespace ZeusInventarioWebAPI.Controllers
                              tra.Idfuente == "DV" &&
                              tra.Vencefac != "" &&
                              (item != "" ? mov.CodigoArticulo == item : true) &&
-                             (client != "" ? mov.Tercero == client : true)
+                             (client != "" ? mov.Tercero == client : true) &&
+                             (asesor != "" ? mov.NombreVendedor == asesor : true)
                        select new
                        {
                            Month = mov.FechaDocumento.Month,
@@ -1849,6 +1853,8 @@ namespace ZeusInventarioWebAPI.Controllers
                            Bill = tra.Numefac,
                            Id_Client = cli.Idcliente,
                            Client = cli.Razoncial,
+                           Id_Sales = Convert.ToString(mov.Vendedor),
+                           Sales = Convert.ToString(mov.NombreVendedor),
                            Item = mov.CodigoArticulo,
                            Reference = mov.NombreArticulo,
                            Quantity = mov.Cantidad * -1,
