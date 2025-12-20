@@ -118,6 +118,73 @@ namespace ZeusInventarioWebAPI.Controllers
             return Ok(facturado - devuelto);
         }
 
+        [HttpGet("ValorTotalFacturadoHoy2")]
+        public ActionResult ValorTotalFacturadoHoy2()
+        {
+            DateTime Hoy = DateTime.Today;
+
+            if (_context.FacturaDeClientes == null) return NotFound();
+
+            var ano = DateTime.Today;
+            var mes = Convert.ToString(ano.Month).Length == 1 ? "0" + Convert.ToString(ano.Month) : Convert.ToString(ano.Month);
+
+            var MovimientoItem = (from mi in _context.Set<MovimientoItem>()
+                                  where mi.Fuente == "FV"
+                                  && mi.Estado == "Procesado"
+                                  && mi.FechaDocumento.Month == ano.Month
+                                  && mi.FechaDocumento.Year == ano.Year
+                                  && mi.FechaDocumento.Day == ano.Day
+                                  && mi.Consecutivo != 35454
+                                  //&& mi.Consecutivo != 38155
+                                  select mi.PrecioTotal + mi.TotalDescuentoVenta).Sum(); 
+
+            var arriendo = (from tr in _context.Set<Transac>()
+                            where tr.Idfuente == "FV"
+                            && tr.Tipofac == "FA"
+                            && tr.Indcpitra == "1"
+                            && tr.Codicta == Convert.ToString(422010)
+                            && tr.Anotra == Convert.ToString(ano.Year) + Convert.ToString(mes)
+                            && tr.Fechatra == Convert.ToString(Hoy.ToString("yyyy/MM/dd"))
+                            && tr.Statustra == "AC"
+                            select Math.Abs(tr.Valortra)).Sum();
+
+            var Transaccion1 = (from tr in _context.Set<Transac>()
+                                where tr.Idfuente == "DV"
+                                && tr.Tipofac == "FA"
+                                && tr.Indcpitra == "1"
+                                && tr.Anotra == Convert.ToString(ano.Year) + Convert.ToString(mes)
+                                && tr.Valortra > 0
+                                && tr.Fechatra == Convert.ToString(Hoy.ToString("yyyy/MM/dd"))
+                                && tr.Statustra == "AC"
+                                select tr.Valortra).Sum();
+
+            var descuentosDV = (from mv in _context.Set<MovimientoItem>()
+                                where mv.FechaDocumento.Month == Convert.ToInt32(mes)
+                                && mv.FechaDocumento.Month == ano.Month
+                                && mv.FechaDocumento.Year == ano.Year
+                                && mv.FechaDocumento.Day == ano.Day
+                                && mv.Fuente == "DV"
+                                && mv.Estado == "Procesado"
+                                && mv.TipoDocumento == 26m
+                                select mv.TotalDescuentoVenta).Sum();
+
+
+            var Transaccion2 = (from tr in _context.Set<Transac>()
+                                where tr.Idfuente == "NV"
+                                && tr.Tipofac == "FA"
+                                && tr.Indcpitra == "1"
+                                && tr.Anotra == Convert.ToString(ano.Year) + Convert.ToString(mes)
+                                && tr.Valortra > 0
+                                && tr.Fechatra == Convert.ToString(Hoy.ToString("yyyy/MM/dd"))
+                                && tr.Statustra == "AC"
+                                select tr.Valortra).Sum();
+
+            var datos = (MovimientoItem + arriendo) + ((Transaccion1 + Transaccion2) - descuentosDV);
+            return Ok(datos);
+        }
+
+
+
         // PUT: api/Transac/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

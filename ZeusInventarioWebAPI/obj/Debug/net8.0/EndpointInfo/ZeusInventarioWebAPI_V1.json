@@ -1827,6 +1827,18 @@
         }
       }
     },
+    "/api/Maevende/getActiveSales": {
+      "get": {
+        "tags": [
+          "Maevende"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/api/MovimientoItems": {
       "get": {
         "tags": [
@@ -2534,10 +2546,31 @@
         }
       }
     },
-    "/api/MovimientoItems/getVendedoresFacturasMes": {
+    "/api/MovimientoItems/getVendedoresFacturasMes/{year}": {
       "get": {
         "tags": [
           "MovimientoItems"
+        ],
+        "parameters": [
+          {
+            "name": "year",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "month",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          }
         ],
         "responses": {
           "200": {
@@ -3265,6 +3298,113 @@
         }
       }
     },
+    "/api/MovimientoItems/getProductsForClient/{client}": {
+      "get": {
+        "tags": [
+          "MovimientoItems"
+        ],
+        "parameters": [
+          {
+            "name": "client",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/MovimientoItems/getBillingAnnual/{year}": {
+      "get": {
+        "tags": [
+          "MovimientoItems"
+        ],
+        "parameters": [
+          {
+            "name": "year",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "asesor",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "client",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/MovimientoItems/getBillingClientsAnnual/{year}": {
+      "get": {
+        "tags": [
+          "MovimientoItems"
+        ],
+        "parameters": [
+          {
+            "name": "year",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "asesor",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "client",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/api/Proveedores": {
       "get": {
         "tags": [
@@ -3673,6 +3813,18 @@
       }
     },
     "/api/Transac/ValorTotalFacturadoHoy": {
+      "get": {
+        "tags": [
+          "Transac"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Transac/ValorTotalFacturadoHoy2": {
       "get": {
         "tags": [
           "Transac"

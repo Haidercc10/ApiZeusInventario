@@ -1105,6 +1105,16 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "ZeusInventarioWebAPI.Controllers.MaevendeController",
+    "Method": "getActiveSales",
+    "RelativePath": "api/Maevende/getActiveSales",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "ZeusInventarioWebAPI.Controllers.MovimientoItemsController",
     "Method": "GetMovimientoItems",
     "RelativePath": "api/MovimientoItems",
@@ -1219,6 +1229,58 @@
         "Name": "idcliente",
         "Type": "System.String",
         "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ZeusInventarioWebAPI.Controllers.MovimientoItemsController",
+    "Method": "getBillingAnnual",
+    "RelativePath": "api/MovimientoItems/getBillingAnnual/{year}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "year",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "asesor",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "client",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ZeusInventarioWebAPI.Controllers.MovimientoItemsController",
+    "Method": "getBillingClientsAnnual",
+    "RelativePath": "api/MovimientoItems/getBillingClientsAnnual/{year}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "year",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "asesor",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "client",
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
@@ -1986,6 +2048,22 @@
   },
   {
     "ContainingType": "ZeusInventarioWebAPI.Controllers.MovimientoItemsController",
+    "Method": "getProductsForClient",
+    "RelativePath": "api/MovimientoItems/getProductsForClient/{client}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "client",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ZeusInventarioWebAPI.Controllers.MovimientoItemsController",
     "Method": "getTodosPedidos",
     "RelativePath": "api/MovimientoItems/getTodosPedidos",
     "HttpMethod": "GET",
@@ -1997,11 +2075,22 @@
   {
     "ContainingType": "ZeusInventarioWebAPI.Controllers.MovimientoItemsController",
     "Method": "GetVendedoresFacturasMes",
-    "RelativePath": "api/MovimientoItems/getVendedoresFacturasMes",
+    "RelativePath": "api/MovimientoItems/getVendedoresFacturasMes/{year}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
-    "Parameters": [],
+    "Parameters": [
+      {
+        "Name": "year",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "month",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
     "ReturnTypes": []
   },
   {
@@ -2263,6 +2352,16 @@
     "ContainingType": "ZeusInventarioWebAPI.Controllers.TransacController",
     "Method": "ValorTotalFacturadoHoy",
     "RelativePath": "api/Transac/ValorTotalFacturadoHoy",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ZeusInventarioWebAPI.Controllers.TransacController",
+    "Method": "ValorTotalFacturadoHoy2",
+    "RelativePath": "api/Transac/ValorTotalFacturadoHoy2",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,

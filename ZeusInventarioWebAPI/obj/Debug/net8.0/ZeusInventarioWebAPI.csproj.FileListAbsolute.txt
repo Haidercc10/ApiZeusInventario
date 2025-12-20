@@ -1489,3 +1489,5 @@ C:\Users\HaiderCarrillo\OneDrive - PLASTICARIBE S.A.S\Documentos\GitHub\ApiZeusI
 C:\Users\HaiderCarrillo\OneDrive - PLASTICARIBE S.A.S\Documentos\GitHub\ApiZeusInventario\ZeusInventarioWebAPI\obj\Debug\net8.0\ZeusInventarioWebAPI.pdb
 C:\Users\HaiderCarrillo\OneDrive - PLASTICARIBE S.A.S\Documentos\GitHub\ApiZeusInventario\ZeusInventarioWebAPI\obj\Debug\net8.0\ZeusInventarioWebAPI.genruntimeconfig.cache
 C:\Users\HaiderCarrillo\OneDrive - PLASTICARIBE S.A.S\Documentos\GitHub\ApiZeusInventario\ZeusInventarioWebAPI\obj\Debug\net8.0\ref\ZeusInventarioWebAPI.dll
+C:\Users\HaiderCarrillo\OneDrive - PLASTICARIBE S.A.S\Documentos\GitHub\ApiZeusInventario\ZeusInventarioWebAPI\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.dll
+C:\Users\HaiderCarrillo\OneDrive - PLASTICARIBE S.A.S\Documentos\GitHub\ApiZeusInventario\ZeusInventarioWebAPI\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
