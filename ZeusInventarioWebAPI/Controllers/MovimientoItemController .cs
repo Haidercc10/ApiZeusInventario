@@ -2070,7 +2070,8 @@ namespace ZeusInventarioWebAPI.Controllers
                                                && mv.TipoDocumento == 26m
                                                && mv.Vendedor == g.Key.AsesorId
                                                && (client != "" ? mv.Tercero == client : true)
-                                           select mv.TotalDescuentoVenta).Sum()
+                                           select mv.TotalDescuentoVenta).Sum(),
+
         }).ToList();
 
             var datos = billing.Select(x => new {
@@ -2079,7 +2080,7 @@ namespace ZeusInventarioWebAPI.Controllers
                 Asesor = x.Asesor,
                 Month = x.Month,
                 Value = (x.Value + x.arriendo + x.desc_dv) - (x.dv + x.nv),
-                //Items = ItemsList(x.Year, x.Month, x.AsesorId)
+                Items = ItemsList(x.Year, x.Month, x.AsesorId)
             });
 
             return Ok(datos);
