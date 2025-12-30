@@ -71,12 +71,14 @@ namespace ZeusInventarioWebAPI.Controllers
                             && tr.Indcpitra == "1"
                             && tr.Codicta == Convert.ToString(422010)
                             && tr.Anotra == Convert.ToString(ano.Year) + Convert.ToString(mes)
+                            && tr.Statustra == "AC"
                             select tr.Valortra).Sum();
 
             var Transaccion1 = (from tr in _context.Set<Transac>()
                                 where tr.Idfuente == "DV"
                                 && tr.Tipofac == "FA"
                                 && tr.Indcpitra == "1"
+                                && tr.Statustra == "AC"
                                 && tr.Anotra == Convert.ToString(ano.Year) + Convert.ToString(mes)
                                 select tr.Valortra).Sum();
 
@@ -93,6 +95,7 @@ namespace ZeusInventarioWebAPI.Controllers
                                 where tr.Idfuente == "NV"
                                 && tr.Tipofac == "FA"
                                 && tr.Indcpitra == "1"
+                                && tr.Statustra == "AC"
                                 && tr.Anotra == Convert.ToString(ano.Year) + Convert.ToString(mes)
                                 && tr.Valortra > 0
                                 select tr.Valortra).Sum();
@@ -225,6 +228,7 @@ namespace ZeusInventarioWebAPI.Controllers
                                   && mi.FechaDocumento.Month == Convert.ToInt32(mes)
                                   && mi.FechaDocumento.Year == ano
                                   && mi.Consecutivo != 35454
+                                  && mi.TipoDocumento == 9m
                                   //&& mi.Consecutivo != 38155
                                   select mi.PrecioTotal + mi.TotalDescuentoVenta).Sum();
 
@@ -232,6 +236,7 @@ namespace ZeusInventarioWebAPI.Controllers
                             where tr.Idfuente == "FV"
                             && tr.Tipofac == "FA"
                             && tr.Indcpitra == "1"
+                            && tr.Statustra == "AC"
                             && tr.Codicta == Convert.ToString(422010)
                             && tr.Anotra == Convert.ToString(ano) + Convert.ToString(mes)
                             select tr.Valortra).Sum();
@@ -240,6 +245,7 @@ namespace ZeusInventarioWebAPI.Controllers
                                 where tr.Idfuente == "DV"
                                 && tr.Tipofac == "FA"
                                 && tr.Indcpitra == "1"
+                                && tr.Statustra == "AC"
                                 && tr.Anotra == Convert.ToString(ano) + Convert.ToString(mes)
                                 select tr.Valortra).Sum();
 
@@ -258,6 +264,7 @@ namespace ZeusInventarioWebAPI.Controllers
                                 && tr.Indcpitra == "1"
                                 && tr.Anotra == Convert.ToString(ano) + Convert.ToString(mes)
                                 && tr.Valortra > 0
+                                && tr.Statustra == "AC"
                                 select tr.Valortra).Sum();
 
             var datos = ((MovimientoItem - (+(arriendo))) - ((Transaccion1 - descuentosDV) + Transaccion2));
