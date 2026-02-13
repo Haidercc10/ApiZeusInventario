@@ -1248,38 +1248,6 @@
         }
       }
     },
-    "/api/Existencias/getPrecioUltimoPrecioFacturado/{producto}/{presentacion}": {
-      "get": {
-        "tags": [
-          "Existencias"
-        ],
-        "parameters": [
-          {
-            "name": "producto",
-            "in": "path",
-            "required": true,
-            "style": "simple",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "presentacion",
-            "in": "path",
-            "required": true,
-            "style": "simple",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
     "/api/Existencias/getExistenciasProductos/{producto}/{presentacion}": {
       "get": {
         "tags": [
@@ -2208,6 +2176,16 @@
         "tags": [
           "MovimientoItems"
         ],
+        "parameters": [
+          {
+            "name": "sales",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success"
@@ -2256,6 +2234,16 @@
         "tags": [
           "MovimientoItems"
         ],
+        "parameters": [
+          {
+            "name": "sales",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success"
@@ -2267,6 +2255,16 @@
       "get": {
         "tags": [
           "MovimientoItems"
+        ],
+        "parameters": [
+          {
+            "name": "sales",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
           "200": {
@@ -2280,6 +2278,16 @@
         "tags": [
           "MovimientoItems"
         ],
+        "parameters": [
+          {
+            "name": "sales",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success"
@@ -2292,6 +2300,16 @@
         "tags": [
           "MovimientoItems"
         ],
+        "parameters": [
+          {
+            "name": "sales",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success"
@@ -2303,6 +2321,16 @@
       "get": {
         "tags": [
           "MovimientoItems"
+        ],
+        "parameters": [
+          {
+            "name": "sales",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
           "200": {
@@ -2527,6 +2555,48 @@
         "tags": [
           "MovimientoItems"
         ],
+        "parameters": [
+          {
+            "name": "sales",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/MovimientoItems/getPrecioUltimoPrecioFacturado/{producto}/{presentacion}": {
+      "get": {
+        "tags": [
+          "MovimientoItems"
+        ],
+        "parameters": [
+          {
+            "name": "producto",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "presentacion",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success"
@@ -2538,6 +2608,16 @@
       "get": {
         "tags": [
           "MovimientoItems"
+        ],
+        "parameters": [
+          {
+            "name": "sales",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
           "200": {
@@ -2560,6 +2640,14 @@
             "schema": {
               "type": "integer",
               "format": "int32"
+            }
+          },
+          {
+            "name": "sales",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string"
             }
           },
           {

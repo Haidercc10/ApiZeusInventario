@@ -117,7 +117,7 @@ namespace ZeusInventarioWebAPI.Controllers
                       select new
                       {
                           ped.PrecioUnidad,
-                          ped.FechaDocumento
+                          ped.FechaDocumento,
                       }).FirstOrDefault();
             return Ok(con);
         }

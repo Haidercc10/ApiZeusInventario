@@ -579,7 +579,7 @@ namespace ZeusInventarioWebAPI.Controllers
         }
 
         [HttpGet("getPedidos")]
-        public ActionResult getPedidos()
+        public ActionResult getPedidos(string? sales)
         {
             DateTime fechaInicio = new DateTime(2024, 2, 4);
 
@@ -591,6 +591,7 @@ namespace ZeusInventarioWebAPI.Controllers
                             && mov.Faltantes < mov.Cantidad
                             && cli.Idcliente == mov.Tercero
                             && ped.Consecutivo == mov.Consecutivo
+                            && (string.IsNullOrEmpty(sales) || mov.Vendedor == sales)
                       select new
                       {
                           mov.Consecutivo,
@@ -751,7 +752,7 @@ namespace ZeusInventarioWebAPI.Controllers
 
         //GET: Consulta para obtener el listado de clientes
         [HttpGet("getPedidosCliente")]
-        public ActionResult GetPedidosClientes()
+        public ActionResult GetPedidosClientes(string? sales)
         {
             var con = from mov in _context.Set<MovimientoItem>()
                       from cli in _context.Set<Cliente>()
@@ -761,6 +762,7 @@ namespace ZeusInventarioWebAPI.Controllers
                             && mov.Faltantes < mov.Cantidad
                             && cli.Idcliente == mov.Tercero
                             && ped.Consecutivo == mov.Consecutivo
+                            && (string.IsNullOrEmpty(sales) || mov.Vendedor == sales)
                       group mov by new
                       {
                           Id_Cliente = mov.Tercero,
@@ -778,7 +780,7 @@ namespace ZeusInventarioWebAPI.Controllers
 
         //GET: Consulta para obtener el listado de productos
         [HttpGet("getPedidosProductos")]
-        public ActionResult GetPedidosProductos()
+        public ActionResult GetPedidosProductos(string? sales)
         {
             var con = from mov in _context.Set<MovimientoItem>()
                       from cli in _context.Set<Cliente>()
@@ -788,6 +790,7 @@ namespace ZeusInventarioWebAPI.Controllers
                             && mov.Faltantes < mov.Cantidad
                             && cli.Idcliente == mov.Tercero
                             && ped.Consecutivo == mov.Consecutivo
+                            && (string.IsNullOrEmpty(sales) || mov.Vendedor == sales)
                       group mov by new
                       {
                           Id_Producto = mov.CodigoArticulo,
@@ -805,7 +808,7 @@ namespace ZeusInventarioWebAPI.Controllers
 
         //GET: Consulta para obtener el listado de productos
         [HttpGet("getPedidosVendedores")]
-        public ActionResult GetPedidosVendedores()
+        public ActionResult GetPedidosVendedores(string? sales)
         {
             var con = from mov in _context.Set<MovimientoItem>()
                       from cli in _context.Set<Cliente>()
@@ -815,6 +818,7 @@ namespace ZeusInventarioWebAPI.Controllers
                             && mov.Faltantes < mov.Cantidad
                             && cli.Idcliente == mov.Tercero
                             && ped.Consecutivo == mov.Consecutivo
+                            && (string.IsNullOrEmpty(sales) || mov.Vendedor == sales)
                       group mov by new
                       {
                           Id_Vendedor = mov.Vendedor,
@@ -832,7 +836,7 @@ namespace ZeusInventarioWebAPI.Controllers
 
         //GET: Consulta para obtener el listado de productos
         [HttpGet("getPedidosEstados")]
-        public ActionResult GetPedidosEstados()
+        public ActionResult GetPedidosEstados(string? sales)
         {
             var con = from mov in _context.Set<MovimientoItem>()
                       from cli in _context.Set<Cliente>()
@@ -842,6 +846,7 @@ namespace ZeusInventarioWebAPI.Controllers
                             && mov.Faltantes < mov.Cantidad
                             && cli.Idcliente == mov.Tercero
                             && ped.Consecutivo == mov.Consecutivo
+                            && (string.IsNullOrEmpty(sales) || mov.Vendedor == sales)
                       group mov by new
                       {
                           mov.Estado,
@@ -858,7 +863,7 @@ namespace ZeusInventarioWebAPI.Controllers
 
         //GET: Consulta para obtener el listado de productos
         [HttpGet("getPedidosStock")]
-        public ActionResult GetPedidosStock()
+        public ActionResult GetPedidosStock(string? sales)
         {
             var con = from mov in _context.Set<MovimientoItem>()
                       from cli in _context.Set<Cliente>()
@@ -868,6 +873,7 @@ namespace ZeusInventarioWebAPI.Controllers
                             && mov.Faltantes < mov.Cantidad
                             && cli.Idcliente == mov.Tercero
                             && ped.Consecutivo == mov.Consecutivo
+                            && (string.IsNullOrEmpty(sales) || mov.Vendedor == sales)
                             && (from art in _context.Set<Articulo>()
                                 join ext in _context.Set<Existencia>() on art.IdArticulo equals ext.Articulo
                                 where art.Codigo == mov.CodigoArticulo
@@ -1151,7 +1157,7 @@ namespace ZeusInventarioWebAPI.Controllers
 
         //Consulta que devolverá la informacion de los clientes que mas se han facturado en el mes y restará las devoluciones que han tenido estos mismos
         [HttpGet("getClienteFacturadosMes")]
-        public ActionResult GetClientesFacturadosMes()
+        public ActionResult GetClientesFacturadosMes(string? sales)
         {
 #pragma warning disable CA1827 // Do not use Count() or LongCount() when Any() can be used
             DateTime fecha = DateTime.Today;
@@ -1162,6 +1168,7 @@ namespace ZeusInventarioWebAPI.Controllers
                             && fv.Fecha.Year == fecha.Year
                             && fv.Fecha.Month == fecha.Month
                             && cli.Idtercero == fv.Cliente
+                            && (string.IsNullOrEmpty(sales) || fv.Vendedor == sales)
                       group fv by new
                       {
                           Anio = fv.Fecha.Year,
@@ -1200,7 +1207,7 @@ namespace ZeusInventarioWebAPI.Controllers
 
         //Consulta que devolverá la informacion de los productos que mas se han facturado en el mes 
         [HttpGet("getProductosFaturadosMes")]
-        public ActionResult GetClientesFacturadoMes()
+        public ActionResult GetClientesFacturadoMes(string? sales)
         {
             DateTime fecha = DateTime.Today;
             var con = from mov in _context.Set<MovimientoItem>()
@@ -1209,6 +1216,7 @@ namespace ZeusInventarioWebAPI.Controllers
                             && mov.Estado == "Procesado"
                             && mov.FechaDocumento.Year == fecha.Year
                             && mov.FechaDocumento.Month == fecha.Month
+                            && (string.IsNullOrEmpty(sales) || mov.Vendedor == sales)
                       group mov by new
                       {
                           Anio = mov.FechaDocumento.Year,
@@ -1232,7 +1240,7 @@ namespace ZeusInventarioWebAPI.Controllers
 
         //Consulta que devolverá la informacion de los vendedores que mas han facturado en el mes
         [HttpGet("getVendedoresFacturasMes/{year}")]
-        public ActionResult GetVendedoresFacturasMes(int year, string? month = "")
+        public ActionResult GetVendedoresFacturasMes(int year, string? sales, string? month = "")
         {
             DateTime fecha = DateTime.Today;
             var Month = month != "" ? Convert.ToInt32(month) : fecha.Month;
@@ -1247,6 +1255,7 @@ namespace ZeusInventarioWebAPI.Controllers
                       && fv.Estado == "Procesado"
                       && fv.Fecha.Year == year
                       && fv.Fecha.Month == Month
+                      && (string.IsNullOrEmpty(sales) || fv.Vendedor == sales)
                 group fv by new
                 {
                     Anio = year,

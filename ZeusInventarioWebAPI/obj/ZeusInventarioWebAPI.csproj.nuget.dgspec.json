@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\HaiderCarrillo\\OneDrive - PLASTICARIBE S.A.S\\Documentos\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj": {}
+    "C:\\Dev\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj": {}
   },
   "projects": {
-    "C:\\Users\\HaiderCarrillo\\OneDrive - PLASTICARIBE S.A.S\\Documentos\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj": {
+    "C:\\Dev\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\HaiderCarrillo\\OneDrive - PLASTICARIBE S.A.S\\Documentos\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj",
+        "projectUniqueName": "C:\\Dev\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj",
         "projectName": "ZeusInventarioWebAPI",
-        "projectPath": "C:\\Users\\HaiderCarrillo\\OneDrive - PLASTICARIBE S.A.S\\Documentos\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj",
+        "projectPath": "C:\\Dev\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj",
         "packagesPath": "C:\\Users\\HaiderCarrillo\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\HaiderCarrillo\\OneDrive - PLASTICARIBE S.A.S\\Documentos\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\obj\\",
+        "outputPath": "C:\\Dev\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
