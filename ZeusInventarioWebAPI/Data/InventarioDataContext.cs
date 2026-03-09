@@ -52,6 +52,7 @@ namespace ZeusInventarioWebAPI.Data
 
         public virtual DbSet<DocumentosRelacionado> DocumentosRelacionados { get; set; }
 
+        public virtual DbSet<Tercero> Terceros { get; set; }
 
         //CONEXIÓN A BASE DE DATOS QUE YA SE ENCUENTRA EN appsettings.json
         /*protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -2193,6 +2194,22 @@ namespace ZeusInventarioWebAPI.Data
             modelBuilder.Entity<DocumentosRelacionado>(entity =>
             {
                 entity.Property(e => e.IdenDocumentosrelacionados).ValueGeneratedOnAdd();
+            });
+
+            modelBuilder.Entity<Tercero>(entity =>
+            {
+                entity.ToView("TERCEROS");
+
+                entity.Property(e => e.CentroCosto).IsFixedLength();
+                entity.Property(e => e.Codigodane).IsFixedLength();
+                entity.Property(e => e.Divpolitica).IsFixedLength();
+                entity.Property(e => e.IdenTerceros).ValueGeneratedOnAdd();
+                entity.Property(e => e.Segmento).IsFixedLength();
+                entity.Property(e => e.Tipo).IsFixedLength();
+                entity.Property(e => e.TipoBloqueo).IsFixedLength();
+                entity.Property(e => e.VersionDeLaFila)
+                    .IsRowVersion()
+                    .IsConcurrencyToken();
             });
 
             OnModelCreatingPartial(modelBuilder);

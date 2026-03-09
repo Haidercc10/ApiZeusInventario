@@ -337,14 +337,16 @@ namespace ZeusInventarioWebAPI.Controllers
                                 where tr.Idfuente == "FV"
                                 && tr.Tipofac == "FA"
                                 && tr.Indcpitra == "1"
+                                && tr.Statustra == "AC"
                                 && tr.Codicta == Convert.ToString(422010)
                                 && tr.Anotra == Convert.ToString(anio) + (mes)
-                                select tr.Valortra).Sum();
+                                select Math.Abs(tr.Valortra)).Sum();
 
                 var Transaccion1 = (from tr in _context.Set<Transac>()
                                     where tr.Idfuente == "DV"
                                     && tr.Tipofac == "FA"
                                     && tr.Indcpitra == "1"
+                                    && tr.Statustra == "AC"
                                     && tr.Anotra == Convert.ToString(anio) + (mes)
                                     select tr.Valortra).Sum();
 
@@ -361,11 +363,12 @@ namespace ZeusInventarioWebAPI.Controllers
                                     where tr.Idfuente == "NV"
                                     && tr.Tipofac == "FA"
                                     && tr.Indcpitra == "1"
+                                    && tr.Statustra == "AC"
                                     && tr.Anotra == Convert.ToString(anio) + (mes)
                                     && tr.Valortra > 0
                                     select tr.Valortra).Sum();
 
-                datos.Add($"'Mes': '{mes}', 'Valor': '{Convert.ToDecimal((MovimientoItem - (+(arriendo))) - ((Transaccion1 - descuentosDV) + Transaccion2))}' ");
+                datos.Add($"'Mes': '{mes}', 'Valor': '{Convert.ToDecimal((MovimientoItem + arriendo) - (Transaccion1 - descuentosDV) + Transaccion2)}' ");
                 if (i == 11) return Ok(datos);
             }
             return Ok(datos);
@@ -1161,47 +1164,88 @@ namespace ZeusInventarioWebAPI.Controllers
         {
 #pragma warning disable CA1827 // Do not use Count() or LongCount() when Any() can be used
             DateTime fecha = DateTime.Today;
-            var con = from fv in _context.Set<FacturaDeCliente>()
-                      from cli in _context.Set<Cliente>()
-                      where fv.Fuente == "FV"
-                            && fv.Estado == "Procesado"
-                            && fv.Fecha.Year == fecha.Year
-                            && fv.Fecha.Month == fecha.Month
-                            && cli.Idtercero == fv.Cliente
-                            && (string.IsNullOrEmpty(sales) || fv.Vendedor == sales)
-                      group fv by new
-                      {
-                          Anio = fv.Fecha.Year,
-                          Mes = fv.Fecha.Month,
-                          Id_Cliente = fv.Cliente,
-                          Cliente = cli.Razoncial
-                      } into fv
-                      orderby fv.Count() descending
-                      select new
-                      {
-                          fv.Key.Anio,
-                          fv.Key.Mes,
-                          fv.Key.Id_Cliente,
-                          fv.Key.Cliente,
-                          Cantidad = fv.Count(),
-                          Costo = (from mov in _context.Set<MovimientoItem>()
-                                   where mov.TipoDocumento == 9
-                                         && mov.Fuente == "FV"
-                                         && mov.Estado == "Procesado"
-                                         && mov.FechaDocumento.Year == fecha.Year
-                                         && mov.FechaDocumento.Month == fecha.Month
-                                         && mov.Tercero == fv.Key.Id_Cliente
-                                   select mov.PrecioTotal).Sum() - (from tr in _context.Set<Transac>()
-                                                                    where tr.Idfuente == "DV"
-                                                                          && tr.Tipofac == "FA"
-                                                                          && tr.Indcpitra == "1"
-                                                                          && tr.Fechatra.Substring(5, 2) == Convert.ToString(fecha.Month)
-                                                                          && tr.Fechatra.Substring(0, 4) == Convert.ToString(fecha.Year)
-                                                                          && tr.Nittra == fv.Key.Id_Cliente
-                                                                    select tr.Valortra).Sum()
-                      };
-            if (con.Count() > 0) return Ok(con);
-            else return BadRequest("No se encontraron clientes con facturas en el mes");
+            var Month = fecha.Month;
+            var year = fecha.Year;
+            var MonthString = Month > 9 ? Month.ToString() : "0" + Month.ToString();
+            
+            var vendedores =
+            (
+                from fv in _context.Set<FacturaDeCliente>()
+                join t in _context.Set<Tercero>() on fv.Cliente equals t.Idtercero
+                where fv.Fuente == "FV"
+                      && fv.Estado == "Procesado"
+                      && fv.Fecha.Year == year
+                      && fv.Fecha.Month == Month
+                      && (string.IsNullOrEmpty(sales) || fv.Vendedor == sales)
+                group fv by new
+                {
+                    Anio = year,
+                    Mes = Month,
+                    Id_Cliente = fv.Cliente,
+                    Cliente = t.Nombreter
+                } into g
+                orderby g.Count() descending
+                select new ClienteFacturacionDTO
+                {
+                    Anio = g.Key.Anio,
+                    Mes = g.Key.Mes,
+                    Id_Cliente = g.Key.Id_Cliente,
+                    Cliente = g.Key.Cliente,
+                    Cantidad = g.Count(),
+                    Costo =
+                        (
+                            (from mov in _context.Set<MovimientoItem>()
+                             where mov.Fuente == "FV"
+                                   && mov.Estado == "Procesado"
+                                   && mov.FechaDocumento.Year == year
+                                   && mov.FechaDocumento.Month == Month
+                                   && mov.Tercero == g.Key.Id_Cliente
+                             select mov.PrecioTotal + mov.TotalDescuentoVenta).Sum()
+                             +
+                             (from tr in _context.Set<Transac>()
+                              where tr.Idfuente == "FV"
+                              && tr.Tipofac == "FA"
+                              && tr.Indcpitra == "1"
+                              && tr.Statustra == "AC"
+                              && tr.Codicta == Convert.ToString(422010)
+                              && tr.Anotra == (year * 100 + Month).ToString()
+                              && tr.Nittra == g.Key.Id_Cliente
+                              select Math.Abs(tr.Valortra)).Sum())
+
+                             - ((from tr in _context.Set<Transac>()
+                                 where tr.Idfuente == "DV"
+                                 && tr.Tipofac == "FA"
+                                 && tr.Indcpitra == "1"
+                                 && tr.Statustra == "AC"
+                                 && tr.Anotra == (year * 100 + Month).ToString()
+                                 && tr.Nittra == g.Key.Id_Cliente
+                                 && tr.Valortra > 0
+                                 select tr.Valortra).Sum()
+                             -
+                                 (from mv in _context.Set<MovimientoItem>()
+                                  where mv.FechaDocumento.Month == Convert.ToInt32(Month)
+                                  && mv.FechaDocumento.Year == year
+                                  && mv.Fuente == "DV"
+                                  && mv.Estado == "Procesado"
+                                  && mv.TipoDocumento == 26m
+                                  && mv.Tercero == g.Key.Id_Cliente
+                                  select mv.TotalDescuentoVenta).Sum())
+                             +
+                                (from tr in _context.Set<Transac>()
+                                 where tr.Idfuente == "NV"
+                                 && tr.Tipofac == "FA"
+                                 && tr.Indcpitra == "1"
+                                 && tr.Statustra == "AC"
+                                 && tr.Anotra == (year * 100 + Month).ToString()
+                                 && tr.Nittra == g.Key.Id_Cliente
+                                 && tr.Valortra > 0
+                                 select tr.Valortra).Sum()
+                }
+
+            ).ToList();
+
+            if (vendedores.Any()) return Ok(vendedores);
+            return BadRequest("No se encontraron vendedores con facturas en el mes");
 #pragma warning restore CA1827 // Do not use Count() or LongCount() when Any() can be used
         }
 
@@ -1272,49 +1316,53 @@ namespace ZeusInventarioWebAPI.Controllers
                     Vendedor = g.Key.Vendedor,
                     Cantidad = g.Count(),
                     Costo =
-                        (from mov in _context.Set<MovimientoItem>()
-                         where mov.TipoDocumento == 9
-                               && mov.Fuente == "FV"
-                               && mov.Estado == "Procesado"
-                               && mov.FechaDocumento.Year == year
-                               && mov.FechaDocumento.Month == Month
-                               && mov.Vendedor == g.Key.Id_Vendedor
-                         select mov.PrecioTotal + mov.TotalDescuentoVenta).Sum()
-                                                        +  (from tr in _context.Set<Transac>()
-                                                            where tr.Idfuente == "FV"
-                                                            && tr.Tipofac == "FA"
-                                                            && tr.Indcpitra == "1"
-                                                            && tr.Codicta == Convert.ToString(422010)
-                                                            && tr.Anotra == (year * 100 + Month).ToString()
-                                                            select tr.Valortra).Sum()
+                        (
+                            (from mov in _context.Set<MovimientoItem>()
+                             where mov.Fuente == "FV"
+                                   && mov.Estado == "Procesado"
+                                   && mov.FechaDocumento.Year == year
+                                   && mov.FechaDocumento.Month == Month
+                                   && mov.Vendedor == g.Key.Id_Vendedor
+                             select mov.PrecioTotal + mov.TotalDescuentoVenta).Sum()
+                             +  
+                             (from tr in _context.Set<Transac>()
+                                 where tr.Idfuente == "FV"
+                                 && tr.Tipofac == "FA"
+                                 && tr.Indcpitra == "1"
+                                 && tr.Statustra == "AC"
+                                 && tr.Codicta == Convert.ToString(422010)
+                                 && tr.Anotra == (year * 100 + Month).ToString()
+                                 && tr.Idvende == g.Key.Id_Vendedor
+                              select Math.Abs(tr.Valortra)).Sum())
 
-                                                        - (from tr in _context.Set<Transac>()
-                                                          where tr.Idfuente == "DV"
-                                                                && tr.Tipofac == "FA"
-                                                                && tr.Indcpitra == "1"
-                                                                && tr.Anotra == (year * 100 + Month).ToString()
-                                                                && tr.Idvende == g.Key.Id_Vendedor
-                                                                && tr.Valortra > 0
-                                                          select tr.Valortra).Sum()
-
-                                                        - (from tr in _context.Set<Transac>()
-                                                           where tr.Idfuente == "NV"
-                                                           && tr.Tipofac == "FA"
-                                                           && tr.Indcpitra == "1"
-                                                           && tr.Anotra == (year * 100 + Month).ToString()
-                                                           && tr.Idvende == g.Key.Id_Vendedor
-                                                           && tr.Valortra > 0
-                                                           select tr.Valortra).Sum()
-
-                                                        + (from mv in _context.Set<MovimientoItem>()
-                                                           where mv.FechaDocumento.Month == Convert.ToInt32(Month)
-                                                           && mv.FechaDocumento.Year == year
-                                                           && mv.Fuente == "DV"
-                                                           && mv.Estado == "Procesado"
-                                                           && mv.TipoDocumento == 26m
-                                                           && mv.Vendedor == g.Key.Vendedor
-                                                           select mv.TotalDescuentoVenta).Sum()
-                                
+                             - ((from tr in _context.Set<Transac>()
+                               where tr.Idfuente == "DV"
+                                     && tr.Tipofac == "FA"
+                                     && tr.Indcpitra == "1"
+                                     && tr.Statustra == "AC"
+                                     && tr.Anotra == (year * 100 + Month).ToString()
+                                     && tr.Idvende == g.Key.Id_Vendedor
+                                     && tr.Valortra > 0
+                               select tr.Valortra).Sum()
+                             -
+                                 (from mv in _context.Set<MovimientoItem>()
+                                  where mv.FechaDocumento.Month == Convert.ToInt32(Month)
+                                  && mv.FechaDocumento.Year == year
+                                  && mv.Fuente == "DV"
+                                  && mv.Estado == "Procesado"
+                                  && mv.TipoDocumento == 26m
+                                  && mv.Vendedor == g.Key.Vendedor
+                                  select mv.TotalDescuentoVenta).Sum())
+                             +
+                                (from tr in _context.Set<Transac>()
+                                where tr.Idfuente == "NV"
+                                && tr.Tipofac == "FA"
+                                && tr.Indcpitra == "1"
+                                && tr.Statustra == "AC"
+                                && tr.Anotra == (year * 100 + Month).ToString()
+                                && tr.Idvende == g.Key.Id_Vendedor
+                                && tr.Valortra > 0
+                                select tr.Valortra).Sum()  
                 } 
 
             ).ToList();
@@ -1968,17 +2016,20 @@ namespace ZeusInventarioWebAPI.Controllers
         }
 
         [HttpGet("getClientsForLastFact/{start}/{end}")]
-        public ActionResult GetClientsForLastFact(DateTime start, DateTime end, string? client = "")
+        public ActionResult GetClientsForLastFact(DateTime start, DateTime end, string? client = "", string? sales = "")
         {
             var fact = from fac in _context.Set<FacturaDeCliente>()
                        where fac.Fecha >= start &&
                        fac.Fecha <= end &&
-                       (client != "" ? fac.Cliente == client : true)
+                       (client != "" ? fac.Cliente == client : true) &&
+                       (sales != "" ? fac.Vendedor == sales : true)
                        select fac.Cliente;
 
             var con = from cli in _context.Set<Cliente>()
                       join v in _context.Set<Maevende>() on cli.Idvende equals v.Idvende
-                      where (fact.Any() ? fact.Contains(cli.Idcliente) : client != "" ? cli.Idcliente == client : true)
+                      where (fact.Any() ? fact.Contains(cli.Idcliente) : true) &&
+                            (client != "" ? cli.Idcliente == client : true) &&
+                            (sales != "" ? cli.Idvende == sales : true)
                       select new
                       {
                           Id_Client = cli.Idcliente,
@@ -2403,6 +2454,16 @@ public class VendedorFacturacionDTO
     public int Cantidad { get; set; }
     public decimal Costo { get; set; }
     public List<VentaClienteDTO> Ventas_Clientes { get; set; } = new();
+}
+
+public class ClienteFacturacionDTO
+{
+    public int Anio { get; set; }
+    public int Mes { get; set; }
+    public string Id_Cliente { get; set; }
+    public string Cliente { get; set; }
+    public int Cantidad { get; set; }
+    public decimal Costo { get; set; }
 }
 
 

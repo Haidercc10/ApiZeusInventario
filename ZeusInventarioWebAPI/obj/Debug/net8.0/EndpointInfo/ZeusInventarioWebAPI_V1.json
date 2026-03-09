@@ -1248,6 +1248,38 @@
         }
       }
     },
+    "/api/Existencias/getPrecioUltimoPrecioFacturado/{producto}/{presentacion}": {
+      "get": {
+        "tags": [
+          "Existencias"
+        ],
+        "parameters": [
+          {
+            "name": "producto",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "presentacion",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/api/Existencias/getExistenciasProductos/{producto}/{presentacion}": {
       "get": {
         "tags": [
@@ -2572,38 +2604,6 @@
         }
       }
     },
-    "/api/MovimientoItems/getPrecioUltimoPrecioFacturado/{producto}/{presentacion}": {
-      "get": {
-        "tags": [
-          "MovimientoItems"
-        ],
-        "parameters": [
-          {
-            "name": "producto",
-            "in": "path",
-            "required": true,
-            "style": "simple",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "presentacion",
-            "in": "path",
-            "required": true,
-            "style": "simple",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
     "/api/MovimientoItems/getProductosFaturadosMes": {
       "get": {
         "tags": [
@@ -3371,6 +3371,15 @@
           },
           {
             "name": "client",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "sales",
             "in": "query",
             "style": "form",
             "schema": {

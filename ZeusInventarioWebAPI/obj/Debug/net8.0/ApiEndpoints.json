@@ -840,6 +840,27 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "ZeusInventarioWebAPI.Controllers.ExistenciasController",
+    "Method": "getPrecioUltimoPrecioFacturado",
+    "RelativePath": "api/Existencias/getPrecioUltimoPrecioFacturado/{producto}/{presentacion}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "producto",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "presentacion",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "ZeusInventarioWebAPI.Controllers.FacturaDeClienteController",
     "Method": "GetFacturasDeClientes",
     "RelativePath": "api/FacturaDeCliente",
@@ -1336,6 +1357,11 @@
       },
       {
         "Name": "client",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "sales",
         "Type": "System.String",
         "IsRequired": false
       }
@@ -2053,27 +2079,6 @@
         "Name": "sales",
         "Type": "System.String",
         "IsRequired": false
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "ZeusInventarioWebAPI.Controllers.MovimientoItemsController",
-    "Method": "getPrecioUltimoPrecioFacturado",
-    "RelativePath": "api/MovimientoItems/getPrecioUltimoPrecioFacturado/{producto}/{presentacion}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "producto",
-        "Type": "System.String",
-        "IsRequired": true
-      },
-      {
-        "Name": "presentacion",
-        "Type": "System.String",
-        "IsRequired": true
       }
     ],
     "ReturnTypes": []
