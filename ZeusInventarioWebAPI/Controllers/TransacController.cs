@@ -53,7 +53,7 @@ namespace ZeusInventarioWebAPI.Controllers
 
         // -- Obtener los recibos de caja de la empresa.
         [HttpGet("getRecibosCaja/{fecha1}/{fecha2}")]
-        public ActionResult GetRecibosCaja(DateTime fecha1, DateTime fecha2)
+        public ActionResult GetRecibosCaja(DateTime fecha1, DateTime fecha2, string? sales)
         {
             if (_context.Transacs == null) return NotFound();
 
@@ -66,7 +66,8 @@ namespace ZeusInventarioWebAPI.Controllers
                           t.Idfuente == "RC" &&
                           t.Tipofac == "FA" &&
                           t.Fgratra >= fecha1 &&
-                          t.Fgratra <= fecha2
+                          t.Fgratra <= fecha2 &&
+                          (string.IsNullOrEmpty(sales) || t.Idvende == sales)
                           orderby t.Fgratra descending
                           select new
                           {

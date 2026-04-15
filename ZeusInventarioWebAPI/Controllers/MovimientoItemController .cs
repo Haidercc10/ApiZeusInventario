@@ -10,6 +10,7 @@ using Newtonsoft.Json.Linq;
 using NuGet.Protocol;
 using ServiceReference1;
 using System.Data.Entity;
+using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.ServiceModel;
@@ -62,7 +63,7 @@ namespace ZeusInventarioWebAPI.Controllers
                                   && mi.FechaDocumento.Month == ano.Month
                                   && mi.FechaDocumento.Year == ano.Year
                                   && mi.Consecutivo != 35454
-                                  //&& mi.Consecutivo != 38155
+                                  && mi.Consecutivo != 38155
                                   select mi.PrecioTotal + mi.TotalDescuentoVenta).Sum();
 
             var arriendo = (from tr in _context.Set<Transac>()
@@ -117,6 +118,7 @@ namespace ZeusInventarioWebAPI.Controllers
                                && mi.Documento == document
                                && mi.TipoDocumento == 9m
                                && mi.Consecutivo != 35454
+                               && mi.Consecutivo != 38155
                                group mi by new
                                {
                                    Fecha = mi.FechaDocumento,
@@ -125,7 +127,6 @@ namespace ZeusInventarioWebAPI.Controllers
                                    Documento = Convert.ToString("FV"),
                                    Recibo = Convert.ToString("------------------------")
                                } into mi
-                               //&& mi.Consecutivo != 38155
                                select new
                                {
                                    Fecha = Convert.ToDateTime(mi.Key.Fecha),
@@ -231,7 +232,7 @@ namespace ZeusInventarioWebAPI.Controllers
                                   && mi.FechaDocumento.Year == ano
                                   && mi.Consecutivo != 35454
                                   //&& mi.TipoDocumento == 9m
-                                  //&& mi.Consecutivo != 38155
+                                  && mi.Consecutivo != 38155
                                   select mi.PrecioTotal + mi.TotalDescuentoVenta).Sum();
 
             var arriendo = (from tr in _context.Set<Transac>()
@@ -330,7 +331,7 @@ namespace ZeusInventarioWebAPI.Controllers
                                       && mi.FechaDocumento.Month == Convert.ToInt32(mes)
                                       && mi.FechaDocumento.Year == anio
                                       && mi.Consecutivo != 35454
-                                      //&& mi.Consecutivo != 38155
+                                      && mi.Consecutivo != 38155
                                       select mi.PrecioTotal + mi.TotalDescuentoVenta).Sum();
 
                 var arriendo = (from tr in _context.Set<Transac>()
@@ -543,6 +544,8 @@ namespace ZeusInventarioWebAPI.Controllers
             return Ok(num1);
         }
 
+        //Función para obtener los pedidos que no han sido liquidados, agrupados por número de pedido,
+        //esto con el fin de tener un informe general de cada pedido sin entrar en el detalle de los items que lo componen.
         [HttpGet("getPedidosAgrupados")]
         public ActionResult getPedidosAgrupados()
         {
@@ -581,6 +584,8 @@ namespace ZeusInventarioWebAPI.Controllers
             return Ok(con);
         }
 
+        //Función para obtener los pedidos que no han sido liquidados, con la información de cada uno de los items que componen el pedido,
+        //esto con el fin de tener un informe detallado de cada pedido.
         [HttpGet("getPedidos")]
         public ActionResult getPedidos(string? sales)
         {
@@ -639,24 +644,27 @@ namespace ZeusInventarioWebAPI.Controllers
             return Ok(con);
         }
 
-        //
-        [HttpGet("getTodosPedidos")]
-        public ActionResult getTodosPedidos()
+        //Función para obtener todos los pedidos sin importar su fecha de creación, esto con el fin de tener un histórico de pedidos.
+        [HttpGet("getTodosPedidos/{date1}/{date2}")]
+        public ActionResult getTodosPedidos(DateTime date1, DateTime date2, string? client = "", string? sales = "", string? oc = "", string? status = "")
         {
-            DateTime fechaInicioPedidos = new DateTime(2025, 1, 1);
-
             var con = from mov in _context.Set<MovimientoItem>()
                       from cli in _context.Set<Cliente>()
                       from ped in _context.Set<PedidoDeCliente>()
                       where mov.TipoDocumento == 7
                             && cli.Idcliente == mov.Tercero
                             && ped.Consecutivo == mov.Consecutivo
-                            && ped.Fecha >= fechaInicioPedidos
+                            && ped.Fecha >= date1
+                            && ped.Fecha <= date2
+                            && (string.IsNullOrEmpty(client) || mov.Tercero == client)
+                            && (string.IsNullOrEmpty(status) || mov.Estado == status)
+                            && (string.IsNullOrEmpty(sales) || mov.Vendedor == sales)
+                            && (string.IsNullOrEmpty(oc) || ped.Detalle.Contains(oc) || ped.OrdenCompraCliente.Contains(oc))
                       select new
                       {
                           mov.Consecutivo,
-                          Fecha_Creacion = mov.FechaDocumento,
-                          Id_Cliente = mov.Tercero,
+                          Fecha_Creacion = mov.FechaDocumento.ToString("yyyy-MM-dd"),
+                          Orden_Compra_CLiente = ped.OrdenCompraCliente,
                           Cliente = mov.NombreTercero,
                           cli.Ciudad,
                           Id_Producto = mov.CodigoArticulo,
@@ -666,36 +674,53 @@ namespace ZeusInventarioWebAPI.Controllers
                           Cant_Facturada = mov.Faltantes,
                           mov.Presentacion,
                           mov.PrecioUnidad,
-                          Id_Vendedor = mov.Vendedor,
                           Vendedor = mov.NombreVendedor,
-                          Orden_Compra_CLiente = ped.OrdenCompraCliente,
+                          Detalle = ped.Detalle,
                           Costo_Cant_Pendiente = ((mov.Cantidad - mov.Faltantes) * mov.PrecioUnidad),
                           Costo_Cant_Total = (mov.Cantidad * mov.PrecioUnidad),
-                          Fecha_Entrega = ped.FechaEntrega,
-                          Existencias = (from art in _context.Set<Articulo>()
-                                         join ext in _context.Set<Existencia>() on art.IdArticulo equals ext.Articulo
-                                         where art.Codigo == mov.CodigoArticulo
-                                               && art.DesHabilitado == false
-                                               && art.Presentacion == mov.Presentacion
-                                         group ext by ext.Articulo into ext
-                                         select ext.Sum(x => x.Existencias)).FirstOrDefault(),
-                          mov.Estado,
-                          Fecha_Factura = (
-                            from f in _context.Set<FacturaDeCliente>()
-                            where
-                            f.Fecha >= fechaInicioPedidos &&
-                            f.Consecutivo == (from c in _context.Set<DocumentosRelacionado>()
-                                              where c.TipoImportador == 9 &&
-                                                    c.TipoExportador == 7 &&
-                                                    c.Exportador == ped.Consecutivo
-                                              orderby c.IdenDocumentosrelacionados descending
-                                              select c.Importador).FirstOrDefault()
-                            select f.Fecha.ToString("yyyy-MM-dd") == null ? Convert.ToString("") : f.Fecha.ToString("yyyy-MM-dd")
-                        ).FirstOrDefault()
+                          Fecha_Entrega = ped.FechaEntrega.ToString("yyyy-MM-dd"),
+                          Estado = mov.Estado,
+                          
                       };
             return Ok(con);
         }
 
+        //Función para obtener la factura de un pedido específico a través de su número de consecutivo,
+        //esto con el fin de tener un informe detallado de un pedido en particular.
+        [HttpGet("getFactForSales/{sales}/{item}")]
+        public ActionResult getFactForSales(int sales, string item)
+        {
+            var sql = from f in _context.Set<DocumentosRelacionado>()
+                      where f.TipoImportador == 9 &&
+                              f.TipoExportador == 7 &&
+                              f.Exportador == sales
+                      orderby f.IdenDocumentosrelacionados descending
+                      select f.Importador;
+
+            var fact = from m in _context.Set<MovimientoItem>()
+                       where sql.Contains(m.Consecutivo)
+                       && m.Fuente == "FV"
+                       && m.Estado == "Procesado"
+                       && m.CodigoArticulo == item
+                       select new
+                       {
+                            Factura = m.Documento,
+                            Fecha = m.FechaDocumento.ToString("yyyy-MM-dd"),
+                            Cliente = m.NombreTercero,
+                            Item = m.CodigoArticulo,
+                            Referencia = m.NombreArticulo,
+                            Cantidad = m.Cantidad,
+                            Precio = m.PrecioUnidad,
+                            Subtotal = (m.Cantidad * m.PrecioUnidad),
+                            Presentacion = m.Presentacion,
+                            Observacion = m.DetalleDocumento,
+                       };
+
+            return Ok(fact);
+        }
+
+            //Función para obtener la información de un pedido específico a través de su número de consecutivo,
+            //esto con el fin de tener un informe detallado de un pedido en particular, el cual puede ser utilizado para generar un PDF.
         [HttpGet("getPedidosPorConsecutivo/{consecutivo}")]
         public ActionResult getPedidosPDF(int consecutivo)
         {
