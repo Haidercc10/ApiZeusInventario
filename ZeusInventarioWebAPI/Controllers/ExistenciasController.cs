@@ -105,22 +105,30 @@ namespace ZeusInventarioWebAPI.Controllers
             return Ok(con);
         }
 
-        //
+        //Función para obtener el último precio facturado de un producto específico, considerando su presentación.
         [HttpGet("getPrecioUltimoPrecioFacturado/{producto}/{presentacion}")]
-        public ActionResult getPrecioUltimoPrecioFacturado(string producto, string presentacion)
+        public async Task<ActionResult> GetPrecioUltimoPrecioFacturado(string producto, string presentacion)
         {
-            var con = (from ped in _context.Set<MovimientoItem>()
-                      where presentacion == ped.Presentacion
-                            && producto == ped.CodigoArticulo
-                            && ped.TipoDocumento == 9
-                      orderby ped.FechaDocumento descending
-                      select new
-                      {
-                          ped.PrecioUnidad,
-                          ped.FechaDocumento,
-                      }).FirstOrDefault();
-            return Ok(con);
+            var resultado = await _context.Set<MovimientoItem>()
+                .AsNoTracking()
+                .Where(ped => ped.Presentacion == presentacion
+                           && ped.CodigoArticulo == producto
+                           && ped.TipoDocumento == 9
+                           && ped.Fuente == "FV")
+                .OrderByDescending(ped => ped.FechaDocumento)
+                .Select(ped => new
+                {
+                    ped.PrecioUnidad,
+                    ped.FechaDocumento
+                })
+                .FirstOrDefaultAsync();
+
+            if (resultado == null)
+                return NotFound("No se encontró precio facturado para ese producto.");
+
+            return Ok(resultado);
         }
+
 
         [HttpGet("getExistenciasProductos/{producto}/{presentacion}")]
         public ActionResult GetExistenciasProducto(string producto, string presentacion)
