@@ -841,7 +841,7 @@
   },
   {
     "ContainingType": "ZeusInventarioWebAPI.Controllers.ExistenciasController",
-    "Method": "getPrecioUltimoPrecioFacturado",
+    "Method": "GetPrecioUltimoPrecioFacturado",
     "RelativePath": "api/Existencias/getPrecioUltimoPrecioFacturado/{producto}/{presentacion}",
     "HttpMethod": "GET",
     "IsController": true,
@@ -1635,6 +1635,27 @@
   },
   {
     "ContainingType": "ZeusInventarioWebAPI.Controllers.MovimientoItemsController",
+    "Method": "getFactForSales",
+    "RelativePath": "api/MovimientoItems/getFactForSales/{sales}/{item}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "sales",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "item",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ZeusInventarioWebAPI.Controllers.MovimientoItemsController",
     "Method": "FacturacionTodosMeses",
     "RelativePath": "api/MovimientoItems/getFacturacion_Mes_Mes/{anio}",
     "HttpMethod": "GET",
@@ -2118,11 +2139,42 @@
   {
     "ContainingType": "ZeusInventarioWebAPI.Controllers.MovimientoItemsController",
     "Method": "getTodosPedidos",
-    "RelativePath": "api/MovimientoItems/getTodosPedidos",
+    "RelativePath": "api/MovimientoItems/getTodosPedidos/{date1}/{date2}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
-    "Parameters": [],
+    "Parameters": [
+      {
+        "Name": "date1",
+        "Type": "System.DateTime",
+        "IsRequired": true
+      },
+      {
+        "Name": "date2",
+        "Type": "System.DateTime",
+        "IsRequired": true
+      },
+      {
+        "Name": "client",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "sales",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "oc",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "status",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
     "ReturnTypes": []
   },
   {
@@ -2402,6 +2454,11 @@
         "Name": "fecha2",
         "Type": "System.DateTime",
         "IsRequired": true
+      },
+      {
+        "Name": "sales",
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []

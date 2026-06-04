@@ -205,6 +205,7 @@ namespace ZeusInventarioWebAPI.Controllers
         {
             var query = _context.Transacs
             .Where(t => t.Idfuente == "FV" || t.Idfuente == "DV" || t.Idfuente == "NV")
+            .Where(t => t.Statustra == "AC")
             .Where(t => string.Compare(t.Fechatra, date1.ToString("yyyy/MM/dd")) >= 0 && string.Compare(t.Fechatra, date2.ToString("yyyy/MM/dd")) <= 0);
 
             if (!string.IsNullOrWhiteSpace(vendedor))
@@ -331,7 +332,7 @@ namespace ZeusInventarioWebAPI.Controllers
                                       && mi.FechaDocumento.Month == Convert.ToInt32(mes)
                                       && mi.FechaDocumento.Year == anio
                                       && mi.Consecutivo != 35454
-                                      && mi.Consecutivo != 38155
+                                      //&& mi.Consecutivo != 38155
                                       select mi.PrecioTotal + mi.TotalDescuentoVenta).Sum();
 
                 var arriendo = (from tr in _context.Set<Transac>()
@@ -369,7 +370,7 @@ namespace ZeusInventarioWebAPI.Controllers
                                     && tr.Valortra > 0
                                     select tr.Valortra).Sum();
 
-                datos.Add($"'Mes': '{mes}', 'Valor': '{Convert.ToDecimal((MovimientoItem + arriendo) - (Transaccion1 - descuentosDV) + Transaccion2)}' ");
+                datos.Add($"'Mes': '{mes}', 'Valor': '{Convert.ToDecimal((MovimientoItem + arriendo) - ((Transaccion1 - descuentosDV) + Transaccion2))}' ");
                 if (i == 11) return Ok(datos);
             }
             return Ok(datos);

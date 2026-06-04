@@ -1,13 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using ZeusInventarioWebAPI.Data;
 using ZeusInventarioWebAPI.Models;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ZeusInventarioWebAPI.Controllers
 {
@@ -65,10 +66,12 @@ namespace ZeusInventarioWebAPI.Controllers
                           t.Idvende == m.Idvende &&
                           t.Idfuente == "RC" &&
                           t.Tipofac == "FA" &&
-                          t.Fgratra >= fecha1 &&
-                          t.Fgratra <= fecha2 &&
+                          //Convert.ToDateTime(t.Fechatra) >= fecha1 &&
+                          //Convert.ToDateTime(t.Fechatra) <= fecha2 &&
+                          (string.Compare(t.Fechatra, fecha1.ToString("yyyy/MM/dd")) >= 0 &&
+                           string.Compare(t.Fechatra, fecha2.ToString("yyyy/MM/dd")) <= 0) &&
                           (string.IsNullOrEmpty(sales) || t.Idvende == sales)
-                          orderby t.Fgratra descending
+                          orderby t.Fechatra descending
                           select new
                           {
                               AnoMes = t.Anotra,

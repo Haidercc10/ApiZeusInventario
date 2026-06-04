@@ -57,7 +57,7 @@ namespace ZeusInventarioWebAPI.Controllers
                                                    Nombre = ART.ArticuloNavigation.Nombre,
                                                    Existencias = ART.Existencias,
                                                    PrecioVenta = ART.ArticuloNavigation.PrecioVenta,
-                                                   Presentacion = ART.ArticuloNavigation.Presentacion == "UND" ? "Und" : ART.ArticuloNavigation.Presentacion == "KLS" ? "Kg" : "Paquete",
+                                                   Presentacion = ART.ArticuloNavigation.Presentacion == "UND" ? "Und" : ART.ArticuloNavigation.Presentacion == "KLS" ? "Kg" : ART.ArticuloNavigation.Presentacion == "MTS" ? "MTS" :  "Paquete",
                                                    Precio_Total = ART.Existencias * ART.ArticuloNavigation.PrecioVenta
                                                }).ToList();
 
