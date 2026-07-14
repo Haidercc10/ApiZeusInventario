@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 using ZeusInventarioWebAPI.Models;
 
 namespace ZeusInventarioWebAPI.Controllers
@@ -46,41 +47,40 @@ namespace ZeusInventarioWebAPI.Controllers
         }
 
         [HttpGet("getItemsByName/{name}")]
-        public ActionResult GetItemsByName(string name)
+        public async Task<ActionResult> GetItemsByName(string name)
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var items = from a in _context.Set<Articulo>()
-                        where a.Tipo == "PRODUCTO TERMINADO" &&
-                              a.Nombre.Contains(name)
-                        select new
-                        {
-                            Codigo = a.Codigo,
-                            Nombre = a.Nombre,
-                        };
+            var items = await (from a in _context.Set<Articulo>().AsNoTracking()
+                               where a.Tipo == "PRODUCTO TERMINADO" &&
+                               a.Nombre.Contains(name)
+                               select new
+                               {
+                                   Codigo = a.Codigo,
+                                   Nombre = a.Nombre,
+                               }).ToListAsync();
             return Ok(items);
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
         [HttpGet("getItemsByNumber/{item}")]
-        public ActionResult GetItemsByNumber(string item)
+        public async Task<ActionResult> GetItemsByNumber(string item)
         {
-            var items = from a in _context.Set<Articulo>()
-                        where a.Tipo == "PRODUCTO TERMINADO" &&
-                              a.Codigo == item
-                        select new { 
-                          Codigo = a.Codigo,
-                          Nombre = a.Nombre,
-                        };
+            var items = await (from a in _context.Set<Articulo>().AsNoTracking()
+                               where a.Tipo == "PRODUCTO TERMINADO" &&
+                               a.Codigo == item
+                               select new { 
+                                    Codigo = a.Codigo,
+                                    Nombre = a.Nombre,
+                               }).ToListAsync();
             return Ok(items);
         }
 
         /** */
         [HttpGet("getArticulos/{item}")]
-        public ActionResult GetArticulos2(string item)
+        public async Task<ActionResult> GetArticulos2(string item)
         {
-
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var articulo = from ar in _context.Set<Articulo>()
+            var articulo = await (from ar in _context.Set<Articulo>().AsNoTracking()
                            where ar.Tipo == "PRODUCTO TERMINADO"
                            && ar.Nombre.Contains(item)
                            select new
@@ -88,111 +88,112 @@ namespace ZeusInventarioWebAPI.Controllers
                                ar.IdArticulo,
                                ar.Codigo,
                                ar.Nombre
-                           };
+                           }).ToListAsync();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(articulo);
         }
 
         /** */
         [HttpGet("getArticulosxId/{codigo}")]
-        public ActionResult GetArticulosxId(string codigo)
+        public async Task<ActionResult> GetArticulosxId(string codigo)
         {
-
-            var articulo = from ar in _context.Set<Articulo>()
-                           where ar.Tipo == "PRODUCTO TERMINADO"
+            var articulo = await (from ar in _context.Set<Articulo>().AsNoTracking()
+                                  where ar.Tipo == "PRODUCTO TERMINADO"
                            && ar.Codigo == codigo
                            select new
                            {
                                ar.IdArticulo,
                                ar.Codigo,
                                ar.Nombre
-                           };
+                           }).ToListAsync();
             return Ok(articulo);
         }
 
-        /** */
+        /**  */
         [HttpGet("getVendedores/{nombre}")]
-        public ActionResult GetVendedor2(string nombre)
+        public async Task<ActionResult> GetVendedor2(string nombre)
         {
-            var vendedor = from v in _context.Set<Maevende>()
-                           where v.Deshabilitado != 1
+            var vendedor = await (from v in _context.Set<Maevende>().AsNoTracking()
+                                  where v.Deshabilitado != 1
                            && v.Nombvende.Contains(nombre)
                            select new
                            {
                                v.Idvende,
                                v.Nombvende
-                           };
-            return Ok(vendedor);
+                           }).ToListAsync();
 
+            return Ok(vendedor);
         }
 
         [HttpGet("getVendedoresxId/{idvende}")]
-        public ActionResult GetNombreVendedor2(string idvende)
+        public async Task<ActionResult> GetNombreVendedor2(string idvende)
         {
-            var vendedor = from v in _context.Set<Maevende>()
+            var vendedor = (from v in _context.Set<Maevende>().AsNoTracking()
                            where v.Deshabilitado != 1
                            && v.Idvende == idvende
                            select new
                            {
                                v.Idvende,
                                v.Nombvende
-                           };
-            return Ok(vendedor);
+                           }).ToListAsync();
 
+            return Ok(vendedor);
         }
 
         [HttpGet("getClientes/{nombre}")]
-        public ActionResult GetCliente2(string nombre)
+        public async Task<ActionResult> GetCliente2(string nombre)
         {
-
-            var clientes = from c in _context.Set<Cliente>()
-                           where c.Deshabilitado != 1
+            var clientes = (from c in _context.Set<Cliente>().AsNoTracking()
+                            where c.Deshabilitado != 1
                            && c.Razoncial.Contains(nombre)
                            select new
                            {
                                c.Idcliente,
                                c.Razoncial
-                           };
+                           }).ToListAsync();
 
             return Ok(clientes);
         }
 
+        //Función para obtener clientes por idCliente
         [HttpGet("getClientesxId/{idCliente}")]
-        public ActionResult GetClientexId(string idCliente)
+        public async Task<ActionResult> GetClientexId(string idCliente)
         {
-            var clientes = from c in _context.Set<Cliente>()
-                           where c.Deshabilitado != 1
-                           && c.Idcliente == idCliente
-                           select new
-                           {
-                               c.Idcliente,
-                               c.Razoncial
-                           };
+            var clientes = await (from c in _context.Set<Cliente>().AsNoTracking()
+                                  where c.Deshabilitado != 1
+                                  && c.Idcliente == idCliente
+                                  select new
+                                  {
+                                      c.Idcliente,
+                                      c.Razoncial
+                                  }).ToListAsync();
 
             return Ok(clientes);
         }
 
+        //Función para obtener clientes por idVendedor
         [HttpGet("getClientesxVendedor/{idVendedor}")]
-        public ActionResult GetCliente_Vendedor(string idVendedor)
+        public async Task<ActionResult> GetCliente_Vendedor(string idVendedor)
         {
 
-            var clientes = from c in _context.Set<Cliente>()
-                           where c.Deshabilitado != 1
-                           && c.Idvende == idVendedor
-                           select new
-                           {
-                               c.Idcliente,
-                               c.Razoncial
-                           };
+            var clientes = await (from c in _context.Set<Cliente>().AsNoTracking()
+                                  where c.Deshabilitado != 1
+                                  && c.Idvende == idVendedor
+                                  select new
+                                  {
+                                      c.Idcliente,
+                                      c.Razoncial
+                                  }).ToListAsync();
 
             return Ok(clientes);
         }
 
+        //Función para obtener clientes por idVendedor y nombre
         [HttpGet("getCliente_Vendedor_LikeNombre/{idVendedor}/{nombre}")]
-        public ActionResult GetCliente_Vendedor_LikeNombre(string idVendedor, string nombre)
+        public async Task<ActionResult> GetCliente_Vendedor_LikeNombre(string idVendedor, string nombre)
         {
 
-            var clientes = from c in _context.Set<Cliente>()
+            var clientes = await (from c in _context.Set<Cliente>()
                            where c.Deshabilitado != 1
                            && c.Idvende == idVendedor
                            && c.Razoncial.Contains(nombre)
@@ -200,7 +201,7 @@ namespace ZeusInventarioWebAPI.Controllers
                            {
                                c.Idcliente,
                                c.Razoncial
-                           };
+                           }).ToListAsync();
 
             return Ok(clientes);
         }
@@ -251,6 +252,7 @@ namespace ZeusInventarioWebAPI.Controllers
             return CreatedAtAction("GetArticulo", new { id = articulo.IdArticulo }, articulo);
         }
 
+        //Función para insertar un artículo en la base de datos mediante parámetros en la URL
         [HttpGet("insertarArticulo/{Codigo}/{Nombre}/{Grupo}/{Presentacion}/{Tipo}/{Valorizacion}/{Categoria}/{PrecioVenta}/{Iva}")]
         public ActionResult PostArticulo2(string Codigo, string Nombre, string Grupo, string Presentacion, string Tipo, string Valorizacion, string Categoria, decimal PrecioVenta, decimal Iva)
         {

@@ -53,28 +53,27 @@ namespace ZeusInventarioWebAPI.Controllers
         }
 
 
-        // GET: Valor Facturado el día de hoy.
+        // Función para obtener el valor facturado hoy
         [HttpGet("ValorFacturadoHoy")]
-        public ActionResult GetFacturado()
+        public async Task<ActionResult> GetFacturado()
         {
             DateTime Hoy = DateTime.Today;
 
             if (_context.FacturaDeClientes == null) return NotFound();
-            var facturado = (from FV in _context.Set<FacturaDeCliente>()
+            var facturado = await (from FV in _context.Set<FacturaDeCliente>()
                             from DI in _context.Set<DocumentoItem>()
                             where FV.Consecutivo == DI.Documento &&
                             FV.Fecha == Hoy
-                            select DI.PrecioTotal).Sum();
+                            select DI.PrecioTotal).SumAsync();
             return Ok(facturado);
         }
 
-        // GET: Valor Facturado el día de hoy.
+        // Función para obtener los datos de una factura específica, incluyendo el total y el tipo de pago.
         [HttpGet("getDataFactura/{fact}")]
-        public ActionResult getDataFactura(string fact)
+        public async Task<ActionResult> getDataFactura(string fact)
         {
-            
             if (_context.FacturaDeClientes == null) return NotFound();
-            var factura = (from FV in _context.Set<FacturaDeCliente>()
+            var factura = await (from FV in _context.Set<FacturaDeCliente>()
                            join T in _context.Set<Transac>() on FV.Documento equals T.Numdoctra
                            where FV.Documento == fact
                            && T.Numdoctra == fact
@@ -84,7 +83,7 @@ namespace ZeusInventarioWebAPI.Controllers
                                Fact = FV.Documento,
                                Total = T.Valortra,
                                TypePay = FV.DiasCreditos >= 2 ? "CREDITO" : "CONTADO"
-                           }).FirstOrDefault();
+                           }).FirstOrDefaultAsync();
 
             return Ok(factura);
         }

@@ -9,17 +9,16 @@ using Microsoft.VisualBasic;
 using Newtonsoft.Json.Linq;
 using NuGet.Protocol;
 using ServiceReference1;
-using System.Data.Entity;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.ServiceModel;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Xml.Schema;
 using ZeusInventarioWebAPI.Data;
 using ZeusInventarioWebAPI.Models;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ZeusInventarioWebAPI.Controllers
 {
@@ -44,7 +43,6 @@ namespace ZeusInventarioWebAPI.Controllers
             }
             return await _context.MovimientoItems.ToListAsync();
         }
-
 
         // Facturación mes actual.
         [HttpGet("FacturacionMensual/{fechaIni}/{fechaFin}")]
@@ -110,9 +108,9 @@ namespace ZeusInventarioWebAPI.Controllers
 
         // Función para buscar facturas que no tienen IVA.
         [HttpGet("getFactWithoutIva/{document}")]
-        public ActionResult getFactWithoutIva(string document)
+        public async Task<ActionResult> getFactWithoutIva(string document)
         {
-            var facturacion = (from mi in _context.Set<MovimientoItem>()
+            var facturacion = await (from mi in _context.Set<MovimientoItem>()
                                where mi.Fuente == "FV"
                                && mi.Estado == "Procesado"
                                && mi.Documento == document
@@ -137,64 +135,7 @@ namespace ZeusInventarioWebAPI.Controllers
                                    Descuentos = Convert.ToDecimal(mi.Sum(x => x.TotalDescuentoVenta)),
                                    Documento = Convert.ToString(mi.Key.Documento),
                                    Recibo = Convert.ToString(mi.Key.Recibo),
-                               }).ToList();
-
-            /*var arriendo = (from tr in _context.Set<Transac>().AsEnumerable()
-                            join cl in _context.Set<Cliente>() on tr.Cliprv equals cl.Idcliente
-                            let fechaValida = DateTime.TryParse(tr.Fechafact, out var f) ? f : (DateTime?)null
-                            where tr.Idfuente == "FV"
-                            && tr.Tipofac == "FA"
-                            && tr.Indcpitra == "1"
-                            && tr.Codicta == Convert.ToString(422010)
-                            && fechaValida != null
-                            && fechaValida >= date1 && fechaValida <= date2
-                            select new
-                           {
-                               Fecha = fechaValida.Value,
-                               Factura = Convert.ToString(tr.Numefac),
-                               Cliente = Convert.ToString(cl.Razoncial),
-                               Suma = Convert.ToDecimal(tr.Valortra),
-                               Iva = Convert.ToDecimal(0),
-                               Descuentos = Convert.ToDecimal(0),
-                               Documento = Convert.ToString("FV"),
-                               Recibo = Convert.ToString("ARRIENDO")
-                           }).ToList();*/
-            /*var devoluciones = (from tr in _context.Set<Transac>()
-                               join cl in _context.Set<Cliente>() on tr.Cliprv equals cl.Idcliente
-                               where tr.Idfuente == "DV"
-                               && tr.Tipofac == "FA"
-                               && tr.Indcpitra == "1"
-                               && Convert.ToDateTime(Convert.ToDateTime(tr.Fechafact).ToString("yyyy-MM-dd")) >= date1
-                               && Convert.ToDateTime(Convert.ToDateTime(tr.Fechafact).ToString("yyyy-MM-dd")) <= date2
-                               select new
-                               {
-                                   Fecha = Convert.ToDateTime(tr.Fechafact),
-                                   Factura = Convert.ToString(tr.Numefac),
-                                   Cliente = Convert.ToString(cl.Razoncial),
-                                   Suma = Convert.ToDecimal(tr.Valortra),
-                                   Iva = Convert.ToDecimal(0),
-                                   Descuentos = Convert.ToDecimal(0),
-                                   Documento = Convert.ToString("DV"),
-                                   Recibo = Convert.ToString("DEVOLUCIÓN")
-                               }).ToList();*/
-            /*var notas_ventas = (from tr in _context.Set<Transac>()
-                               join cl in _context.Set<Cliente>() on tr.Cliprv equals cl.Idcliente
-                               where tr.Idfuente == "NV"
-                               && tr.Tipofac == "FA"
-                               && tr.Indcpitra == "1"
-                               && Convert.ToDateTime(Convert.ToDateTime(tr.Fechafact).ToString("yyyy-MM-dd")) >= date1
-                                && Convert.ToDateTime(Convert.ToDateTime(tr.Fechafact).ToString("yyyy-MM-dd")) <= date2
-                               select new
-                               {
-                                   Fecha = Convert.ToDateTime(tr.Fechafact),
-                                   Factura = Convert.ToString(tr.Numefac),
-                                   Cliente = Convert.ToString(cl.Razoncial),
-                                   Suma = Convert.ToDecimal(tr.Valortra),
-                                   Iva = Convert.ToDecimal(0),
-                                   Descuentos = Convert.ToDecimal(0),
-                                   Documento = Convert.ToString("NV"),
-                                   Recibo = Convert.ToString("DEVOLUCIÓN")
-                               }).ToList();*/
+                               }).ToListAsync();
 
             return Ok(facturacion);
         }
@@ -203,10 +144,10 @@ namespace ZeusInventarioWebAPI.Controllers
         [HttpGet("getInformeTransacciones/{date1}/{date2}")]
         public ActionResult getInformeTransacciones(DateTime date1, DateTime date2, string? vendedor = "", string? item = "", string? cliente = "")
         {
-            var query = _context.Transacs
+            var query = (_context.Transacs
             .Where(t => t.Idfuente == "FV" || t.Idfuente == "DV" || t.Idfuente == "NV")
             .Where(t => t.Statustra == "AC")
-            .Where(t => string.Compare(t.Fechatra, date1.ToString("yyyy/MM/dd")) >= 0 && string.Compare(t.Fechatra, date2.ToString("yyyy/MM/dd")) <= 0);
+            .Where(t => string.Compare(t.Fechatra, date1.ToString("yyyy/MM/dd")) >= 0 && string.Compare(t.Fechatra, date2.ToString("yyyy/MM/dd")) <= 0));
 
             if (!string.IsNullOrWhiteSpace(vendedor))
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -310,7 +251,7 @@ namespace ZeusInventarioWebAPI.Controllers
                                 Und = s.Key.Presentacion
                             };
                 datos.Add(value);
-                //datos.Add($"'Mes': '{mes}', 'Valor': '{Convert.ToDecimal(value)}'");
+                
                 if (i == 11) return Ok(datos);
             }
             return Ok(datos);
@@ -548,10 +489,10 @@ namespace ZeusInventarioWebAPI.Controllers
         //Función para obtener los pedidos que no han sido liquidados, agrupados por número de pedido,
         //esto con el fin de tener un informe general de cada pedido sin entrar en el detalle de los items que lo componen.
         [HttpGet("getPedidosAgrupados")]
-        public ActionResult getPedidosAgrupados()
+        public async Task<ActionResult> getPedidosAgrupados()
         {
-            var con = from mov in _context.Set<MovimientoItem>()
-                      from cli in _context.Set<Cliente>()
+            var con = await (from mov in _context.Set<MovimientoItem>()
+                             from cli in _context.Set<Cliente>()
                       from ped in _context.Set<PedidoDeCliente>()
                       where mov.TipoDocumento == 7
                             && mov.Estado != "Liquidado"
@@ -581,18 +522,18 @@ namespace ZeusInventarioWebAPI.Controllers
                           Orden_Compra_CLiente = mov.Key.OrdenCompraCliente,
                           Fecha_Entrega = mov.Key.FechaEntrega,
                           mov.Key.Estado
-                      };
+                      }).ToListAsync();
             return Ok(con);
         }
 
         //Función para obtener los pedidos que no han sido liquidados, con la información de cada uno de los items que componen el pedido,
         //esto con el fin de tener un informe detallado de cada pedido.
         [HttpGet("getPedidos")]
-        public ActionResult getPedidos(string? sales)
+        public async Task<ActionResult> getPedidos(string? sales)
         {
             DateTime fechaInicio = new DateTime(2024, 2, 4);
 
-            var con = from mov in _context.Set<MovimientoItem>()
+            var con = await (from mov in _context.Set<MovimientoItem>()
                       from cli in _context.Set<Cliente>()
                       from ped in _context.Set<PedidoDeCliente>()
                       where mov.TipoDocumento == 7
@@ -641,15 +582,15 @@ namespace ZeusInventarioWebAPI.Controllers
                                               select c.Importador).FirstOrDefault()
                             select f.Fecha.ToString("yyyy-MM-dd") == null ? Convert.ToString("") : f.Fecha.ToString("yyyy-MM-dd")
                         ).FirstOrDefault()
-                      };
+                      }).ToListAsync();
             return Ok(con);
         }
 
         //Función para obtener todos los pedidos sin importar su fecha de creación, esto con el fin de tener un histórico de pedidos.
         [HttpGet("getTodosPedidos/{date1}/{date2}")]
-        public ActionResult getTodosPedidos(DateTime date1, DateTime date2, string? client = "", string? sales = "", string? oc = "", string? status = "")
+        public async Task<ActionResult> getTodosPedidos(DateTime date1, DateTime date2, string? client = "", string? sales = "", string? oc = "", string? status = "")
         {
-            var con = from mov in _context.Set<MovimientoItem>()
+            var con = await (from mov in _context.Set<MovimientoItem>()
                       from cli in _context.Set<Cliente>()
                       from ped in _context.Set<PedidoDeCliente>()
                       where mov.TipoDocumento == 7
@@ -682,23 +623,23 @@ namespace ZeusInventarioWebAPI.Controllers
                           Fecha_Entrega = ped.FechaEntrega.ToString("yyyy-MM-dd"),
                           Estado = mov.Estado,
                           
-                      };
+                      }).ToListAsync();
             return Ok(con);
         }
 
         //Función para obtener la factura de un pedido específico a través de su número de consecutivo,
         //esto con el fin de tener un informe detallado de un pedido en particular.
         [HttpGet("getFactForSales/{sales}/{item}")]
-        public ActionResult getFactForSales(int sales, string item)
+        public async Task<ActionResult> getFactForSales(int sales, string item)
         {
-            var sql = from f in _context.Set<DocumentosRelacionado>()
+            var sql = (from f in _context.Set<DocumentosRelacionado>()
                       where f.TipoImportador == 9 &&
                               f.TipoExportador == 7 &&
                               f.Exportador == sales
                       orderby f.IdenDocumentosrelacionados descending
-                      select f.Importador;
+                      select f.Importador);
 
-            var fact = from m in _context.Set<MovimientoItem>()
+            var fact = await (from m in _context.Set<MovimientoItem>()
                        where sql.Contains(m.Consecutivo)
                        && m.Fuente == "FV"
                        && m.Estado == "Procesado"
@@ -715,7 +656,7 @@ namespace ZeusInventarioWebAPI.Controllers
                             Subtotal = (m.Cantidad * m.PrecioUnidad),
                             Presentacion = m.Presentacion,
                             Observacion = m.DetalleDocumento,
-                       };
+                       }).ToListAsync();
 
             return Ok(fact);
         }
@@ -723,22 +664,13 @@ namespace ZeusInventarioWebAPI.Controllers
             //Función para obtener la información de un pedido específico a través de su número de consecutivo,
             //esto con el fin de tener un informe detallado de un pedido en particular, el cual puede ser utilizado para generar un PDF.
         [HttpGet("getPedidosPorConsecutivo/{consecutivo}")]
-        public ActionResult getPedidosPDF(int consecutivo)
+        public async Task<ActionResult> getPedidosPDF(int consecutivo)
         {
-            var con = from mov in _context.Set<MovimientoItem>()
+            var con = await (from mov in _context.Set<MovimientoItem>()
                       from cli in _context.Set<Cliente>()
                       from ped in _context.Set<PedidoDeCliente>()
                       where mov.TipoDocumento == 7
                             && cli.Idcliente == mov.Tercero
-                      //from art in _context.Set<Articulo>()
-                      //from ext in _context.Set<Existencia>()
-                      //join ext in _context.Set<Existencia>() on art.IdArticulo equals ext.Articulo
-                      where mov.TipoDocumento == 7
-                            && cli.Idcliente == mov.Tercero
-                            //&& ext.Articulo == art.IdArticulo
-                            //&& art.Codigo == mov.CodigoArticulo
-                            //&& art.DesHabilitado == false
-                            //&& art.Presentacion == mov.Presentacion
                             && ped.Consecutivo == mov.Consecutivo
                             && mov.Consecutivo == consecutivo
                       select new
@@ -775,15 +707,15 @@ namespace ZeusInventarioWebAPI.Controllers
                           Direccion = "Calle 42 #52-105",
                           Ciudad_Empresa = "Barranquilla",
                           Cant_Facturar = 0,
-                      };
+                      }).ToListAsync();
             return Ok(con);
         }
 
         //GET: Consulta para obtener el listado de clientes
         [HttpGet("getPedidosCliente")]
-        public ActionResult GetPedidosClientes(string? sales)
+        public async Task<ActionResult> GetPedidosClientes(string? sales)
         {
-            var con = from mov in _context.Set<MovimientoItem>()
+            var con = await (from mov in _context.Set<MovimientoItem>()
                       from cli in _context.Set<Cliente>()
                       from ped in _context.Set<PedidoDeCliente>()
                       where mov.TipoDocumento == 7
@@ -803,15 +735,15 @@ namespace ZeusInventarioWebAPI.Controllers
                           mov.Key.Cliente,
                           Costo = (mov.Sum(x => x.Cantidad * x.PrecioUnidad)),
                           Cantidad = mov.Count()
-                      };
+                      }).ToListAsync();
             return Ok(con);
         }
 
         //GET: Consulta para obtener el listado de productos
         [HttpGet("getPedidosProductos")]
-        public ActionResult GetPedidosProductos(string? sales)
+        public async Task<ActionResult> GetPedidosProductos(string? sales)
         {
-            var con = from mov in _context.Set<MovimientoItem>()
+            var con = await (from mov in _context.Set<MovimientoItem>()
                       from cli in _context.Set<Cliente>()
                       from ped in _context.Set<PedidoDeCliente>()
                       where mov.TipoDocumento == 7
@@ -831,15 +763,15 @@ namespace ZeusInventarioWebAPI.Controllers
                           mov.Key.Producto,
                           Costo = (mov.Sum(x => x.Cantidad * x.PrecioUnidad)),
                           Cantidad = mov.Count()
-                      };
+                      }).ToListAsync();
             return Ok(con);
         }
 
         //GET: Consulta para obtener el listado de productos
         [HttpGet("getPedidosVendedores")]
-        public ActionResult GetPedidosVendedores(string? sales)
+        public async Task<ActionResult> GetPedidosVendedores(string? sales)
         {
-            var con = from mov in _context.Set<MovimientoItem>()
+            var con = await (from mov in _context.Set<MovimientoItem>()
                       from cli in _context.Set<Cliente>()
                       from ped in _context.Set<PedidoDeCliente>()
                       where mov.TipoDocumento == 7
@@ -859,15 +791,15 @@ namespace ZeusInventarioWebAPI.Controllers
                           mov.Key.Vendedor,
                           Costo = (mov.Sum(x => x.Cantidad * x.PrecioUnidad)),
                           Cantidad = mov.Count()
-                      };
+                      }).ToListAsync();
             return Ok(con);
         }
 
         //GET: Consulta para obtener el listado de productos
         [HttpGet("getPedidosEstados")]
-        public ActionResult GetPedidosEstados(string? sales)
+        public async Task<ActionResult> GetPedidosEstados(string? sales)
         {
-            var con = from mov in _context.Set<MovimientoItem>()
+            var con = await (from mov in _context.Set<MovimientoItem>()
                       from cli in _context.Set<Cliente>()
                       from ped in _context.Set<PedidoDeCliente>()
                       where mov.TipoDocumento == 7
@@ -886,15 +818,15 @@ namespace ZeusInventarioWebAPI.Controllers
                           Costo = (mov.Sum(x => (x.Cantidad - x.Faltantes) * x.PrecioUnidad)),
                           CostoTotal = (mov.Sum(x => x.Cantidad * x.PrecioUnidad)),
                           Cantidad = mov.Count()
-                      };
+                      }).ToListAsync();
             return Ok(con);
         }
 
         //GET: Consulta para obtener el listado de productos
         [HttpGet("getPedidosStock")]
-        public ActionResult GetPedidosStock(string? sales)
+        public async Task<ActionResult> GetPedidosStock(string? sales)
         {
-            var con = from mov in _context.Set<MovimientoItem>()
+            var con = await (from mov in _context.Set<MovimientoItem>()
                       from cli in _context.Set<Cliente>()
                       from ped in _context.Set<PedidoDeCliente>()
                       where mov.TipoDocumento == 7
@@ -938,17 +870,17 @@ namespace ZeusInventarioWebAPI.Controllers
                           Costo_Cant_Total = (mov.Cantidad * mov.PrecioUnidad),
                           Fecha_Entrega = ped.FechaEntrega,
                           mov.Estado,
-                      };
+                      }).ToListAsync();
             return Ok(con);
         }
 
         //GET: Consullta para obtener un consolidad de los productos comprados por cliente cada mes año a año, esta consultará entre un ragon de años y/o un vendedor y/o un cliente y/o un producto
         [HttpGet("getConsolidadoClientesArticulo/{fecha1}/{fecha2}")]
-        public ActionResult GetConsolidadClientesArticulo(DateTime fecha1, DateTime fecha2, string? vendedor = "", string? nombreVendedor = "", string? producto = "", string? nombreProducto = "", string? cliente = "", string? nombreCliente = "")
+        public async Task<ActionResult> GetConsolidadClientesArticulo(DateTime fecha1, DateTime fecha2, string? vendedor = "", string? nombreVendedor = "", string? producto = "", string? nombreProducto = "", string? cliente = "", string? nombreCliente = "")
         {
 #pragma warning disable CS8604 // Posible argumento de referencia nulo
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var con = from mov in _context.Set<MovimientoItem>()
+            var con = await (from mov in _context.Set<MovimientoItem>()
                       where mov.Vendedor.Contains(vendedor)
                             && mov.NombreVendedor.Contains(nombreVendedor)
                             && mov.CodigoArticulo.Contains(producto)
@@ -989,9 +921,9 @@ namespace ZeusInventarioWebAPI.Controllers
                           SubTotal = Convert.ToDecimal(mov.Sum(x => x.PrecioTotal)),
                           mov.Key.Id_Vendedor,
                           mov.Key.Vendedor,
-                      };
+                      }).ToListAsync();
 
-            var devolucion = from mov in _context.Set<MovimientoItem>()
+            var devolucion = await (from mov in _context.Set<MovimientoItem>()
                              from tr in _context.Set<Transac>()
                              from dev in _context.Set<DevolucionVenta>()
                              where tr.Idvende.Contains(vendedor)
@@ -1039,7 +971,7 @@ namespace ZeusInventarioWebAPI.Controllers
                                  SubTotal = Convert.ToDecimal(mov.Sum(x => x.tr.Valortra) * -1),
                                  mov.Key.Id_Vendedor,
                                  mov.Key.Vendedor
-                             };
+                             }).ToListAsync();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 #pragma warning restore CS8604 // Posible argumento de referencia nulo
             return Ok(con.Concat(devolucion));
@@ -1061,9 +993,9 @@ namespace ZeusInventarioWebAPI.Controllers
 
         // Funcion que conultará un pedido por sus consecutivo
         [HttpGet("getInfoPedido_Consecutivo/{id}")]
-        public ActionResult GetInfoPedido_Consecutivo(int id)
+        public async Task<ActionResult> GetInfoPedido_Consecutivo(int id)
         {
-            var con = from mov in _context.Set<MovimientoItem>()
+            var con = await (from mov in _context.Set<MovimientoItem>()
                       from cli in _context.Set<Cliente>()
                       from ped in _context.Set<PedidoDeCliente>()
                       where mov.TipoDocumento == 7
@@ -1105,21 +1037,22 @@ namespace ZeusInventarioWebAPI.Controllers
                           NIT = 800188732,
                           Direccion = "Calle 42 #52-105",
                           Ciudad_Empresa = "Barranquilla",
-                      };
+                      }).ToListAsync();
             return Ok(con);
         }
 
         // Consulta que devolverá el costo total de las devoluciones en un lapso de años
         [HttpGet("getDevoluciones/{anio1}/{anio2}")]
-        public ActionResult GetDevoluciones(int anio1, int anio2)
+        public async Task<ActionResult> GetDevoluciones(int anio1, int anio2)
         {
-            var Transaccion1 = (from tr in _context.Set<Transac>()
+            var Transaccion1 = await (from tr in _context.Set<Transac>()
                                 where tr.Idfuente == "DV"
                                 && tr.Tipofac == "FA"
                                 && tr.Indcpitra == "1"
                                 && Convert.ToInt32(tr.Fechatra.Substring(0, 4)) >= anio1
                                 && Convert.ToInt32(tr.Fechatra.Substring(0, 4)) <= anio2
-                                select tr.Valortra).Sum();
+                                select tr.Valortra).SumAsync();
+
             return Ok(Transaccion1);
         }
 
@@ -1186,7 +1119,7 @@ namespace ZeusInventarioWebAPI.Controllers
 
         //Consulta que devolverá la informacion de los clientes que mas se han facturado en el mes y restará las devoluciones que han tenido estos mismos
         [HttpGet("getClienteFacturadosMes")]
-        public ActionResult GetClientesFacturadosMes(string? sales)
+        public async Task<ActionResult> GetClientesFacturadosMes(string? sales)
         {
 #pragma warning disable CA1827 // Do not use Count() or LongCount() when Any() can be used
             DateTime fecha = DateTime.Today;
@@ -1195,7 +1128,7 @@ namespace ZeusInventarioWebAPI.Controllers
             var MonthString = Month > 9 ? Month.ToString() : "0" + Month.ToString();
             
             var vendedores =
-            (
+            await (
                 from fv in _context.Set<FacturaDeCliente>()
                 join t in _context.Set<Tercero>() on fv.Cliente equals t.Idtercero
                 where fv.Fuente == "FV"
@@ -1268,7 +1201,7 @@ namespace ZeusInventarioWebAPI.Controllers
                                  select tr.Valortra).Sum()
                 }
 
-            ).ToList();
+            ).ToListAsync();
 
             if (vendedores.Any()) return Ok(vendedores);
             return BadRequest("No se encontraron vendedores con facturas en el mes");
@@ -1277,10 +1210,11 @@ namespace ZeusInventarioWebAPI.Controllers
 
         //Consulta que devolverá la informacion de los productos que mas se han facturado en el mes 
         [HttpGet("getProductosFaturadosMes")]
-        public ActionResult GetClientesFacturadoMes(string? sales)
+        public async Task<ActionResult> GetClientesFacturadoMes(string? sales)
         {
             DateTime fecha = DateTime.Today;
-            var con = from mov in _context.Set<MovimientoItem>()
+
+            var con = await (from mov in _context.Set<MovimientoItem>()
                       where mov.TipoDocumento == 9
                             && mov.Fuente == "FV"
                             && mov.Estado == "Procesado"
@@ -1303,14 +1237,15 @@ namespace ZeusInventarioWebAPI.Controllers
                           mov.Key.Producto,
                           Cantidad = mov.Count(),
                           Costo = mov.Sum(x => x.PrecioTotal)
-                      };
+                      }).ToListAsync();
+
             if (con.Count() > 0) return Ok(con);
             else return BadRequest("No se encontraron clientes con facturas en el mes");
         }
 
         //Consulta que devolverá la informacion de los vendedores que mas han facturado en el mes
         [HttpGet("getVendedoresFacturasMes/{year}")]
-        public ActionResult GetVendedoresFacturasMes(int year, string? sales, string? month = "")
+        public async Task<ActionResult> GetVendedoresFacturasMes(int year, string? sales, string? month = "")
         {
             DateTime fecha = DateTime.Today;
             var Month = month != "" ? Convert.ToInt32(month) : fecha.Month;
@@ -1318,7 +1253,7 @@ namespace ZeusInventarioWebAPI.Controllers
 
             // 1️ Consulta principal (sin colecciones en el GroupBy)
             var vendedores =
-            (
+            await (
                 from fv in _context.Set<FacturaDeCliente>()
                 join ven in _context.Set<Maevende>() on fv.Vendedor equals ven.Idvende
                 where fv.Fuente == "FV"
@@ -1391,19 +1326,17 @@ namespace ZeusInventarioWebAPI.Controllers
                                 select tr.Valortra).Sum()  
                 } 
 
-            ).ToList();
+            ).ToListAsync();
 
             if (vendedores.Any()) return Ok(vendedores);
             return BadRequest("No se encontraron vendedores con facturas en el mes");
         }
 
-
-
         /** Consulta que devolverá las compras realizadas por plasticaribe en cada mes */
         [HttpGet("getComprasMes/{anio}/{mes}")]
-        public ActionResult GetComprasMes(string anio, string mes)
+        public async Task<ActionResult> GetComprasMes(string anio, string mes)
         {
-            var con = (from mov in _context.Set<MovimientoItem>()
+            var con = await (from mov in _context.Set<MovimientoItem>()
                        from prov in _context.Set<Proveedore>()
                        from ent in _context.Set<Entradum>()
                        where mov.CodigoDocumento == ent.Consecutivo
@@ -1413,16 +1346,16 @@ namespace ZeusInventarioWebAPI.Controllers
                              && mov.TipoDocumento == 2
                              && Convert.ToString(mov.FechaDocumento.Year) == anio
                              && Convert.ToString(mov.FechaDocumento.Month) == mes
-                       select mov.CostoTotal).Sum();
+                       select mov.CostoTotal).SumAsync();
 
             return Ok(con);
         }
 
         /** Consulta que devolverá las compras realizadas por plasticaribe en cada mes */
         [HttpGet("getComprasMesInverGoal_InverSuez/{anio}/{mes}/{proveedor}")]
-        public ActionResult GetComprasMesInverGoal(string anio, string mes, string proveedor)
+        public async Task<ActionResult> GetComprasMesInverGoal(string anio, string mes, string proveedor)
         {
-            var con = (from mov in _context.Set<MovimientoItem>()
+            var con = await (from mov in _context.Set<MovimientoItem>()
                        from prov in _context.Set<Proveedore>()
                        from ent in _context.Set<Entradum>()
                        where mov.CodigoDocumento == ent.Consecutivo
@@ -1431,21 +1364,21 @@ namespace ZeusInventarioWebAPI.Controllers
                              && mov.TipoDocumento == 2
                              && Convert.ToString(mov.FechaDocumento.Year) == anio
                              && Convert.ToString(mov.FechaDocumento.Month) == mes
-                       select mov.CostoTotal).Sum();
+                       select mov.CostoTotal).SumAsync();
 
             return Ok(con);
         }
 
         //Consulta que devolverá las compras de plasticaribe mes a mes en el año que le sea pasado
         [HttpGet("getComprasMes_Mes_Plasticaribe/{anio}")]
-        public ActionResult GetComprasMes_Mes_Plasticaribe(string anio)
+        public async Task<ActionResult> GetComprasMes_Mes_Plasticaribe(string anio)
         {
 #pragma warning disable CS8604 // Posible argumento de referencia nulo
             var datos = new List<object>();
             for (int i = 0; i < 12; i++)
             {
                 string mes = (i + 1).ToString().Length > 1 ? $"{i + 1}" : $"0{i + 1}";
-                var con = (from mov in _context.Set<MovimientoItem>()
+                var con = await (from mov in _context.Set<MovimientoItem>()
                            from prov in _context.Set<Proveedore>()
                            from ent in _context.Set<Entradum>()
                            where mov.CodigoDocumento == ent.Consecutivo
@@ -1455,7 +1388,7 @@ namespace ZeusInventarioWebAPI.Controllers
                                  && mov.TipoDocumento == 2
                                  && Convert.ToString(mov.FechaDocumento.Year) == anio
                                  && Convert.ToString(mov.FechaDocumento.Month) == $"{i + 1}"
-                           select mov.CostoTotal).Sum();
+                           select mov.CostoTotal).SumAsync();
 
                 datos.Add($"'Mes': '{mes}', 'Valor': '{Convert.ToDecimal(con)}'");
                 if (i == 11) return Ok(datos);
@@ -1466,14 +1399,15 @@ namespace ZeusInventarioWebAPI.Controllers
 
         //Consulta que devolverá las compras de invergoal e inversuez mes a mes en el año que le sea pasado
         [HttpGet("getComprasMes_Mes_InverGoal_InverSuez/{anio}/{proveedor}")]
-        public ActionResult GetComprasMes_Mes_InverGoal_InverSuez(string anio, string proveedor)
+        public async Task<ActionResult> GetComprasMes_Mes_InverGoal_InverSuez(string anio, string proveedor)
         {
 #pragma warning disable CS8604 // Posible argumento de referencia nulo
             var datos = new List<object>();
             for (int i = 0; i < 12; i++)
             {
                 string mes = (i + 1).ToString().Length > 1 ? $"{i + 1}" : $"0{i + 1}";
-                var con = (from mov in _context.Set<MovimientoItem>()
+
+                var con = await (from mov in _context.Set<MovimientoItem>()
                            from prov in _context.Set<Proveedore>()
                            from ent in _context.Set<Entradum>()
                            where mov.CodigoDocumento == ent.Consecutivo
@@ -1482,7 +1416,7 @@ namespace ZeusInventarioWebAPI.Controllers
                                  && mov.TipoDocumento == 2
                                  && Convert.ToString(mov.FechaDocumento.Year) == anio
                                  && Convert.ToString(mov.FechaDocumento.Month) == $"{i + 1}"
-                           select mov.CostoTotal).Sum();
+                           select mov.CostoTotal).SumAsync();
 
                 datos.Add($"'Mes': '{mes}', 'Valor': '{Convert.ToDecimal(con)}'");
                 if (i == 11) return Ok(datos);
@@ -1493,10 +1427,10 @@ namespace ZeusInventarioWebAPI.Controllers
 
         //Consulta que devolverá las compras de invergoal e inversuez mes a mes en el año que le sea pasado
         [HttpGet("getComprasDetalladas/{proveedor}/{factura}")]
-        public ActionResult GetComprasDetalladas(string proveedor, string factura)
+        public async Task<ActionResult> GetComprasDetalladas(string proveedor, string factura)
         {
 #pragma warning disable CS8604 // Posible argumento de referencia nulo
-            var con = from mov in _context.Set<MovimientoItem>()
+            var con = await (from mov in _context.Set<MovimientoItem>()
                       from prov in _context.Set<Proveedore>()
                       from ent in _context.Set<Entradum>()
                       where mov.CodigoDocumento == ent.Consecutivo
@@ -1520,7 +1454,7 @@ namespace ZeusInventarioWebAPI.Controllers
                           IvaCompras = mov.TotalIvacompras,
                           ValorMasIva = mov.CostoTotal + mov.TotalIvacompras,
                           FechaVence = ent.Vencimiento,
-                      };
+                      }).ToListAsync();
 
             if (con == null) return BadRequest("No se encontró la factura consultada para este proveedor");
             else return Ok(con);
@@ -1529,27 +1463,27 @@ namespace ZeusInventarioWebAPI.Controllers
 
         //Consulta que devolverá las facturas de exportaciones falsas que se le mostrarán a Ecopetrol
         [HttpGet("getFacturasEcopetrol/{factura}/{trm}/{valorFinal}/{fecha}")]
-        public ActionResult GetFacturasEcopetrol(string factura, double trm, decimal valorFinal, DateTime fecha)
+        public async Task<ActionResult> GetFacturasEcopetrol(string factura, double trm, decimal valorFinal, DateTime fecha)
         {
-            var Codigofactura = (from fac in _context.Set<FacturaDeCliente>()
+            var Codigofactura = await (from fac in _context.Set<FacturaDeCliente>()
                                  where fac.Fecha >= fecha.AddDays(2) &&
                                        fac.Fecha <= fecha.AddDays(5)
                                  orderby fecha descending
-                                 select fac.Documento).FirstOrDefault();
+                                 select fac.Documento).FirstOrDefaultAsync();
 
-            var fechaDocumento = (from fac in _context.Set<FacturaDeCliente>()
+            var fechaDocumento = await (from fac in _context.Set<FacturaDeCliente>()
                                   where fac.Documento == Codigofactura
                                   orderby fecha descending
-                                  select fac.Fecha).FirstOrDefault();
+                                  select fac.Fecha).FirstOrDefaultAsync();
 
-            var consecutivoBu = (from fac in _context.Set<FacturaDeCliente>()
+            var consecutivoBu = await (from fac in _context.Set<FacturaDeCliente>()
                                  join mov in _context.Set<MovimientoItem>() on fac.Consecutivo equals mov.CodigoDocumento
                                  where fac.Documento == Codigofactura
                                  orderby fecha descending
-                                 select mov.ConsecutivoBu).FirstOrDefault();
+                                 select mov.ConsecutivoBu).FirstOrDefaultAsync();
 
 #pragma warning disable CS8604 // Posible argumento de referencia nulo
-            var con = from mov in _context.Set<MovimientoItem>()
+            var con = (from mov in _context.Set<MovimientoItem>()
                       from ent in _context.Set<Entradum>()
                       from prv in _context.Set<Proveedore>()
                       where ent.Consecutivo == mov.CodigoDocumento &&
@@ -1599,7 +1533,7 @@ namespace ZeusInventarioWebAPI.Controllers
                           Anticipo = 0.00,
                           Total_FactElectronica = valorFinal,
                           Usuario = "SISTEMAS"
-                      };
+                      }).ToListAsync();
 
             if (con == null) return BadRequest("No se encontraron facturas en las fechas consultadas!");
             else return Ok(con);
@@ -1608,9 +1542,9 @@ namespace ZeusInventarioWebAPI.Controllers
 
         //Consulta que retornará las ventas detalladas por vendedor en las fechas consultadas
         [HttpGet("getFacturacionDetallada/{fecha1}/{fecha2}")]
-        public ActionResult GetFacturacionDetallada(DateTime fecha1, DateTime fecha2, string? cliente = "", string? vendedor = "", string? item = "")
+        public async Task<ActionResult> GetFacturacionDetallada(DateTime fecha1, DateTime fecha2, string? cliente = "", string? vendedor = "", string? item = "")
         {
-            var facturacion = from f in _context.Set<FacturaDeCliente>()
+            var facturacion = await (from f in _context.Set<FacturaDeCliente>()
                               from m in _context.Set<MovimientoItem>()
                               from c in _context.Set<Cliente>()
                               from v in _context.Set<Maevende>()
@@ -1638,7 +1572,7 @@ namespace ZeusInventarioWebAPI.Controllers
                                   Cantidad = m.Cantidad,
                                   Precio = m.PrecioUnidad,
                                   ValorTotal = (m.Cantidad * m.PrecioUnidad)
-                              };
+                              }).ToListAsync();
 
             if (facturacion == null) return Ok("No se encontraron resultados de búsqueda");
             else return Ok(facturacion);
@@ -1800,12 +1734,12 @@ namespace ZeusInventarioWebAPI.Controllers
 
         //Consulta que devolverá la facturación consolidada dependiendo los parametros consultados
         [HttpGet("getNuevaFacturacionConsolidada/{fecha1}/{fecha2}")]
-        public ActionResult getNuevaFacturacionConsolidada(DateTime fecha1, DateTime fecha2, string? vendedor = "", string? item = "", string? cliente = "")
+        public async Task<ActionResult> getNuevaFacturacionConsolidada(DateTime fecha1, DateTime fecha2, string? vendedor = "", string? item = "", string? cliente = "")
         {
 #pragma warning disable CS8604 // Posible argumento de referencia nulo
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
 
-            var fact = from mov in _context.Set<MovimientoItem>()
+            var fact = await (from mov in _context.Set<MovimientoItem>()
                        from tr in _context.Set<Transac>()
                        from f in _context.Set<FacturaDeCliente>()
                        where mov.CodigoDocumento == f.Consecutivo
@@ -1841,7 +1775,7 @@ namespace ZeusInventarioWebAPI.Controllers
                            Recibo = Convert.ToString("------------------------"),
                            TotalIvaVentas = Convert.ToDecimal(mov.TotalIvaventas),
                            PrecioTotal = Convert.ToDecimal(mov.PrecioTotal),
-                       };
+                       }).ToListAsync();
 
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 #pragma warning restore CS8604 // Posible argumento de referencia nulo
@@ -1850,12 +1784,12 @@ namespace ZeusInventarioWebAPI.Controllers
 
         //Consulta que devolverá las devoluciones consolidadas dependiendo los parametros consultados
         [HttpGet("getNuevaDevolucionConsolidada/{fecha1}/{fecha2}")]
-        public ActionResult GetNuevaDevolucionConsolidada(DateTime fecha1, DateTime fecha2, string? vendedor = "", string? item = "", string? cliente = "")
+        public async Task<ActionResult> GetNuevaDevolucionConsolidada(DateTime fecha1, DateTime fecha2, string? vendedor = "", string? item = "", string? cliente = "")
         {
 #pragma warning disable CS8604 // Posible argumento de referencia nulo
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
 
-            var devolucion = from mov in _context.Set<MovimientoItem>()
+            var devolucion = await (from mov in _context.Set<MovimientoItem>()
                              from tr in _context.Set<Transac>()
                              from dev in _context.Set<DevolucionVenta>()
                              where mov.CodigoDocumento == dev.Consecutivo
@@ -1889,7 +1823,7 @@ namespace ZeusInventarioWebAPI.Controllers
                                  Recibo = Convert.ToString("DEVOLUCIÓN"),
                                  TotalIvaVentas = Convert.ToDecimal(mov.TotalIvaventas),
                                  PrecioTotal = Convert.ToDecimal(mov.PrecioTotal),
-                             };
+                             }).ToListAsync();
 
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 #pragma warning restore CS8604 // Posible argumento de referencia nulo

@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace ZeusInventarioWebAPI.Controllers
 {
@@ -15,30 +17,37 @@ namespace ZeusInventarioWebAPI.Controllers
             _context = context;
         }
 
+        // Función para obtener todos los clientes
         [HttpGet("getClientByName/{name}")]
-        public ActionResult getClientByName(string name)
+        public async Task<ActionResult> getClientByName(string name)
         {
-            var clients = from c in _context.Set<Cliente>()
-                          where c.Razoncial.Contains(name)
-                          select c;
+            var clients = await (from c in _context.Set<Cliente>().AsNoTracking()
+                                 where c.Razoncial.Contains(name)
+                                 select c).ToListAsync();
+
             return clients.Any() ? Ok(clients) : NotFound();
         }
 
+        // Función para obtener un cliente por su ID
         [HttpGet("getClientById/{id}")]
-        public ActionResult getClientById(string id)
+        public async Task<ActionResult> getClientById(string id)
         {
-            var client = from c in _context.Set<Cliente>()
-                         where c.Idtercero == id
-                         select c;
+            var client = await (from c in _context.Set<Cliente>().AsNoTracking()
+                                where c.Idtercero == id
+                                select c).ToListAsync();
+
             return client.Any() ? Ok(client) : NotFound();
         }
 
+        // Función para obtener un cliente por su ID de tercero
         [HttpGet("getClientByIdThird/{third}")]
-        public ActionResult getClientBythird(string third)
+        public async Task<ActionResult> getClientBythird(string third)
         {
-            var client = from c in _context.Set<Cliente>()
-                         where c.Idcliente == third
-                         select c;
+            var client = await
+                         (from c in _context.Set<Cliente>().AsNoTracking()
+                          where c.Idcliente == third
+                         select c).ToListAsync();
+
             return client.Any() ? Ok(client) : NotFound();
         }
     }

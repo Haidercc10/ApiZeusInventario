@@ -52,14 +52,14 @@ namespace ZeusInventarioWebAPI.Controllers
             return transac;
         }
 
-        // -- Obtener los recibos de caja de la empresa.
+        // Obtener los recibos de caja de la empresa.
         [HttpGet("getRecibosCaja/{fecha1}/{fecha2}")]
-        public ActionResult GetRecibosCaja(DateTime fecha1, DateTime fecha2, string? sales)
+        public async Task<ActionResult> GetRecibosCaja(DateTime fecha1, DateTime fecha2, string? sales)
         {
             if (_context.Transacs == null) return NotFound();
 
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var transac = from t in _context.Set<Transac>()
+            var transac = await (from t in _context.Set<Transac>()
                           from m in _context.Set<Maevende>()
                           from c in _context.Set<Cliente>()
                           where t.Nittra == c.Idcliente &&
@@ -90,40 +90,40 @@ namespace ZeusInventarioWebAPI.Controllers
                               Vencimiento = t.Vencefac,
                               Usuario = t.Idusuario.Trim(),
                               FechaRegistro = t.Fgratra
-                          };
+                          }).ToListAsync();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
             if (transac == null) return BadRequest("No se encontraron recibos de caja en el rango de fechas consultado.");
             else return Ok(transac);
         }
 
-        // GET: Valor Facturado el día de hoy.
+        // Función para obtener el valor total facturado hoy, considerando facturas y devoluciones.
         [HttpGet("ValorTotalFacturadoHoy")]
-        public ActionResult ValorTotalFacturadoHoy()
+        public async Task<ActionResult> ValorTotalFacturadoHoy()
         {
             DateTime Hoy = DateTime.Today;
 
             if (_context.FacturaDeClientes == null) return NotFound();
-            var facturado = (from t in _context.Set<Transac>()
+            var facturado = await (from t in _context.Set<Transac>()
                              where t.Idfuente == "FV"
                              && t.Tipofac == "FA"
                              && t.Indcpitra == "1"
                              && t.Fechatra == Convert.ToString(Hoy.ToString("yyyy/MM/dd"))
-                             select Math.Abs(t.Valortra)).Sum();
+                             select Math.Abs(t.Valortra)).SumAsync();
 
-            var devuelto = (from t in _context.Set<Transac>()
+            var devuelto = await (from t in _context.Set<Transac>()
                              where t.Idfuente == "DV"
                              && t.Idfuente == "NV"
                              && t.Tipofac == "FA"
                              && t.Indcpitra == "1"
                              && t.Fechatra == Convert.ToString(Hoy.ToString("yyyy/MM/dd"))
-                            select t.Valortra).Sum();
+                            select t.Valortra).SumAsync();
 
             return Ok(facturado - devuelto);
         }
 
         [HttpGet("ValorTotalFacturadoHoy2")]
-        public ActionResult ValorTotalFacturadoHoy2()
+        public async Task<ActionResult> ValorTotalFacturadoHoy2()
         {
             DateTime Hoy = DateTime.Today;
 
@@ -132,48 +132,48 @@ namespace ZeusInventarioWebAPI.Controllers
             var ano = DateTime.Today;
             var mes = Convert.ToString(ano.Month).Length == 1 ? "0" + Convert.ToString(ano.Month) : Convert.ToString(ano.Month);
 
-            var MovimientoItem = (from mi in _context.Set<MovimientoItem>()
-                                  where mi.Fuente == "FV"
+            var MovimientoItem = await (from mi in _context.Set<MovimientoItem>().AsNoTracking()
+                                        where mi.Fuente == "FV"
                                   && mi.Estado == "Procesado"
                                   && mi.FechaDocumento.Month == ano.Month
                                   && mi.FechaDocumento.Year == ano.Year
                                   && mi.FechaDocumento.Day == ano.Day
                                   && mi.Consecutivo != 35454
                                   //&& mi.Consecutivo != 38155
-                                  select mi.PrecioTotal + mi.TotalDescuentoVenta).Sum(); 
+                                  select mi.PrecioTotal + mi.TotalDescuentoVenta).SumAsync(); 
 
-            var arriendo = (from tr in _context.Set<Transac>()
-                            where tr.Idfuente == "FV"
+            var arriendo = await (from tr in _context.Set<Transac>().AsNoTracking()
+                                  where tr.Idfuente == "FV"
                             && tr.Tipofac == "FA"
                             && tr.Indcpitra == "1"
                             && tr.Codicta == Convert.ToString(422010)
                             && tr.Anotra == Convert.ToString(ano.Year) + Convert.ToString(mes)
                             && tr.Fechatra == Convert.ToString(Hoy.ToString("yyyy/MM/dd"))
                             && tr.Statustra == "AC"
-                            select Math.Abs(tr.Valortra)).Sum();
+                            select Math.Abs(tr.Valortra)).SumAsync();
 
-            var Transaccion1 = (from tr in _context.Set<Transac>()
-                                where tr.Idfuente == "DV"
+            var Transaccion1 = await (from tr in _context.Set<Transac>().AsNoTracking()
+                                      where tr.Idfuente == "DV"
                                 && tr.Tipofac == "FA"
                                 && tr.Indcpitra == "1"
                                 && tr.Anotra == Convert.ToString(ano.Year) + Convert.ToString(mes)
                                 && tr.Valortra > 0
                                 && tr.Fechatra == Convert.ToString(Hoy.ToString("yyyy/MM/dd"))
                                 && tr.Statustra == "AC"
-                                select tr.Valortra).Sum();
+                                select tr.Valortra).SumAsync();
 
-            var descuentosDV = (from mv in _context.Set<MovimientoItem>()
-                                where
+            var descuentosDV = await (from mv in _context.Set<MovimientoItem>().AsNoTracking()
+                                      where
                                 mv.FechaDocumento.Month == ano.Month
                                 && mv.FechaDocumento.Year == ano.Year
                                 && mv.FechaDocumento.Day == ano.Day
                                 && mv.Fuente == "DV"
                                 && mv.Estado == "Procesado"
                                 && mv.TipoDocumento == 26m
-                                select mv.TotalDescuentoVenta).Sum();
+                                select mv.TotalDescuentoVenta).SumAsync();
 
 
-            var Transaccion2 = (from tr in _context.Set<Transac>()
+            var Transaccion2 = await (from tr in _context.Set<Transac>().AsNoTracking()
                                 where tr.Idfuente == "NV"
                                 && tr.Tipofac == "FA"
                                 && tr.Indcpitra == "1"
@@ -181,7 +181,7 @@ namespace ZeusInventarioWebAPI.Controllers
                                 && tr.Valortra > 0
                                 && tr.Fechatra == Convert.ToString(Hoy.ToString("yyyy/MM/dd"))
                                 && tr.Statustra == "AC"
-                                select tr.Valortra).Sum();
+                                select tr.Valortra).SumAsync();
 
             var datos = (MovimientoItem + arriendo) - (Transaccion1 - descuentosDV) + Transaccion2;
             return Ok(datos);

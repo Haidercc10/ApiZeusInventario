@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ZeusInventarioWebAPI.Models;
 
 namespace ZeusInventarioWebAPI.Controllers
@@ -18,16 +19,16 @@ namespace ZeusInventarioWebAPI.Controllers
 
         // Función para obtener los asesores de ventas activos
         [HttpGet("getActiveSales")]
-        public ActionResult getActiveSales()
+        public async Task<ActionResult> getActiveSales()
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var sales = from v in _context.Set<Maevende>()
-                        where v.Deshabilitado == 0
+            var sales = await (from v in _context.Set<Maevende>().AsNoTracking()
+                         where v.Deshabilitado == 0
                         select new
                         {
                             Asesor_Id = v.Idvende,
                             Asesor = v.Nombvende,
-                        }; 
+                        }).ToListAsync(); 
             return Ok(sales);
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
         }

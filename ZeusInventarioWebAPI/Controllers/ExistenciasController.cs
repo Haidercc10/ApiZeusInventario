@@ -35,7 +35,7 @@ namespace ZeusInventarioWebAPI.Controllers
 
         //GET EXISTENCIA Y ARTICULO PARA OBTENER INVENTARIO
         [HttpGet("BusquedaCodigoArticulo")]
-        public IActionResult GetExistenciasProductos()
+        public async Task<ActionResult> GetExistenciasProductos()
         {
             if (_context.Existencia == null)
             {
@@ -44,7 +44,7 @@ namespace ZeusInventarioWebAPI.Controllers
 
             var TipoProd = "PRODUCTO TERMINADO";
             var Bodega = "003";
-            var CodArticulo = _context.Existencia.Where(a => a.ArticuloNavigation.Tipo == TipoProd
+            var CodArticulo = await _context.Existencia.AsNoTracking().Where(a => a.ArticuloNavigation.Tipo == TipoProd
                                                 && a.Bodega == Bodega
                                                 && a.ArticuloNavigation.DesHabilitado == false
                                                 && a.Existencias >= 1
@@ -59,7 +59,7 @@ namespace ZeusInventarioWebAPI.Controllers
                                                    PrecioVenta = ART.ArticuloNavigation.PrecioVenta,
                                                    Presentacion = ART.ArticuloNavigation.Presentacion == "UND" ? "Und" : ART.ArticuloNavigation.Presentacion == "KLS" ? "Kg" : ART.ArticuloNavigation.Presentacion == "MTS" ? "MTS" :  "Paquete",
                                                    Precio_Total = ART.Existencias * ART.ArticuloNavigation.PrecioVenta
-                                               }).ToList();
+                                               }).ToListAsync();
 
             if (CodArticulo == null)
             {
@@ -71,36 +71,37 @@ namespace ZeusInventarioWebAPI.Controllers
             }
         }
 
-        //
+        //Función para obtener las existencias de un artículo específico según su código.
         [HttpGet("getExistenciasArticulo/{id}")]
-        public ActionResult getExistenciasArticulo(string id)
+        public async Task<ActionResult> getExistenciasArticulo(string id)
         {
-            var con = from exis in _context.Set<Existencia>()
-                      from art in _context.Set<Articulo>()
+            var con = await (from exis in _context.Set<Existencia>().AsNoTracking()
+                      from art in _context.Set<Articulo>().AsNoTracking()
                       where exis.Articulo == art.IdArticulo
                             && art.Codigo == id
-                      select exis;
+                      select exis).ToListAsync();
             return Ok(con);
         }
 
+        // Función para obtener el inventario de productos terminados en la bodega "003" con existencias mayores o iguales a 1.
         [HttpGet("getInventoryZeus")]
-        public ActionResult getInventoryZeus()
+        public async Task<ActionResult> getInventoryZeus()
         {
-            var con = from exis in _context.Set<Existencia>()
-                      from art in _context.Set<Articulo>()
-                      where exis.Articulo == art.IdArticulo
-                      && exis.Bodega == "003"
-                      && art.Tipo == "PRODUCTO TERMINADO"
-                      && exis.Existencias >= 1
-                      select new //art.Codigo + "-" + art.Presentacion;
-                      {
-                          Item = art.Codigo,
-                          Reference = art.Nombre,
-                          Qty = exis.Existencias,
-                          Presentation = art.Presentacion,
-                          Price = art.PrecioVenta,
-                          Subtotal = (art.PrecioVenta * exis.Existencias)
-                      }; 
+            var con = await (from exis in _context.Set<Existencia>().AsNoTracking()
+                             from art in _context.Set<Articulo>().AsNoTracking()
+                             where exis.Articulo == art.IdArticulo
+                             && exis.Bodega == "003"
+                             && art.Tipo == "PRODUCTO TERMINADO"
+                             && exis.Existencias >= 1
+                             select new
+                             {
+                                 Item = art.Codigo,
+                                 Reference = art.Nombre,
+                                 Qty = exis.Existencias,
+                                 Presentation = art.Presentacion,
+                                 Price = art.PrecioVenta,
+                                 Subtotal = (art.PrecioVenta * exis.Existencias)
+                             }).ToListAsync(); 
 
             return Ok(con);
         }
@@ -129,13 +130,13 @@ namespace ZeusInventarioWebAPI.Controllers
             return Ok(resultado);
         }
 
-
+        //Función para obtener las existencias de un producto específico según su código y presentación.
         [HttpGet("getExistenciasProductos/{producto}/{presentacion}")]
-        public ActionResult GetExistenciasProducto(string producto, string presentacion)
+        public async Task<ActionResult> GetExistenciasProducto(string producto, string presentacion)
         {
             //string[] productTypes = { "PRODUCTO TERMINADO", "PRODUCTO EN PROCESO" }; 
 
-            var con = from exis in _context.Set<Existencia>()
+            var con = await (from exis in _context.Set<Existencia>()
                       from art in _context.Set<Articulo>()
                       where exis.Articulo == art.IdArticulo
                             && art.Codigo == producto
@@ -144,7 +145,7 @@ namespace ZeusInventarioWebAPI.Controllers
                             && exis.Bodega == "003"
                             && art.DesHabilitado == false
                             && art.Presentacion == presentacion
-                      select exis;
+                      select exis).ToListAsync();
             return Ok(con);
         }
 
