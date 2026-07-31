@@ -104,15 +104,15 @@ namespace ZeusInventarioWebAPI.Controllers
             DateTime Hoy = DateTime.Today;
 
             if (_context.FacturaDeClientes == null) return NotFound();
-            var facturado = await (from t in _context.Set<Transac>()
-                             where t.Idfuente == "FV"
+            var facturado = await (from t in _context.Set<Transac>().AsNoTracking()
+                                   where t.Idfuente == "FV"
                              && t.Tipofac == "FA"
                              && t.Indcpitra == "1"
                              && t.Fechatra == Convert.ToString(Hoy.ToString("yyyy/MM/dd"))
                              select Math.Abs(t.Valortra)).SumAsync();
 
-            var devuelto = await (from t in _context.Set<Transac>()
-                             where t.Idfuente == "DV"
+            var devuelto = await (from t in _context.Set<Transac>().AsNoTracking()
+                                  where t.Idfuente == "DV"
                              && t.Idfuente == "NV"
                              && t.Tipofac == "FA"
                              && t.Indcpitra == "1"

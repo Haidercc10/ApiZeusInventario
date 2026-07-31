@@ -76,8 +76,8 @@ namespace ZeusInventarioWebAPI.Controllers
         public async Task<ActionResult> getExistenciasArticulo(string id)
         {
             var con = await (from exis in _context.Set<Existencia>().AsNoTracking()
-                      from art in _context.Set<Articulo>().AsNoTracking()
-                      where exis.Articulo == art.IdArticulo
+                      join art in _context.Set<Articulo>().AsNoTracking() on exis.Articulo equals art.IdArticulo
+                             where exis.Articulo == art.IdArticulo
                             && art.Codigo == id
                       select exis).ToListAsync();
             return Ok(con);
@@ -88,7 +88,7 @@ namespace ZeusInventarioWebAPI.Controllers
         public async Task<ActionResult> getInventoryZeus()
         {
             var con = await (from exis in _context.Set<Existencia>().AsNoTracking()
-                             from art in _context.Set<Articulo>().AsNoTracking()
+                             join art in _context.Set<Articulo>().AsNoTracking() on exis.Articulo equals art.IdArticulo
                              where exis.Articulo == art.IdArticulo
                              && exis.Bodega == "003"
                              && art.Tipo == "PRODUCTO TERMINADO"
@@ -137,8 +137,8 @@ namespace ZeusInventarioWebAPI.Controllers
             //string[] productTypes = { "PRODUCTO TERMINADO", "PRODUCTO EN PROCESO" }; 
 
             var con = await (from exis in _context.Set<Existencia>()
-                      from art in _context.Set<Articulo>()
-                      where exis.Articulo == art.IdArticulo
+                            join art in _context.Set<Articulo>() on exis.Articulo equals art.IdArticulo
+                             where exis.Articulo == art.IdArticulo
                             && art.Codigo == producto
                             && (art.Tipo == "PRODUCTO TERMINADO"
                             || art.Tipo == "PRODUCTO EN PROCESO")

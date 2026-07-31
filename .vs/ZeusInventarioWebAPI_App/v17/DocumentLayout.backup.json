@@ -18,7 +18,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 344,
-          "SelectedChildIndex": 9,
+          "SelectedChildIndex": 10,
           "Children": [
             {
               "$type": "Bookmark",
@@ -58,28 +58,28 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "MovimientoItemController .cs",
-              "DocumentMoniker": "C:\\Dev\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\Controllers\\MovimientoItemController .cs",
-              "RelativeDocumentMoniker": "ZeusInventarioWebAPI\\Controllers\\MovimientoItemController .cs",
-              "ToolTip": "C:\\Dev\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\Controllers\\MovimientoItemController .cs",
-              "RelativeToolTip": "ZeusInventarioWebAPI\\Controllers\\MovimientoItemController .cs",
-              "ViewState": "AgIAAH0AAAAAAAAAAAAAAKIAAAAfAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-10T22:06:15.35Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 1,
               "Title": "TransacController.cs",
               "DocumentMoniker": "C:\\Dev\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\Controllers\\TransacController.cs",
               "RelativeDocumentMoniker": "ZeusInventarioWebAPI\\Controllers\\TransacController.cs",
               "ToolTip": "C:\\Dev\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\Controllers\\TransacController.cs",
               "RelativeToolTip": "ZeusInventarioWebAPI\\Controllers\\TransacController.cs",
-              "ViewState": "AgIAABAAAAAAAAAAAAAAADQAAAAJAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACQAAAAdAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-10T22:06:04.12Z",
+              "WhenOpened": "2026-07-17T18:14:39.189Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "MovimientoItemController .cs",
+              "DocumentMoniker": "C:\\Dev\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\Controllers\\MovimientoItemController .cs",
+              "RelativeDocumentMoniker": "ZeusInventarioWebAPI\\Controllers\\MovimientoItemController .cs",
+              "ToolTip": "C:\\Dev\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\Controllers\\MovimientoItemController .cs",
+              "RelativeToolTip": "ZeusInventarioWebAPI\\Controllers\\MovimientoItemController .cs",
+              "ViewState": "AgIAAFMAAAAAAAAAAADwv10AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-17T18:12:07.864Z",
               "EditorCaption": ""
             }
           ]

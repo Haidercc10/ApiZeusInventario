@@ -128,7 +128,7 @@ namespace ZeusInventarioWebAPI.Controllers
         [HttpGet("getVendedoresxId/{idvende}")]
         public async Task<ActionResult> GetNombreVendedor2(string idvende)
         {
-            var vendedor = (from v in _context.Set<Maevende>().AsNoTracking()
+            var vendedor = await (from v in _context.Set<Maevende>().AsNoTracking()
                            where v.Deshabilitado != 1
                            && v.Idvende == idvende
                            select new
@@ -141,9 +141,9 @@ namespace ZeusInventarioWebAPI.Controllers
         }
 
         [HttpGet("getClientes/{nombre}")]
-        public async Task<ActionResult> GetCliente2(string nombre)
+        public async Task<ActionResult> getClientes(string nombre)
         {
-            var clientes = (from c in _context.Set<Cliente>().AsNoTracking()
+            var clientes = await (from c in _context.Set<Cliente>().AsNoTracking()
                             where c.Deshabilitado != 1
                            && c.Razoncial.Contains(nombre)
                            select new

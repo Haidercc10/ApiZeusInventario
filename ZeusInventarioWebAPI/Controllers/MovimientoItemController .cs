@@ -55,7 +55,7 @@ namespace ZeusInventarioWebAPI.Controllers
             var ano = DateTime.Today;
             var mes = Convert.ToString(ano.Month).Length == 1 ? "0" + Convert.ToString(ano.Month) : Convert.ToString(ano.Month);
 
-            var MovimientoItem = (from mi in _context.Set<MovimientoItem>()
+            var fv = (from mi in _context.Set<MovimientoItem>()
                                   where mi.Fuente == "FV"
                                   && mi.Estado == "Procesado"
                                   && mi.FechaDocumento.Month == ano.Month
@@ -73,7 +73,7 @@ namespace ZeusInventarioWebAPI.Controllers
                             && tr.Statustra == "AC"
                             select Math.Abs(tr.Valortra)).Sum();
 
-            var Transaccion1 = (from tr in _context.Set<Transac>()
+            var dv = (from tr in _context.Set<Transac>()
                                 where tr.Idfuente == "DV"
                                 && tr.Tipofac == "FA"
                                 && tr.Indcpitra == "1"
@@ -92,7 +92,7 @@ namespace ZeusInventarioWebAPI.Controllers
                                 select mv.TotalDescuentoVenta).Sum();
 
 
-            var Transaccion2 = (from tr in _context.Set<Transac>()
+            var nv = (from tr in _context.Set<Transac>()
                                 where tr.Idfuente == "NV"
                                 && tr.Tipofac == "FA"
                                 && tr.Indcpitra == "1"
@@ -101,7 +101,7 @@ namespace ZeusInventarioWebAPI.Controllers
                                 && tr.Valortra > 0
                                 select tr.Valortra).Sum();
 
-            var datos = (MovimientoItem + arriendo) - (Transaccion1 - descuentosDV) + Transaccion2;
+            var datos = (fv + arriendo) - ((dv - descuentosDV) + nv);
 
             return Ok(datos);
         }
@@ -266,7 +266,7 @@ namespace ZeusInventarioWebAPI.Controllers
             for (int i = 0; i < 12; i++)
             {
                 string mes = (i + 1).ToString().Length > 1 ? $"{i + 1}" : $"0{i + 1}";
-                var MovimientoItem = (from mi in _context.Set<MovimientoItem>()
+                var fv = (from mi in _context.Set<MovimientoItem>()
                                       where
                                       mi.Fuente == "FV"
                                       && mi.Estado == "Procesado"
@@ -285,7 +285,7 @@ namespace ZeusInventarioWebAPI.Controllers
                                 && tr.Anotra == Convert.ToString(anio) + (mes)
                                 select Math.Abs(tr.Valortra)).Sum();
 
-                var Transaccion1 = (from tr in _context.Set<Transac>()
+                var dv = (from tr in _context.Set<Transac>()
                                     where tr.Idfuente == "DV"
                                     && tr.Tipofac == "FA"
                                     && tr.Indcpitra == "1"
@@ -302,7 +302,7 @@ namespace ZeusInventarioWebAPI.Controllers
                                     select mv.TotalDescuentoVenta).Sum();
 
 
-                var Transaccion2 = (from tr in _context.Set<Transac>()
+                var nv = (from tr in _context.Set<Transac>()
                                     where tr.Idfuente == "NV"
                                     && tr.Tipofac == "FA"
                                     && tr.Indcpitra == "1"
@@ -311,7 +311,7 @@ namespace ZeusInventarioWebAPI.Controllers
                                     && tr.Valortra > 0
                                     select tr.Valortra).Sum();
 
-                datos.Add($"'Mes': '{mes}', 'Valor': '{Convert.ToDecimal((MovimientoItem + arriendo) - ((Transaccion1 - descuentosDV) + Transaccion2))}' ");
+                datos.Add($"'Mes': '{mes}', 'Valor': '{Convert.ToDecimal((fv + arriendo) - ((dv - descuentosDV) + nv))}' ");
                 if (i == 11) return Ok(datos);
             }
             return Ok(datos);
@@ -661,7 +661,7 @@ namespace ZeusInventarioWebAPI.Controllers
             return Ok(fact);
         }
 
-            //Función para obtener la información de un pedido específico a través de su número de consecutivo,
+        //Función para obtener la información de un pedido específico a través de su número de consecutivo,
             //esto con el fin de tener un informe detallado de un pedido en particular, el cual puede ser utilizado para generar un PDF.
         [HttpGet("getPedidosPorConsecutivo/{consecutivo}")]
         public async Task<ActionResult> getPedidosPDF(int consecutivo)
@@ -2330,66 +2330,6 @@ namespace ZeusInventarioWebAPI.Controllers
                           }).ToList();
 
             return query.ToList<object>();
-        }
-
-        //
-        private List<object> ItemsListForClient(int year, string month, string vendedorId, string clientId)
-        {
-            var query = (from mi in _context.Set<MovimientoItem>()
-                         where mi.TipoDocumento == 9
-                            && mi.Estado == "Procesado"
-                            && mi.Fuente == "FV"
-                            && mi.FechaDocumento.Year == year
-                            && mi.FechaDocumento.Month == Convert.ToInt32(month)
-                            && mi.Vendedor == vendedorId
-                            && mi.Tercero == clientId
-                         group mi by mi.CodigoArticulo
-                         into g
-                         select new Items
-                         {
-                             item = g.Key,
-                             unit = g.Max(x => x.Presentacion),
-                             qty = g.Sum(x => x.Cantidad)
-                         }).ToList();
-
-            return query.ToList<object>();
-        }
-
-
-        //Calcula el costo de las devoluciones por vendedor en un mes y año específico
-        private decimal CalculateCostDVsClients(int year, string month, string vendedorId, string clientId)
-        {
-            var dv = (from tr in _context.Set<Transac>()
-                      where tr.Idfuente == "DV"
-                            && tr.Tipofac == "FA"
-                            && tr.Indcpitra == "1"
-                            && tr.Anotra == $"{year}{month}"
-                            && tr.Idvende == vendedorId
-                            && tr.Nittra == clientId
-                      select (decimal?)tr.Valortra).Sum() ?? 0m;
-
-            var nv = (from tr in _context.Set<Transac>()
-                      where tr.Idfuente == "NV"
-                      && tr.Tipofac == "FA"
-                      && tr.Indcpitra == "1"
-                      && tr.Anotra == $"{year}{month}"
-                      && tr.Idvende == vendedorId
-                      && tr.Valortra > 0
-                      && tr.Nittra == clientId
-                      select (decimal?)tr.Valortra).Sum() ?? 0m;
-
-            var desc_dv = (from mv in _context.Set<MovimientoItem>()
-                           where mv.FechaDocumento.Month == Convert.ToInt32(month)
-                           && mv.FechaDocumento.Year == year
-                           && mv.Fuente == "DV"
-                           && mv.Estado == "Procesado"
-                           && mv.TipoDocumento == 26m
-                           && mv.Vendedor == vendedorId
-                           && mv.Tercero == clientId
-                           select mv.TotalDescuentoVenta).Sum();
-
-            var cost = (dv + nv) - desc_dv;
-            return cost;
         }
 
     }
