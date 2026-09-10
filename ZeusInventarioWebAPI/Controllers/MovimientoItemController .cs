@@ -587,8 +587,8 @@ namespace ZeusInventarioWebAPI.Controllers
         }
 
         //Función para obtener todos los pedidos sin importar su fecha de creación, esto con el fin de tener un histórico de pedidos.
-        [HttpGet("getTodosPedidos/{date1}/{date2}")]
-        public async Task<ActionResult> getTodosPedidos(DateTime date1, DateTime date2, string? client = "", string? sales = "", string? oc = "", string? status = "")
+        [HttpPost("getTodosPedidos/{date1}/{date2}")]
+        public async Task<ActionResult> getTodosPedidos([FromBody] List<string> status, DateTime date1, DateTime date2, string? client = "", string? sales = "", string? oc = "")
         {
             var con = await (from mov in _context.Set<MovimientoItem>()
                       from cli in _context.Set<Cliente>()
@@ -596,10 +596,10 @@ namespace ZeusInventarioWebAPI.Controllers
                       where mov.TipoDocumento == 7
                             && cli.Idcliente == mov.Tercero
                             && ped.Consecutivo == mov.Consecutivo
-                            && ped.Fecha >= date1
+                            && ped.Fecha >= date1   
                             && ped.Fecha <= date2
+                            && (status.Count == 0 || status.Contains(mov.Estado))   
                             && (string.IsNullOrEmpty(client) || mov.Tercero == client)
-                            && (string.IsNullOrEmpty(status) || mov.Estado == status)
                             && (string.IsNullOrEmpty(sales) || mov.Vendedor == sales)
                             && (string.IsNullOrEmpty(oc) || ped.Detalle.Contains(oc) || ped.OrdenCompraCliente.Contains(oc))
                       select new
