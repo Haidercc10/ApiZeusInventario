@@ -163,7 +163,7 @@
   },
   {
     "ContainingType": "ZeusInventarioWebAPI.Controllers.ArticulosController",
-    "Method": "GetCliente2",
+    "Method": "getClientes",
     "RelativePath": "api/Articulos/getClientes/{nombre}",
     "HttpMethod": "GET",
     "IsController": true,
@@ -2140,10 +2140,15 @@
     "ContainingType": "ZeusInventarioWebAPI.Controllers.MovimientoItemsController",
     "Method": "getTodosPedidos",
     "RelativePath": "api/MovimientoItems/getTodosPedidos/{date1}/{date2}",
-    "HttpMethod": "GET",
+    "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
+      {
+        "Name": "status",
+        "Type": "System.Collections.Generic.List\u00601[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": true
+      },
       {
         "Name": "date1",
         "Type": "System.DateTime",
@@ -2166,11 +2171,6 @@
       },
       {
         "Name": "oc",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "status",
         "Type": "System.String",
         "IsRequired": false
       }
@@ -2207,6 +2207,22 @@
     "ContainingType": "ZeusInventarioWebAPI.Controllers.MovimientoItemsController",
     "Method": "KilosFacturadosMes",
     "RelativePath": "api/MovimientoItems/KilosFacturadosMes/{year}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "year",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ZeusInventarioWebAPI.Controllers.MovimientoItemsController",
+    "Method": "KilosFacturadosMesAMes",
+    "RelativePath": "api/MovimientoItems/KilosFacturadosMesAMes/{year}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,

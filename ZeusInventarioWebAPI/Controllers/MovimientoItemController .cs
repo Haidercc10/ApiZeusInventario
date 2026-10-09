@@ -9,6 +9,7 @@ using Microsoft.VisualBasic;
 using Newtonsoft.Json.Linq;
 using NuGet.Protocol;
 using ServiceReference1;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
@@ -219,7 +220,7 @@ namespace ZeusInventarioWebAPI.Controllers
 
         // Consulta para obtener la cantidad total facturada de cada item por año y mes.
         [HttpGet("KilosFacturadosMes/{year}")]
-        public ActionResult KilosFacturadosMes(int year)
+        public async Task<ActionResult> KilosFacturadosMes(int year)
         {
             if (_context.MovimientoItems == null)
             {
@@ -231,7 +232,8 @@ namespace ZeusInventarioWebAPI.Controllers
             {
                 string mes = (i + 1).ToString().Length > 1 ? $"{i + 1}" : $"0{i + 1}";
 
-                var value = from mi in _context.Set<MovimientoItem>()
+                var value = await
+                            (from mi in _context.Set<MovimientoItem>()
                             where mi.Fuente == "FV"
                             && mi.Estado == "Procesado"
                             && mi.FechaDocumento.Month == Convert.ToInt32(mes)
@@ -249,12 +251,70 @@ namespace ZeusInventarioWebAPI.Controllers
                                 Reference = s.Key.NombreArticulo,
                                 Qty = s.Sum(x => x.Cantidad),
                                 Und = s.Key.Presentacion
-                            };
+                            }).ToListAsync();
                 datos.Add(value);
                 
                 if (i == 11) return Ok(datos);
             }
             return Ok(datos);
+        }
+
+        [HttpGet("KilosFacturadosMesAMes/{year}")]
+        public async Task<ActionResult> KilosFacturadosMesAMes(int year)
+        {
+            if (_context.MovimientoItems == null)
+            {
+                return NotFound();
+            }
+
+            List<string> presentaciones = ["MTS", "UND", "PAQ"];
+
+            // Obtener total de kilos facturados del mes
+            var kilos = await SoloKilosFacturadosMesAMes(year);
+
+            // Obtener movimientos agrupados
+            var value = await
+                (from mi in _context.Set<MovimientoItem>().AsNoTracking()
+                 where mi.Fuente == "FV"
+                    && mi.Estado == "Procesado"
+                    && mi.FechaDocumento.Month == 9
+                    && mi.FechaDocumento.Year == year
+                    && presentaciones.Contains(mi.Presentacion)
+                 group mi by new
+                 {
+                     mi.CodigoArticulo,
+                     mi.NombreArticulo,
+                     mi.Presentacion,
+                     mi.Documento
+                 }
+                 into s
+                 select new
+                 {
+                     Item = s.Key.CodigoArticulo,
+                     Reference = s.Key.NombreArticulo,
+                     Qty = s.Sum(x => x.Cantidad),
+                     Und = s.Key.Presentacion,
+                     Factura = s.Key.Documento
+                 }).ToListAsync();
+
+            return Ok(new
+            {
+                Kilos = kilos,
+                Detalle = value
+            });
+        }
+
+        private async Task<decimal> SoloKilosFacturadosMesAMes(int year)
+        {
+            return await _context.Set<MovimientoItem>()
+                .AsNoTracking()
+                .Where(mi =>
+                    mi.Fuente == "FV" &&
+                    mi.Estado == "Procesado" &&
+                    mi.FechaDocumento.Month == 9 &&
+                    mi.FechaDocumento.Year == year &&
+                    mi.Presentacion == "KLS")
+                .SumAsync(mi => mi.Cantidad);
         }
 
         // Consulta que devovlerá un array con cada uno de los meses y el valor que se facturó mes mes en el año que le sea pasado

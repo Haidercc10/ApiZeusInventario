@@ -2052,6 +2052,30 @@
         }
       }
     },
+    "/api/MovimientoItems/KilosFacturadosMesAMes/{year}": {
+      "get": {
+        "tags": [
+          "MovimientoItems"
+        ],
+        "parameters": [
+          {
+            "name": "year",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/api/MovimientoItems/getFacturacion_Mes_Mes/{anio}": {
       "get": {
         "tags": [
@@ -2226,7 +2250,7 @@
       }
     },
     "/api/MovimientoItems/getTodosPedidos/{date1}/{date2}": {
-      "get": {
+      "post": {
         "tags": [
           "MovimientoItems"
         ],
@@ -2277,17 +2301,36 @@
               "type": "string",
               "default": ""
             }
-          },
-          {
-            "name": "status",
-            "in": "query",
-            "style": "form",
-            "schema": {
-              "type": "string",
-              "default": ""
-            }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Success"
