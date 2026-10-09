@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "targets": {
     "net8.0": {
       "Azure.Core/1.25.0": {
@@ -11443,23 +11443,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\HaiderCarrillo\\.nuget\\packages\\": {},
+    "C:\\Users\\ErickChamorro\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Dev\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj",
+      "projectUniqueName": "C:\\Dev\\GitHub\\ZeusInventarioAPI\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj",
       "projectName": "ZeusInventarioWebAPI",
-      "projectPath": "C:\\Dev\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj",
-      "packagesPath": "C:\\Users\\HaiderCarrillo\\.nuget\\packages\\",
-      "outputPath": "C:\\Dev\\GitHub\\ApiZeusInventario\\ZeusInventarioWebAPI\\obj\\",
+      "projectPath": "C:\\Dev\\GitHub\\ZeusInventarioAPI\\ZeusInventarioWebAPI\\ZeusInventarioWebAPI.csproj",
+      "packagesPath": "C:\\Users\\ErickChamorro\\.nuget\\packages\\",
+      "outputPath": "C:\\Dev\\GitHub\\ZeusInventarioAPI\\ZeusInventarioWebAPI\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\HaiderCarrillo\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\ErickChamorro\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -11468,10 +11468,12 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net8.0": {
+          "framework": "net8.0",
           "targetAlias": "net8.0",
           "projectReferences": {}
         }
@@ -11486,10 +11488,11 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "9.0.300"
+      "SdkAnalysisLevel": "10.0.400"
     },
     "frameworks": {
       "net8.0": {
+        "framework": "net8.0",
         "targetAlias": "net8.0",
         "dependencies": {
           "EntityFramework": {
@@ -11600,7 +11603,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.302/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.401/PortableRuntimeIdentifierGraph.json"
       }
     }
   },
