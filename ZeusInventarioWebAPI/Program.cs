@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using PlasticaribeAPI.Service;
+using System.Data.SqlClient;
 using System.Text;
 using ZeusInventarioWebAPI.Data;
 using ZeusInventarioWebAPI.Models;
@@ -40,11 +41,61 @@ builder.Services.AddSwaggerGen(options =>
 });
 builder.Services.AddScoped<ICacheService, CacheService>();
 builder.Services.AddDbContext<InventarioDataContext>(options => { 
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), sqlServerOptionsAction: SqlOptions => { 
-        SqlOptions.EnableRetryOnFailure();
-        SqlOptions.UseCompatibilityLevel(120);
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection"), 
+        sqlServerOptionsAction: SqlOptions => { 
+            SqlOptions.EnableRetryOnFailure();
+            SqlOptions.UseCompatibilityLevel(120);
     }); 
 });
+
+// Obtener cadena de conexión según el entorno.
+var connectionString = builder.Configuration
+    .GetConnectionString("DefaultConnection");
+
+// Verificar que exista la configuración.
+if (string.IsNullOrWhiteSpace(connectionString))
+{
+    throw new InvalidOperationException(
+        "No se ha configurado la cadena de conexión."
+    );
+}
+
+// Obtener información de SQL Server.
+var sqlConnection = new SqlConnectionStringBuilder(
+    connectionString
+);
+
+// Validar entorno Development.
+if (builder.Environment.IsDevelopment() &&
+    !sqlConnection.InitialCatalog.Equals(
+        "Inventario_Prea21",
+        StringComparison.OrdinalIgnoreCase))
+{
+    throw new InvalidOperationException(
+        "Development debe utilizar Inventario_Prea21."
+    );
+}
+
+// Validar entorno Production.
+if (builder.Environment.IsProduction() &&
+    !sqlConnection.InitialCatalog.Equals(
+        "Inventario",
+        StringComparison.OrdinalIgnoreCase))
+{
+    throw new InvalidOperationException(
+        "Production debe utilizar Inventario."
+    );
+}
+
+// Mostrar información del entorno.
+Console.WriteLine("==================================");
+Console.WriteLine($"ENTORNO: {builder.Environment.EnvironmentName}");
+Console.WriteLine($"SERVIDOR: {sqlConnection.DataSource}");
+Console.WriteLine($"BASE DE DATOS: {sqlConnection.InitialCatalog}");
+Console.WriteLine("==================================");
+
+
 builder.Services.AddAuthentication(opt => {
     opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -83,10 +134,18 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() ||
+    app.Configuration.GetValue<bool>("EnableSwagger"))
 {
     app.UseSwagger();
-    app.UseSwaggerUI(options => { options.SwaggerEndpoint("/swagger/V1/swagger.json", "Inventario Zeus WebAPI"); });
+
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint(
+            "/swagger/V1/swagger.json",
+            "Plasticaribe WebAPI"
+        );
+    });
 }
 app.UseAuthentication();
 app.UseCors(myAllowSpecificOrigins);
