@@ -17,15 +17,21 @@ namespace ZeusInventarioWebAPI.Controllers
             _context = context;
         }
 
-        // Función para obtener todos los clientes
+        /// <summary>
+        /// Busca clientes cuya razón social contenga el texto indicado.
+        /// Devuelve como máximo 50 coincidencias ordenadas por razón social.
+        /// </summary>
+        /// <param name="name">Texto a buscar dentro de la razón social.</param>
+        /// <returns>200 con la lista de clientes encontrados; lista vacía si no hay coincidencias.</returns>
         [HttpGet("getClientByName/{name}")]
         public async Task<ActionResult> getClientByName(string name)
         {
             var clients = await (from c in _context.Set<Cliente>().AsNoTracking()
                                  where c.Razoncial.Contains(name)
-                                 select c).ToListAsync();
+                                 orderby c.Razoncial
+                                 select c).Take(50).ToListAsync();
 
-            return clients.Any() ? Ok(clients) : NotFound();
+            return Ok(clients);
         }
 
         // Función para obtener un cliente por su ID
