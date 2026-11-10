@@ -149,6 +149,40 @@ namespace ZeusInventarioWebAPI.Controllers
             return Ok(con);
         }
 
+        /// <summary>
+        /// Consulta en una sola petición los disponibles de varios productos (código + presentación) en la bodega "003",
+        /// con los mismos criterios de <see cref="GetExistenciasProducto"/>. Los disponibles se suman por producto y
+        /// presentación (un artículo puede tener varias filas por lote/ubicación). Los productos sin existencia no se
+        /// devuelven.
+        /// </summary>
+        [HttpPost("getExistenciasProductos")]
+        public async Task<ActionResult> GetExistenciasProductos([FromBody] List<Models.Dto.ExistenciaProductoConsulta> productos)
+        {
+            if (productos == null || productos.Count == 0) return Ok(new List<object>());
+
+            var codigos = productos.Select(p => p.Producto).Distinct().ToList();
+            var presentaciones = productos.Select(p => p.Presentacion).Distinct().ToList();
+
+            var existencias = await (from exis in _context.Set<Existencia>().AsNoTracking()
+                                     join art in _context.Set<Articulo>().AsNoTracking() on exis.Articulo equals art.IdArticulo
+                                     where codigos.Contains(art.Codigo)
+                                     && presentaciones.Contains(art.Presentacion!)
+                                     && (art.Tipo == "PRODUCTO TERMINADO" || art.Tipo == "PRODUCTO EN PROCESO")
+                                     && exis.Bodega == "003"
+                                     && art.DesHabilitado == false
+                                     group exis by new { art.Codigo, art.Presentacion } into g
+                                     select new
+                                     {
+                                         Producto = g.Key.Codigo,
+                                         Presentacion = g.Key.Presentacion,
+                                         Disponibles = g.Sum(x => x.Disponibles)
+                                     }).ToListAsync();
+
+            // Contains por separado puede cruzar códigos y presentaciones; se conservan solo los pares solicitados.
+            var solicitados = productos.Select(p => (p.Producto, p.Presentacion)).ToHashSet();
+            return Ok(existencias.Where(e => solicitados.Contains((e.Producto, e.Presentacion!))));
+        }
+
         // GET: api/Existencias/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Existencia>> GetExistencia(decimal id)
