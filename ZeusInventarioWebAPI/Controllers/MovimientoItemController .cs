@@ -1177,6 +1177,85 @@ namespace ZeusInventarioWebAPI.Controllers
             return Ok(datos);
         }
 
+        //Costo facturado del mes para TODOS los vendedores a la vez. Misma fórmula y filtros que getCostoFacturado_Vendedor,
+        //pero cada suma se agrupa por vendedor: 5 consultas en total en lugar de 5 por vendedor.
+        //Respuesta: [{ vendedor: "007", total: 123.45 }]. El código del vendedor va tal como está en Zeus.
+        [HttpGet("getCostoFacturado_Vendedores/{mes}/{anio}")]
+        public async Task<ActionResult> GetCostoFacturado_Vendedores(string mes, int anio)
+        {
+            int mesNumero = Convert.ToInt32(mes);
+            string mesTexto = mesNumero.ToString("00");
+            string anioTexto = Convert.ToString(anio);
+            string cuentaArriendo = Convert.ToString(422010);
+
+            var facturado = await (from mi in _context.Set<MovimientoItem>().AsNoTracking()
+                                   where mi.Fuente == "FV"
+                                   && mi.Estado == "Procesado"
+                                   && mi.FechaDocumento.Month == mesNumero
+                                   && mi.FechaDocumento.Year == anio
+                                   && mi.Consecutivo != 34839
+                                   && mi.Consecutivo != 35454
+                                   && mi.Consecutivo != 38155
+                                   group mi by mi.Vendedor into g
+                                   select new { Vendedor = g.Key, Total = g.Sum(x => x.PrecioTotal + x.TotalDescuentoVenta) }).ToListAsync();
+
+            var arriendo = await (from tr in _context.Set<Transac>().AsNoTracking()
+                                  where tr.Idfuente == "FV"
+                                  && tr.Tipofac == "FA"
+                                  && tr.Indcpitra == "1"
+                                  && tr.Codicta == cuentaArriendo
+                                  && tr.Fechatra.Substring(5, 2) == mesTexto
+                                  && tr.Fechatra.Substring(0, 4) == anioTexto
+                                  && tr.Statustra == "AC"
+                                  group tr by tr.Idvende into g
+                                  select new { Vendedor = g.Key, Total = g.Sum(x => Math.Abs(x.Valortra)) }).ToListAsync();
+
+            var devoluciones = await (from tr in _context.Set<Transac>().AsNoTracking()
+                                      where tr.Idfuente == "DV"
+                                      && tr.Tipofac == "FA"
+                                      && tr.Indcpitra == "1"
+                                      && tr.Fechatra.Substring(5, 2) == mesTexto
+                                      && tr.Fechatra.Substring(0, 4) == anioTexto
+                                      && tr.Statustra == "AC"
+                                      group tr by tr.Idvende into g
+                                      select new { Vendedor = g.Key, Total = g.Sum(x => x.Valortra) }).ToListAsync();
+
+            var descuentosDV = await (from mv in _context.Set<MovimientoItem>().AsNoTracking()
+                                      where mv.FechaDocumento.Month == mesNumero
+                                      && mv.FechaDocumento.Year == anio
+                                      && mv.Fuente == "DV"
+                                      && mv.Estado == "Procesado"
+                                      && mv.TipoDocumento == 26m
+                                      group mv by mv.Vendedor into g
+                                      select new { Vendedor = g.Key, Total = g.Sum(x => x.TotalDescuentoVenta) }).ToListAsync();
+
+            var notas = await (from tr in _context.Set<Transac>().AsNoTracking()
+                               where tr.Idfuente == "NV"
+                               && tr.Tipofac == "FA"
+                               && tr.Indcpitra == "1"
+                               && tr.Fechatra.Substring(5, 2) == mesTexto
+                               && tr.Fechatra.Substring(0, 4) == anioTexto
+                               && tr.Valortra > 0
+                               && tr.Statustra == "AC"
+                               group tr by tr.Idvende into g
+                               select new { Vendedor = g.Key, Total = g.Sum(x => x.Valortra) }).ToListAsync();
+
+            // Combina las 5 sumas por vendedor: (FV + arriendo + descuentos DV) - (DV + NV)
+            var totales = new Dictionary<string, decimal>();
+            void Sumar(string? vendedor, decimal valor)
+            {
+                string clave = (vendedor ?? "").Trim();
+                totales[clave] = (totales.TryGetValue(clave, out var actual) ? actual : 0) + valor;
+            }
+            facturado.ForEach(x => Sumar(x.Vendedor, x.Total));
+            arriendo.ForEach(x => Sumar(x.Vendedor, x.Total));
+            descuentosDV.ForEach(x => Sumar(x.Vendedor, x.Total));
+            devoluciones.ForEach(x => Sumar(x.Vendedor, -x.Total));
+            notas.ForEach(x => Sumar(x.Vendedor, -x.Total));
+
+            return Ok(totales.Where(x => x.Key != "").Select(x => new { Vendedor = x.Key, Total = x.Value }).OrderBy(x => x.Vendedor));
+        }
+
         //Consulta que devolverá la informacion de los clientes que mas se han facturado en el mes y restará las devoluciones que han tenido estos mismos
         [HttpGet("getClienteFacturadosMes")]
         public async Task<ActionResult> GetClientesFacturadosMes(string? sales)
