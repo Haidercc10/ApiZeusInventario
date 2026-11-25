@@ -622,6 +622,8 @@ namespace ZeusInventarioWebAPI.Controllers
                           Costo_Cant_Pendiente = ((mov.Cantidad - mov.Faltantes) * mov.PrecioUnidad),
                           Costo_Cant_Total = (mov.Cantidad * mov.PrecioUnidad),
                           Fecha_Entrega = ped.FechaEntrega,
+                          // Días de plazo de pago del cliente (campo nuevo, aditivo): criterio para sugerir a qué pedido facturar primero
+                          Plazo_Pago = cli.Diplazo,
                           Existencias = (from art in _context.Set<Articulo>()
                                          join ext in _context.Set<Existencia>() on art.IdArticulo equals ext.Articulo
                                          where art.Codigo == mov.CodigoArticulo
@@ -1241,10 +1243,15 @@ namespace ZeusInventarioWebAPI.Controllers
                                select new { Vendedor = g.Key, Total = g.Sum(x => x.Valortra) }).ToListAsync();
 
             // Combina las 5 sumas por vendedor: (FV + arriendo + descuentos DV) - (DV + NV)
+            // El código se normaliza a 3 dígitos ("7", "07" y "007 " son el mismo vendedor): si MovimientoItem y Transac
+            // lo guardan con distinto formato, sus sumas quedaban en claves separadas y el front tomaba solo una
+            // (p. ej. solo las devoluciones), por eso salían totales negativos.
             var totales = new Dictionary<string, decimal>();
             void Sumar(string? vendedor, decimal valor)
             {
-                string clave = (vendedor ?? "").Trim();
+                string codigo = (vendedor ?? "").Trim();
+                if (codigo == "") return;
+                string clave = codigo.All(char.IsDigit) ? codigo.TrimStart('0').PadLeft(3, '0') : codigo;
                 totales[clave] = (totales.TryGetValue(clave, out var actual) ? actual : 0) + valor;
             }
             facturado.ForEach(x => Sumar(x.Vendedor, x.Total));
@@ -1253,7 +1260,7 @@ namespace ZeusInventarioWebAPI.Controllers
             devoluciones.ForEach(x => Sumar(x.Vendedor, -x.Total));
             notas.ForEach(x => Sumar(x.Vendedor, -x.Total));
 
-            return Ok(totales.Where(x => x.Key != "").Select(x => new { Vendedor = x.Key, Total = x.Value }).OrderBy(x => x.Vendedor));
+            return Ok(totales.Select(x => new { Vendedor = x.Key, Total = x.Value }).OrderBy(x => x.Vendedor));
         }
 
         //Consulta que devolverá la informacion de los clientes que mas se han facturado en el mes y restará las devoluciones que han tenido estos mismos
